@@ -4,15 +4,13 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## How to start the project
 
-Run the following commands:
+Clone this repository in your computer in a location of your preference, then via CMD access the folder you just cloned and run the following commands:
 
 ### 1. `npm isntall`
 ### 2. `npm install antd`
 ### 3. `npm react-router-dom`
 
-## Available Scripts
-
-In the project directory, you can run:
+Once you've excuted the previous commands, you can start the project by running the command below:
 
 ### `npm start`
 
@@ -21,6 +19,12 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
+
+##Below information is just additional added by default when the project was created.
+
+## Available Scripts
+
+In the project directory, you can run:
 
 ### `npm test`
 
