@@ -2,6 +2,14 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## How to start the project
+
+Run the following commands:
+
+### 1. `npm isntall`
+### 2. `npm install antd`
+### 3. `npm react-router-dom`
+
 ## Available Scripts
 
 In the project directory, you can run:

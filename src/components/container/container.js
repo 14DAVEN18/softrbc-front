@@ -4,7 +4,7 @@ import Login from './login/login';
 import Register from './register/register';
 // import Application from './application/application';
 
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 
 import './container.css';
 import 'antd/dist/reset.css';
