@@ -20,9 +20,7 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
-##Below information is just additional added by default when the project was created.
-
-## Available Scripts
+## Below information is just additional added by default when the project was created.
 
 In the project directory, you can run:
 
