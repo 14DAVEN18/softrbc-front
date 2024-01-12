@@ -44,7 +44,7 @@ img {
 
 ****************************************************************************************/
 
-/* Styles for the whole register page */
+/* Styles for the whole login/register page */
 .page {
     align-items: center;
     background-color:rgb(255, 255, 255);
@@ -55,7 +55,7 @@ img {
     width: 100%;
 }
 
-/* Styles for the top band in between the from and the title of the page */
+/* Styles for the top band in between the form and the title of the page */
 .top {
     align-items: center;
     display: flex;
@@ -77,11 +77,11 @@ img {
 /* Styles for the content of the form box */
 .frame {
     align-items: center;
-    background-color: rgb(20, 37, 68);
+    background-color: rgb(69, 71, 74);
     border-radius: 2%;
     border-style: solid;
     border-width: 1px;
-    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5); /* horizontal-offset vertical-offset blur-radius color */
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.8); /* horizontal-offset vertical-offset blur-radius color */
     display: flex;
     font-family: 'Courier New', Courier, monospace;
     flex-direction: column;
@@ -91,34 +91,37 @@ img {
 }
 
 /* Styles for the input box (icon and text area not included) */
-.ant-input-affix-wrapper {
-    background-color: rgb(20, 37, 68);
+.ant-input-affix-wrapper, .ant-input-number-affix-wrapper {
+    background-color: rgb(255, 255, 255);
     box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5);
-    color: white;
+    color: black;
     font-size: 22px;
     width: 100%;
 }
 
 /* Styles for the number input box (icon and text area not included) */
 .ant-input-number-affix-wrapper {
-    background-color: rgb(20, 37, 68);
+    background-color: rgb(255, 255, 255);
     box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5);
-    color: white;
+    color: black;
     font-size: 27px;
     width: 100%;
 }
 
 /* Styles for the text area of the input box */
 .ant-input, .ant-input-number {
-    background-color: rgb(20, 37, 68);
-    color: white;
+    background-color: rgb(255, 255, 255);
+    color: black;
     font-size: 22px
 }
 
 /* Styles for the placeholder of the input box */
   .ant-input::placeholder {
     color: rgb(107, 108, 109);
+  }
 
+  .ant-input-number::placeholder {
+    color:black;
   }
 
   /* Styles for the invisible box that contains the input fields */

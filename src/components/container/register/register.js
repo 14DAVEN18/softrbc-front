@@ -1,5 +1,5 @@
 import { Button, Form, Input, InputNumber } from 'antd';
-import { UserOutlined, MailOutlined, PhoneOutlined, LockOutlined } from '@ant-design/icons';
+import { UserOutlined, MailOutlined, PhoneOutlined, LockOutlined, SolutionOutlined } from '@ant-design/icons';
 import { CREATE_USER } from '../../../constants/constants';
 
 import React, { useEffect , useRef, useState} from 'react';
@@ -171,7 +171,7 @@ export default function Register() {
                                 }
                             ]}
                         >
-                            <InputNumber prefix={<PhoneOutlined/>} placeholder='50978521'/>
+                            <InputNumber prefix={<SolutionOutlined/>} placeholder='50978521'/>
                         </Form.Item>
 
                         <Form.Item {...tailFormItemLayout}>
