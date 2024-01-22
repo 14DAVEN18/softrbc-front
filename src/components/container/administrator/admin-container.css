@@ -1,0 +1,80 @@
+/* Styles for the whole container admin page */
+.administrator {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+/* Styles for the header of the admin page */
+.header {
+    align-items: center;
+    background-color: rgb(69, 71, 74);
+    display: flex;
+    flex-direction: row-reverse;
+    height: 10%;
+    width: 100%;
+    z-index: 1;
+}
+
+/* Style for profile pic */
+.profile-pic {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    padding: 20px;
+}
+
+/* Style for employee name */
+.employee-data {
+    align-content: space-around;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol','Noto Color Emoji';
+    font-size: 22px;
+}
+
+.employee-data p {
+    display: flex;
+    height: 50%;
+}
+
+/* Styles for the content-admin class (below the header) */
+.content-admin {
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    flex-direction: row;
+    height: 90%;
+    width: 100%;
+}
+
+/* Styles for the left menu */
+.menu {
+    background-color: #FFFFFF;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.8);
+    display: inline-block;
+    flex-direction: column;
+    height: 100%;
+    min-width: 250px;
+    width: 20%;
+    z-index: 0;
+}
+
+.ant-menu {
+    font-size: 22px;
+}
+
+/* Styles for the display of the selected option */
+.selection {
+    align-items: center;
+    display: inline-block;
+    flex-direction: column;
+    height: 100%;
+    justify-content: center;
+    width: 80%;
+}
+
+.administrator h1 {
+    color: white;   
+}

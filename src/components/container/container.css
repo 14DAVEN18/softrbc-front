@@ -16,18 +16,6 @@
     width: 100%;
 }
 
-.title {
-    background-color: #001529;
-    border-bottom: solid 1px black;
-    display: "flex";
-    font-family: 'Courier New', Courier, monospace;
-    font-size: large;
-    min-height: 5%;
-    text-align: center;
-    width: 100%;
-    height: 5%;
-}
-
 h1 {
     color: white;
 }
@@ -125,7 +113,7 @@ img {
   }
 
   /* Styles for the invisible box that contains the input fields */
-  .ant-form {
+  .frame .ant-form {
     width: 80%;
   }
   

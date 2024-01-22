@@ -1,6 +1,6 @@
 import { Button, Form, Input, InputNumber } from 'antd';
-import { UserOutlined, MailOutlined, PhoneOutlined, LockOutlined, SolutionOutlined } from '@ant-design/icons';
-import { CREATE_USER } from '../../../constants/constants';
+import { UserOutlined, MailOutlined, PhoneOutlined, LockOutlined, IdcardOutlined } from '@ant-design/icons';
+import { CREATE_USER } from '../../../../constants/constants';
 
 import React, { useEffect , useRef, useState} from 'react';
 import axios from "axios";
@@ -143,7 +143,7 @@ export default function Register() {
                                 }
                             ]}
                         >
-                            <InputNumber prefix={<PhoneOutlined/>} placeholder='3215557878'/>
+                            <InputNumber prefix={<PhoneOutlined/>} placeholder='Ingrese su número telefónico'/>
                         </Form.Item>
 
                         <Form.Item
@@ -171,7 +171,7 @@ export default function Register() {
                                 }
                             ]}
                         >
-                            <InputNumber prefix={<SolutionOutlined/>} placeholder='50978521'/>
+                            <InputNumber prefix={<IdcardOutlined/>} placeholder='Ingrese su número de cédula sin puntos'/>
                         </Form.Item>
 
                         <Form.Item {...tailFormItemLayout}>
@@ -183,7 +183,7 @@ export default function Register() {
                     </Form>
                     <Form.Item>
                         <p>
-                            <Link to="/login">Iniciar sesión</Link>
+                            ¿Ya tienes una cuenta? <Link to="/inicio-de-sesion">Inicia sesión</Link>
                         </p>
                     </Form.Item>
                 </div>

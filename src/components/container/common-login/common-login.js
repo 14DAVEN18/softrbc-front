@@ -7,7 +7,7 @@ import { LOGIN_USER, CREDENTIALS_SUCCESSFULLY_VALIDATED, USER_DOES_NOT_EXIST, IN
 
 import { Link, useNavigate } from "react-router-dom";
 
-export default function Login() {
+export default function EmployeeLogin() {
 
     
 
@@ -142,13 +142,10 @@ export default function Login() {
                                 INICIAR SESIÓN
                             </Button>
                         </Form.Item>
-
-                        <Form.Item>
-                            <p>
-                                ¿No tienes una cuenta? <Link to="/register">Crear cuenta</Link>
-                            </p>
-                        </Form.Item>
                     </Form>
+
+                    <Link to="/login">El login normal.</Link>
+                    <Link to="/administrador/gestion-optometras">Entrar admin</Link>
                 </div>
             </div>
         </div>
