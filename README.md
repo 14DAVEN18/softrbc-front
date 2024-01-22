@@ -6,7 +6,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 Clone this repository in your computer in a location of your preference, then via CMD access the folder you just cloned and run the following commands:
 
-### 1. `npm isntall`
+### 1. `npm install`
 ### 2. `npm install antd`
 ### 3. `npm react-router-dom`
 
