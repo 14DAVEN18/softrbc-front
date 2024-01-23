@@ -8,7 +8,7 @@ Clone this repository in your computer in a location of your preference, then vi
 
 ### 1. `npm install`
 ### 2. `npm install antd`
-### 3. `npm react-router-dom`
+### 3. `npm install react-router-dom`
 
 Once you've excuted the previous commands, you can start the project by running the command below:
 

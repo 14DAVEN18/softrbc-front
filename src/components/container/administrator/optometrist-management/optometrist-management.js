@@ -61,6 +61,7 @@ export default function OptometristManagement() {
     const [isCreationModalOpen, setIsCreationModalOpen] = useState(false);
 
     const showCreationModal = () => {
+        form.resetFields();
         setIsCreationModalOpen(true);
     }
     
