@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button, Form, Input, InputNumber, Modal, Select, Space, Table } from 'antd';
 import { UserOutlined, MailOutlined, PhoneOutlined, LockOutlined, IdcardOutlined } from '@ant-design/icons';
 
@@ -67,6 +67,42 @@ export default function OptometristManagement() {
     
     const handleCreateOptometrist = (values) => {
         console.log("El boton de crear optometra: ", values);
+
+        /*try {
+             const response = await axios.post (
+                CREATE_USER,
+                {
+                    nombre: values.nombre,
+                    apellido: values.apellido,
+                    direccion: values.direccion,
+                    correo: values.correo,
+                    telefono: values.telefono,
+                    password: values.password,
+                    cedula: values.cedula
+                },
+                {
+                    headers: 
+                    {
+                        'Content-Type': 'application/json',
+                        
+                    },
+                    withCredentials: true,
+                }).then(response => {
+                    console.log(response.data);
+
+                }).catch(error => {
+                    console.error("Error en la solicitud:", error);
+                    // Manejar el error aquí
+                })
+                .finally(() => {
+                    setLoading(false);
+                    setIsCreationModalOpen(false);
+                });
+
+              
+        } catch (error) {
+            console.log(error);
+        }*/
     
         setLoading(true);
         setTimeout(() => {
@@ -264,7 +300,7 @@ export default function OptometristManagement() {
                     >
                         
                         <Form.Item
-                            name="name"
+                            name="nombre"
                             rules={[
                             {
                                 required: true,
@@ -275,7 +311,7 @@ export default function OptometristManagement() {
                         </Form.Item>
                         
                         <Form.Item
-                            name="surname"
+                            name="apellido"
                             rules={[
                             {
                                 required: true,
@@ -286,7 +322,7 @@ export default function OptometristManagement() {
                         </Form.Item>
 
                         <Form.Item
-                            name="address"
+                            name="direccion"
                             rules={[
                             {
                                 required: true,
@@ -297,7 +333,7 @@ export default function OptometristManagement() {
                         </Form.Item>
 
                         <Form.Item
-                            name="email"
+                            name="correo"
                             rules={[
                             {
                                 type: 'email',
@@ -313,7 +349,7 @@ export default function OptometristManagement() {
                         </Form.Item>
 
                         <Form.Item
-                            name="telephone"
+                            name="telefono"
                             rules={[
                                 {
                                     type: 'number',
@@ -341,7 +377,7 @@ export default function OptometristManagement() {
                         </Form.Item>
 
                         <Form.Item
-                            name="identification"
+                            name="cedula"
                             rules={[
                                 {
                                     type: 'number',
