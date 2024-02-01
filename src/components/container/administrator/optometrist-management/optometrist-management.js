@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, Form, Input, InputNumber, Modal, Select, Space, Table } from 'antd';
+import { Button, Form, Input, InputNumber, Modal, Space, Table } from 'antd';
 import { UserOutlined, MailOutlined, PhoneOutlined, LockOutlined, IdcardOutlined } from '@ant-design/icons';
 
 import axios from "axios";
@@ -28,28 +28,39 @@ export default function OptometristManagement() {
     };
 
     /*
-            START of const for handling Disable Modal
+            START of const for handling Action Modal
                                                     */
-    const [isDisableModalOpen, setIsDisableModalOpen] = useState(false);
+    const [isActionModalOpen, setIsActionModalOpen] = useState(false);
     const [selectedOptometrist, setSelectedOptometrist] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [modalAction, setModalAction] = useState(""); 
 
 
-    const showDisableModal = (optometrist) => {
+    const showActionModal = (optometrist, action) => {
         setSelectedOptometrist(optometrist)
-        setIsDisableModalOpen(true);
+        setIsActionModalOpen(true);
+        setModalAction(action);
     };  
     
-    const handleDisableOk = () => {
+    const handleActionOk = () => {
+        if (modalAction === "enable") {
+            // Handle logic to enable the optometrist
+            console.log("Enable optometrist:", selectedOptometrist);
+        } else if (modalAction === "disable") {
+            // Handle logic to disable the optometrist
+            console.log("Disable optometrist:", selectedOptometrist);
+        }
         setLoading(true);
         setTimeout(() => {
             setLoading(false);
-            setIsDisableModalOpen(false);
+            setIsActionModalOpen(false);
+            setModalAction("");
         }, 2000);
     };
     
-    const handleDisableCancel = () => {
-        setIsDisableModalOpen(false);
+    const handleActionCancel = () => {
+        setIsActionModalOpen(false);
+        setModalAction("");
     };
     /*
             END of const for handling Disable Modal
@@ -58,11 +69,16 @@ export default function OptometristManagement() {
     /*
             START of const for handling Creation Modal
                                                             */
-    const [isCreationModalOpen, setIsCreationModalOpen] = useState(false);
+    const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+    const [formAction, setFormAction] = useState("");
 
-    const showCreationModal = () => {
-        form.resetFields();
-        setIsCreationModalOpen(true);
+    const showFormModal = (optometrist, action) => {
+        setFormAction(action);
+        if (action === "create")
+            form.resetFields();
+        else
+            form.setFieldsValue(optometrist);
+        setIsFormModalOpen(true);
     }
     
     const handleCreateOptometrist = (values) => {
@@ -107,24 +123,30 @@ export default function OptometristManagement() {
         setLoading(true);
         setTimeout(() => {
           setLoading(false);
-          setIsCreationModalOpen(false);
+          setIsFormModalOpen(false);
         }, 2000);
       };
     
-    const handleCreationOk = () => {
-    // Trigger form submission when the modal button is clicked
-    form
-        .validateFields()
-        .then((values) => {
-            handleCreateOptometrist(values);
-        })
-        .catch((errorInfo) => {
-        console.log("Validation failed:", errorInfo);
-        });
+    const handleFormOk = () => {
+        // Trigger form submission when the modal button is clicked
+        if (form != null) {
+            form
+            .validateFields()
+            .then((values) => {
+                if(formAction === "create")
+                    handleCreateOptometrist(values);
+                else if(formAction === "update")
+                    handleUpdateOptometrist(values);
+            })
+            .catch((errorInfo) => {
+                console.log("Validation failed:", errorInfo);
+            });
+        }
+    
     };
     
-    const handleCreationCancel = () => {
-        setIsCreationModalOpen(false);
+    const handleFormCancel = () => {
+        setIsFormModalOpen(false);
     };
     /*
             END of const for handling Creation Modal
@@ -134,15 +156,52 @@ export default function OptometristManagement() {
     /*
             START of Moddify logic
                                         */
-    const handleModificar = (optometrist) => {
-        
-        // Set the form fields with the data of the selected optometrist
-        form.setFieldsValue(optometrist);
     
-        // Open the modal
-        setIsCreationModalOpen(true);
-    };
+    const handleUpdateOptometrist = (values) => {
+        console.log("El boton de modificar optometra: ", values);
 
+        /*try {
+                const response = await axios.post (
+                CREATE_USER,
+                {
+                    nombre: values.nombre,
+                    apellido: values.apellido,
+                    direccion: values.direccion,
+                    correo: values.correo,
+                    telefono: values.telefono,
+                    password: values.password,
+                    cedula: values.cedula
+                },
+                {
+                    headers: 
+                    {
+                        'Content-Type': 'application/json',
+                        
+                    },
+                    withCredentials: true,
+                }).then(response => {
+                    console.log(response.data);
+
+                }).catch(error => {
+                    console.error("Error en la solicitud:", error);
+                    // Manejar el error aquí
+                })
+                .finally(() => {
+                    setLoading(false);
+                    setIsCreationModalOpen(false);
+                });
+
+                
+        } catch (error) {
+            console.log(error);
+        }*/
+    
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false);
+            setIsFormModalOpen(false);
+        }, 2000);
+        };
     /*
             END of Modify logic
                                         */
@@ -209,7 +268,7 @@ export default function OptometristManagement() {
             title: 'Nombre',
             key: 'name',
             render: (_, record) => (
-                record.name + " " + record.surname
+                record.nombre + " " + record.apellido
             )
         },
         {
@@ -217,10 +276,16 @@ export default function OptometristManagement() {
             key: 'action',
             render: (_, record) => (
             <Space size="middle">
-                <Button type="primary" onClick={ () => showDisableModal(record)} danger htmlType='submit'>
-                    Inhabilitar
-                </Button>
-                <Button type="primary" onClick={ () => handleModificar(record)} htmlType='submti'>
+                {record.activo === 0 ? (
+                    <Button type="primary" onClick={() => showActionModal(record, "enable")} htmlType='submit'>
+                        Habilitar
+                    </Button>
+                ) : (
+                    <Button type="primary" onClick={() => showActionModal(record, "disable")} danger htmlType='submit'>
+                        Inhabilitar
+                    </Button>
+                )}
+                <Button type="primary" onClick={ () => showFormModal(record, "update")} htmlType='submit'>
                     Modificar
                 </Button>
             </Space>
@@ -256,16 +321,23 @@ export default function OptometristManagement() {
                     </Form.Item>
                 </Form>
                 
-                <Modal title="Inhabilitar optometra" centered open={isDisableModalOpen} onCancel={handleDisableCancel} footer=
-                    {[
-                        <Button key="cancel" onClick={handleDisableCancel}>
+                <Modal title={modalAction === "enable" ? "Habilitar optometra" : "Inhabilitar optometra"} centered open={isActionModalOpen} onCancel={handleFormCancel} footer=
+                    {modalAction === "enable" ? [
+                        <Button key="cancel" onClick={handleActionCancel}>
                             Cancelar
                         </Button>,
-                        <Button key="disable" type="primary" danger loading={loading} onClick={handleDisableOk}>
+                        <Button key="action" type="primary" loading={loading} onClick={handleActionOk}>
+                            Habilitar
+                        </Button>
+                    ] : [
+                        <Button key="cancel" onClick={handleActionCancel}>
+                            Cancelar
+                        </Button>,
+                        <Button key="action" type="primary" danger loading={loading} onClick={handleActionOk}>
                             Inhabilitar
                         </Button>
                     ]}>
-                    <p className='confirmation'>¿Está seguro que desea inhabilitar al optometra {selectedOptometrist ? selectedOptometrist.name : ''}</p>
+                    <p className='confirmation'>¿Está seguro que desea {modalAction === "enable" ? "habilitar" : "inhabilitar"} al optómetra {selectedOptometrist ? selectedOptometrist.nombre + ' ' + selectedOptometrist.apellido : ''}?</p>
                 </Modal>
             </div>
             
@@ -274,18 +346,24 @@ export default function OptometristManagement() {
 
 
             <div className='create'>
-                <Button type="dashed" htmlType='submit' onClick={showCreationModal}>
+                <Button type="dashed" htmlType='submit' onClick={() => showFormModal(null, "create")}>
                     Crear Optometra
                 </Button>
 
-                <Modal title="Crear optometra" centered open={isCreationModalOpen} onCancel={handleCreationCancel} width={'50%'} footer=
-                    {[
-                        <Button key="cancel" onClick={handleCreationCancel}>
+                <Modal title={formAction === "create" ? "Crear optómetra" : "Modificar optómetra"} centered open={isFormModalOpen} onCancel={handleFormCancel} width={'50%'} footer=
+                    {formAction === "create" ? [
+                        <Button key="cancel" onClick={handleFormCancel}>
                             Cancelar
                         </Button>,
-                        
-                        <Button key="disable" type="primary" loading={loading} onClick={handleCreationOk}>
+                        <Button key="create" type="primary" loading={loading} onClick={handleFormOk}>
                             Crear
+                        </Button>
+                    ] : [
+                        <Button key="cancel" onClick={handleFormCancel}>
+                            Cancelar
+                        </Button>,
+                        <Button key="update" type="primary" loading={loading} onClick={handleFormOk}>
+                            Actualizar
                         </Button>
                     ]}>
 

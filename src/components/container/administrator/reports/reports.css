@@ -1,0 +1,18 @@
+/* Style for the selected content */
+.reports {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: center;
+    width: 100%;
+}
+
+/* Styles for table */
+.report-table {
+    align-self: center;
+    width: 80%;
+}
+
+.reports h1 {
+    color: black;
+}

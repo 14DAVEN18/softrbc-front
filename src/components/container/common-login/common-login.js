@@ -144,8 +144,9 @@ export default function EmployeeLogin() {
                         </Form.Item>
                     </Form>
 
-                    <Link to="/login">El login normal.</Link>
+                    <Link to="/inicio-de-sesion">El login normal.</Link>
                     <Link to="/administrador/gestion-optometras">Entrar admin</Link>
+                    <Link to="/optometra/agenda">Entrar optometra</Link>
                 </div>
             </div>
         </div>

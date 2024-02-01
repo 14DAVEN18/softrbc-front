@@ -1,3 +1,57 @@
+export const durations = [
+    {
+        key: '1',
+        duration: '10 minutos'
+    },
+    {
+        key: '2',
+        duration: '15 minutos'
+    },
+    {
+        key: '3',
+        duration: '20 minuots'
+    },
+    {
+        key: '4',
+        duration: '25 minutos'
+    },
+    {
+        key: '5',
+        duration: '30 minutos'
+    }
+];
+
+export const days = [
+    {
+        key: '1',
+        day: 'Lunes'
+    },
+    {
+        key: '2',
+        day: 'Martes'
+    },
+    {
+        key: '3',
+        day: 'Miercoles'
+    },
+    {
+        key: '4',
+        day: 'Jueves'
+    },
+    {
+        key: '5',
+        day: 'Viernes'
+    },
+    {
+        key: '6',
+        day: 'Sábado'
+    },
+    {
+        key: '7',
+        day: 'Domingo'
+    }
+]
+
 export const months = [
     { 
         key  : '01',

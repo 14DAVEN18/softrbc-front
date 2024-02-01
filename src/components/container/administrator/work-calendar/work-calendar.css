@@ -1,0 +1,54 @@
+/* Style for the selected content */
+.work-calendar {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+.work-calendar h3 {
+    color: black;
+}
+
+/* Styles for optometrist selector */
+.optometrist-selection {
+    align-items: center;
+    align-self: center;
+    display: flex;
+    height: 10%;
+    justify-content: center;
+    width: 70%;
+}
+
+/* Style for day selection */
+.day-selection {
+    align-items: center;
+    align-self: center;
+    display: flex;
+    height: 30%;
+    justify-content: center;
+    width: 70%;
+}
+
+.ant-transfer {
+    justify-content: center;
+    width: 100%;
+}
+.ant-transfer .ant-transfer-list {
+    width: 40%;
+}
+
+/* Styles for optometrist selector */
+.duration-selection {
+    align-items: center;
+    align-self: center;
+    display: flex;
+    height: 10%;
+    justify-content: center;
+    width: 70%;
+}
+
+/* Style for button */
+.work-calendar .calendar button{
+    width: 100%;
+}

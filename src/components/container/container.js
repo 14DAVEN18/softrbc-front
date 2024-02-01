@@ -10,6 +10,12 @@ import EmployeeLogin from './common-login/common-login';
 // Components for administrator pages
 import Admin from './administrator/admin-container'
 import OptometristManagement from './administrator/optometrist-management/optometrist-management';
+import Reports from './administrator/reports/reports';
+import WorkCalendar from './administrator/work-calendar/work-calendar';
+
+// Components for optometrist pages
+import Optometrist from './optometrist/optometrist-container';
+import OptometristSchedule from './optometrist/optometrist-schedule/optometrist-schedule';
 
 import { Routes, Route, Navigate } from 'react-router-dom';
 
@@ -43,6 +49,13 @@ export default function Container() {
             <Route path='/administrador' element={ <Navigate replace to="/administrador/gestion-optometras"/> }></Route>
             <Route path='/administrador' element={ <Admin/> }>
               <Route path='gestion-optometras' element={ <OptometristManagement/> }></Route>
+              <Route path='reportes' element={ <Reports/> }></Route>
+              <Route path='calendario-laboral' element={ <WorkCalendar/> }></Route>
+            </Route>
+
+            <Route path='/optometra' element={ <Navigate replace to="/optometra/agenda"/> }></Route>
+            <Route path='/optometra' element={ <Optometrist/> }>
+              <Route path='agenda' element={ <OptometristSchedule/> }></Route>
             </Route>
           </Routes>
         </div>

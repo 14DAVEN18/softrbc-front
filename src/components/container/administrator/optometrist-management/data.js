@@ -1,37 +1,35 @@
-import { Button, Modal, Space } from 'antd';
-import {useEffect, useRef, useState} from 'react';
-
-
-
 export const data = [
     {
       key: '1',
-      name: 'Angela',
-      surname: 'Henao',
-      address: 'Carrera 58 # 38 Este 25',
-      email: 'ahenao@gmail.com',
-      telephone: 3102225555,
+      nombre: 'Angela',
+      apellido: 'Henao',
+      direccion: 'Carrera 58 # 38 Este 25',
+      correo: 'ahenao@gmail.com',
+      telefono: 3102225555,
       password: '123456789',
-      identification: '47658921'
+      cedula: '47658921',
+      activo: 1
     },
     {
       key: '2',
-      name: 'Pana',
-      surname: 'Hidalgo',
-      address: 'Diagonal 30C # 10-12',
-      email: 'pana.hidalgo@gmail.com',
-      telephone: 3057778888,
+      nombre: 'Pana',
+      apellido: 'Hidalgo',
+      direccion: 'Diagonal 30C # 10-12',
+      correo: 'pana.hidalgo@gmail.com',
+      telefono: 3057778888,
       password: '777888*.',
-      identification: 10276663333
+      cedula: 1027666333,
+      activo: 0
     },
     {
       key: '3',
-      name: 'Persona',
-      surname: 'Random',
-      address: 'Calle 24A # 12-34',
-      email: 'dcortes79@uan.edu.co',
-      telephone: 3006335421,
+      nombre: 'Persona',
+      apellido: 'Random',
+      direccion: 'Calle 24A # 12-34',
+      correo: 'dcortes79@uan.edu.co',
+      telefono: 3006335421,
       password: '654321.d*',
-      identification: 10276663333
+      cedula: 10276663333,
+      activo: 1
     },
   ];

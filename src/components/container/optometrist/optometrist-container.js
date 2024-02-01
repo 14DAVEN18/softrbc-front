@@ -4,7 +4,7 @@ import { BookOutlined, CalendarOutlined, SolutionOutlined } from '@ant-design/ic
 import { Avatar, Menu } from 'antd';
 import { Link, Outlet, useNavigate } from "react-router-dom";
 
-import './admin-container.css';
+import './optometrist-container.css';
 
 import image from '../../../profile_photos/Watermark.png';
 
@@ -19,15 +19,11 @@ function getItem(label, key, icon, children, type) {
 }
 
 const items = [
-    getItem(<Link to="/administrador/gestion-optometras">Gestión de optómetras</Link>, '1', <SolutionOutlined style={{ fontsize: '50px'}}/>),
+    getItem(<Link to="/optometra/agenda">Agenda</Link>, '1', <BookOutlined />),
     {
         type: 'divider',
     },
-    getItem(<Link to="/administrador/reportes">Reportes</Link>, '2', <BookOutlined />),
-    {
-        type: 'divider',
-    },
-    getItem(<Link to="/administrador/calendario-laboral">Gestionar calendarios laborales</Link>, '3', <CalendarOutlined />),
+    getItem(<Link to="/optometra/consultar-paciente">Consultar</Link>, '2', <SolutionOutlined style={{ fontsize: '50px'}}/>),
     {
         type: 'divider',
     }
@@ -40,7 +36,7 @@ const dropdownOptions = [
     },
 ];
 
-export default function Admin() {
+export default function Optometrist() {
 
     const ref = useRef(null);
 
@@ -58,8 +54,8 @@ export default function Admin() {
 
     return (
         <div 
-            id="administrator" 
-            className="administrator" 
+            id="optometrist" 
+            className="optometrist" 
             ref={ref}
         >
             <div className='header'>
@@ -71,7 +67,7 @@ export default function Admin() {
                     <div>El nombre de un pana</div>
                 </div>
             </div>
-            <div className='content-admin'>
+            <div className='content-optometrist'>
                 <div className='menu'>
                     <div>
                         <Menu
