@@ -1,13 +1,16 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useContext } from 'react';
 import { Button, Form, Input } from 'antd';
 import { LockOutlined ,UserOutlined } from '@ant-design/icons';
-import axios from "axios";
-
-import { LOGIN_USER, CREDENTIALS_SUCCESSFULLY_VALIDATED, USER_DOES_NOT_EXIST, INVALID_PASSWORD } from '../../../constants/constants';
+import { AuthContext } from "../../../auth/context/AuthContext";
 
 import { Link, useNavigate } from "react-router-dom";
 
-export default function EmployeeLogin() {
+const initialLoginForm = {
+    username: '',
+    password: ''
+}
+
+const EmployeeLogin = () => {
 
     
 
@@ -26,8 +29,6 @@ export default function EmployeeLogin() {
     useEffect(() => {
         setHeight(ref.current.offsetHeight);
         setWidth(ref.current.offsetWidth);
-        if(localStorage.getItem("user_id") !== null)
-            navigation("/application")
     }, [])
 
 
@@ -35,45 +36,30 @@ export default function EmployeeLogin() {
     useEffect(() => {
         forceUpdate({});
     }, []);
+
+
+    const { handlerLogin } = useContext(AuthContext);
+
+    const [ loginForm, setLoginForm] = useState(initialLoginForm);
+    const { username, password } = loginForm;
+
+    const onInputChange = ({ target }) => {
+        const { name, value } = target;
+        setLoginForm({
+            ...loginForm,
+            [ name ]: value,
+        })
+    }
     
-    const onFinish = async (values) => {
-        localStorage.clear()
-        try {
-            axios.post (
-                LOGIN_USER,
-                {
-                    values
-                },
-                {
-                    headers: 
-                    {
-                        'Content-Type': 'application/json',
-                        withCredentials: true,
-                        username: values.username,
-                        password: values.password
-                    }
-                })
-                .then(({data}) => 
-                {
-                    if (data.isMatch === 2) {
-                        localStorage.setItem("user_id", data.user_id);
-                        localStorage.setItem("user_name" , data.user_username);
-                        setMessage(CREDENTIALS_SUCCESSFULLY_VALIDATED)
-                        navigation("/application/register-transaction");
-                    } else if (data.isMatch === 1) {
-                        setMatch(data.isMatch)
-                        setMessage(INVALID_PASSWORD);
-                    } else if (data.isMatch === 0) {
-                        setMatch(data.isMatch)
-                        setMessage(USER_DOES_NOT_EXIST);
-                    }
-                })
-                .catch(error => {
-                    console.log(error);
-                })
-        } catch (error) {
-            console.log(error);
+    const login = (values) => {
+        console.log('values', values)
+        if(!username || !password) {
+            console.log("Error", "Correo y contraseña requeridos.")
         }
+
+        handlerLogin({username: values.username, password: values.password})
+
+        setLoginForm(initialLoginForm)
     };
 
     return (
@@ -82,9 +68,6 @@ export default function EmployeeLogin() {
             className="page" 
             ref={ref}
         >
-            <div className='top'>
-                <img src={process.env.PUBLIC_URL + "/Expense-Tracker-Logo-192.png"} alt="Expense tracker logo"/>
-            </div>
 
             <div className='bottom'>
                 
@@ -111,7 +94,7 @@ export default function EmployeeLogin() {
                         initialValues={{ remember: false }}
                         form={form}
                         name="normal_login"
-                        onFinish={onFinish}
+                        onFinish={login}
                     >
                         <Form.Item
                             name="username"
@@ -121,7 +104,7 @@ export default function EmployeeLogin() {
                                     message: 'Por favor ingresa tu usuario!'
                                 }]}
                         >
-                            <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Usuario" />
+                            <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Usuario" onChange={ onInputChange } value={username}/>
                         </Form.Item>
 
                         <Form.Item
@@ -133,7 +116,7 @@ export default function EmployeeLogin() {
                                 }
                             ]}
                         >
-                            <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} placeholder='Contraseña'/>
+                            <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} placeholder='Contraseña' onChange={ onInputChange } value={password}/>
                         </Form.Item>
                         
 
@@ -152,3 +135,5 @@ export default function EmployeeLogin() {
         </div>
     );
 }
+
+export default EmployeeLogin;
