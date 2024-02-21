@@ -17,17 +17,17 @@ export const useAuth = () => {
             const response = await loginUser ({ correo, password});
             const token = response.data.token; // body viene en el body
             const claims = JSON.parse(window.atob(token.split(".")[1]));
-            const rol = { rol: claims.sub }
+            const rol = claims.sub
             console.log(claims)
             dispatch({
                 type: 'login',
                 payload: {rol}
             });
-            localStorage.setItem('rol', login);
+            localStorage.setItem('rol', rol);
             localStorage.setItem('token', `Bearer ${token}`)
-            if (response.data.rol === 'ROLE_ADMIN')
+            if (rol === 'ROLE_ADMIN')
                 navigate('/administrador');
-            else if (response.data.rol === 'ROLE_OPTOMETRA')
+            else if (rol === 'ROLE_OPTOMETRA')
                 navigate('/optometra');
             else {
                 console.log('Rol: ', 'Es paciente')

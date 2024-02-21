@@ -138,29 +138,6 @@ const EmployeeLogin = () => {
                             <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} placeholder='Contraseña' onChange={ onInputChange } value={password}/>
                         </Form.Item>
 
-                        <Form.Item
-                            name="confirm"
-                            dependencies={['password']}
-                            hasFeedback
-                            rules={[
-                            {
-                                required: true,
-                                message: 'Por favor confirme su contraseña!',
-                            },
-                            ({ getFieldValue }) => ({
-                                validator(_, value) {
-                                if (!value || getFieldValue('password') === value) {
-                                    return Promise.resolve();
-                                }
-                                return Promise.reject(new Error('La contraseña ingresada no coincide!'));
-                                },
-                            }),
-                            ]}
-                        >
-                            <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} placeholder='Confirmar contraseña'/>
-                        </Form.Item>
-                        
-
                         <Form.Item shouldUpdate>
                             {() => {
                                 return <Button
