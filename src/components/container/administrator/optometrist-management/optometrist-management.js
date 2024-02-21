@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, Form, Input, InputNumber, Modal, Space, Table } from 'antd';
 import { UserOutlined, MailOutlined, PhoneOutlined, LockOutlined, IdcardOutlined } from '@ant-design/icons';
+import { Link, useNavigate } from "react-router-dom";
 
 import axios from "axios";
 import { CREATE_USER } from '../../../../constants/constants';
-import { Link, useNavigate } from "react-router-dom";
+
+import { create } from '../../../../services/userService';
 
 import './optometrist-management.css';
 
@@ -71,7 +73,14 @@ export default function OptometristManagement() {
                                                             */
     const [isFormModalOpen, setIsFormModalOpen] = useState(false);
     const [formAction, setFormAction] = useState("");
+    const [isFormComplete, setIsFormComplete] = useState(false);
 
+
+    const onValuesChange = (_, allValues) => {
+        const isComplete = Object.values(allValues).every(value => !!value);
+        setIsFormComplete(isComplete);
+    };
+    
     const showFormModal = (optometrist, action) => {
         setFormAction(action);
         if (action === "create")
@@ -81,54 +90,32 @@ export default function OptometristManagement() {
         setIsFormModalOpen(true);
     }
     
-    const handleCreateOptometrist = (values) => {
+    const handleCreateOptometrist = async (values) => {
+        setLoading(true)
         console.log("El boton de crear optometra: ", values);
 
-        /*try {
-             const response = await axios.post (
-                CREATE_USER,
-                {
-                    nombre: values.nombre,
-                    apellido: values.apellido,
-                    direccion: values.direccion,
-                    correo: values.correo,
-                    telefono: values.telefono,
-                    password: values.password,
-                    cedula: values.cedula
-                },
-                {
-                    headers: 
-                    {
-                        'Content-Type': 'application/json',
-                        
-                    },
-                    withCredentials: true,
-                }).then(response => {
-                    console.log(response.data);
-
-                }).catch(error => {
-                    console.error("Error en la solicitud:", error);
-                    // Manejar el error aquí
-                })
-                .finally(() => {
-                    setLoading(false);
-                    setIsCreationModalOpen(false);
-                });
-
-              
+        try {
+            const response = await create(values); // Call the create function from userService.js
+            console.log('Response:', response.data);
+            // Handle success if needed
         } catch (error) {
-            console.log(error);
-        }*/
-    
+            console.error('Error en la solicitud:', error);
+            // Handle error if needed
+        } finally {
+            setLoading(false);
+            // Handle modal state changes here if needed
+        }
+
         setLoading(true);
         setTimeout(() => {
-          setLoading(false);
-          setIsFormModalOpen(false);
+            setLoading(false);
+            setIsFormModalOpen(false);
+            setIsFormComplete(false);
         }, 2000);
-      };
+    };
     
     const handleFormOk = () => {
-        // Trigger form submission when the modal button is clicked
+        // Triggers form submission when the modal button is clicked
         if (form != null) {
             form
             .validateFields()
@@ -200,6 +187,7 @@ export default function OptometristManagement() {
         setTimeout(() => {
             setLoading(false);
             setIsFormModalOpen(false);
+            setIsFormComplete(false);
         }, 2000);
         };
     /*
@@ -225,6 +213,7 @@ export default function OptometristManagement() {
     };
     
     const [form] = Form.useForm();
+    const [clientReady, setClientReady] = useState(false); 
 
     const onFinish = (values) => {
         /*try {
@@ -355,14 +344,14 @@ export default function OptometristManagement() {
                         <Button key="cancel" onClick={handleFormCancel}>
                             Cancelar
                         </Button>,
-                        <Button key="create" type="primary" loading={loading} onClick={handleFormOk}>
+                        <Button key="create" type="primary" loading={loading} onClick={handleFormOk} disabled={!isFormComplete}>
                             Crear
                         </Button>
                     ] : [
                         <Button key="cancel" onClick={handleFormCancel}>
                             Cancelar
                         </Button>,
-                        <Button key="update" type="primary" loading={loading} onClick={handleFormOk}>
+                        <Button key="update" type="primary" loading={loading} onClick={handleFormOk} disabled={!isFormComplete}>
                             Actualizar
                         </Button>
                     ]}>
@@ -374,7 +363,7 @@ export default function OptometristManagement() {
                         form={form}
                         name="employee-creation"
                         onFinish={handleCreateOptometrist}
-                        scrollToFirstError
+                        onValuesChange={onValuesChange}
                     >
                         
                         <Form.Item
@@ -443,18 +432,6 @@ export default function OptometristManagement() {
                         </Form.Item>
 
                         <Form.Item
-                            name="password"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Por favor ingresa una contraseña para el optómetra!'
-                                }
-                            ]}
-                        >
-                            <Input.Password prefix={<LockOutlined/>} placeholder='Contraseña'/>
-                        </Form.Item>
-
-                        <Form.Item
                             name="cedula"
                             rules={[
                                 {
@@ -469,6 +446,71 @@ export default function OptometristManagement() {
                         >
                             <InputNumber prefix={<IdcardOutlined/>} placeholder='Ingrese el número de cédula sin puntos'/>
                         </Form.Item>
+
+                        <Form.Item
+                            name="numeroTarjeta"
+                            rules={[
+                            {
+                                required: true,
+                                message: 'Por favor ingrese el número de tarjeta profesional del optómetra!',
+                            }]}
+                        >
+                            <Input prefix={<UserOutlined/>} placeholder='Número de tarjeta profesional'/>
+                        </Form.Item>
+
+                        <Form.Item
+                            name="password"
+                            rules={[
+                                {
+                                    required: true,
+                                    type: "string",
+                                }, {
+                                    message: 'La contraseña debe tener al menos 8 caracteres',
+                                    min: 8
+                                }, {
+                                    max: 15,
+                                    message: "La contraseña no puede tener más de 15 caracteres"
+                                }, {
+                                    pattern: "^(?=.*[a-z]).+$",
+                                    message: "La contraseña debe contener al menos una letra minúscula (a - z)"
+                                }, {
+                                    pattern: "^(?=.*[A-Z]).+$",
+                                    message: "La contraseña debe contener al menos una letra mayúscula (A - Z)"
+                                }, {
+                                    pattern: "^(?=.*[0-9]).+$",
+                                    message: "La contraseña debe contener por lo menos 1 número"
+                                }, {
+                                    pattern: "^(?=.*[*+!.]).+$",
+                                    message: "La contraseña solo puede tener al menos uno de los siguientes caracteres: * + ! ó ."
+                                }
+                            ]}
+                        >
+                            <Input.Password prefix={<LockOutlined/>} placeholder='Contraseña'/>
+                        </Form.Item>
+
+                        <Form.Item
+                            name="confirm"
+                            dependencies={['password']}
+                            hasFeedback
+                            rules={[
+                            {
+                                required: true,
+                                message: 'Por favor confirme su contraseña!',
+                            },
+                            ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                if (!value || getFieldValue('password') === value) {
+                                    return Promise.resolve();
+                                }
+                                return Promise.reject(new Error('La contraseña ingresada no coincide!'));
+                                },
+                            }),
+                            ]}
+                        >
+                            <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} placeholder='Confirmar contraseña'/>
+                        </Form.Item>
+
+                        
 
                     </Form>
                 </Modal>

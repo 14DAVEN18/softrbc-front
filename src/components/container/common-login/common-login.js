@@ -21,12 +21,15 @@ const EmployeeLogin = () => {
     const [width, setWidth] = useState(0);
 
     const [form] = Form.useForm();
+    const [clientReady, setClientReady] = useState(false);
+
     const [, forceUpdate] = useState({});
     const navigation = useNavigate();
     const [message, setMessage] = useState("");
     const [match, setMatch] = useState(2)
 
     useEffect(() => {
+        setClientReady(true);
         setHeight(ref.current.offsetHeight);
         setWidth(ref.current.offsetWidth);
     }, [])
@@ -53,11 +56,8 @@ const EmployeeLogin = () => {
     
     const login = (values) => {
         console.log('values', values)
-        if(!username || !password) {
-            console.log("Error", "Correo y contraseña requeridos.")
-        }
 
-        handlerLogin({username: values.username, password: values.password})
+        handlerLogin({correo: values.username, password: values.password})
 
         setLoginForm(initialLoginForm)
     };
@@ -101,10 +101,11 @@ const EmployeeLogin = () => {
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Por favor ingresa tu usuario!'
+                                    message: 'La entrada no es un correo electónico válido.',
+                                    type: "email"
                                 }]}
                         >
-                            <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Usuario" onChange={ onInputChange } value={username}/>
+                            <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Correo electrónico" onChange={ onInputChange } value={username}/>
                         </Form.Item>
 
                         <Form.Item
@@ -112,18 +113,69 @@ const EmployeeLogin = () => {
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Por favor ingresa tu contraseña!'
+                                    type: "string",
+                                }, {
+                                    message: 'La contraseña debe tener al menos 8 caracteres',
+                                    min: 8
+                                }, {
+                                    max: 15,
+                                    message: "La contraseña no puede tener más de 15 caracteres"
+                                }, {
+                                    pattern: "^(?=.*[a-z]).+$",
+                                    message: "La contraseña debe contener al menos una letra minúscula (a - z)"
+                                }, {
+                                    pattern: "^(?=.*[A-Z]).+$",
+                                    message: "La contraseña debe contener al menos una letra mayúscula (A - Z)"
+                                }, {
+                                    pattern: "^(?=.*[0-9]).+$",
+                                    message: "La contraseña debe contener por lo menos 1 número"
+                                }, {
+                                    pattern: "^(?=.*[*+!.]).+$",
+                                    message: "La contraseña solo puede tener al menos uno de los siguientes caracteres: * + ! ó ."
                                 }
                             ]}
                         >
                             <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} placeholder='Contraseña' onChange={ onInputChange } value={password}/>
                         </Form.Item>
+
+                        <Form.Item
+                            name="confirm"
+                            dependencies={['password']}
+                            hasFeedback
+                            rules={[
+                            {
+                                required: true,
+                                message: 'Por favor confirme su contraseña!',
+                            },
+                            ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                if (!value || getFieldValue('password') === value) {
+                                    return Promise.resolve();
+                                }
+                                return Promise.reject(new Error('La contraseña ingresada no coincide!'));
+                                },
+                            }),
+                            ]}
+                        >
+                            <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} placeholder='Confirmar contraseña'/>
+                        </Form.Item>
                         
 
-                        <Form.Item>
-                            <Button type="primary" htmlType="submit" className="login-form-button">
-                                INICIAR SESIÓN
-                            </Button>
+                        <Form.Item shouldUpdate>
+                            {() => {
+                                return <Button
+                                    type="primary"
+                                    htmlType="submit"
+                                    className="login-form-button"
+                                    disabled={
+                                        !clientReady ||
+                                        !form.isFieldsTouched(true) ||
+                                        !!form.getFieldsError().filter(({ errors }) => errors.length).length
+                                    }
+                                >
+                                    INICIAR SESIÓN
+                                </Button>
+                            }}
                         </Form.Item>
                     </Form>
 

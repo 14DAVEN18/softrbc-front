@@ -3,15 +3,11 @@ export const loginReducer = (state = {}, action) => {
     switch(action.type) {
         case 'login':
             return {
-                isAuth: true,
-                rol: action.payload.rol,
-                correo: action.payload.correo
+                rol: action.payload.rol
             };
         case 'logout':
             return {
-                isAuth: false,
-                rol: false,
-                correo: undefined
+                rol: undefined
             };
         default:
             return state; 

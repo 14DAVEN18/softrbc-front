@@ -4,35 +4,34 @@ import { loginReducer } from "../reducers/loginReducer";
 import { loginUser } from "../services/authService";
 
 const initialLogin = JSON.parse(localStorage.getItem('login')) || {
-    isAuth: false,
-    rol: false,
-    user: undefined
+    rol: '',
 }
-
 export const useAuth = () => {
+
     const [login, dispatch] = useReducer(loginReducer, initialLogin);
     const navigate = useNavigate();
 
     const handlerLogin = async ({ correo, password }) => {
         
-
         try {
             const response = await loginUser ({ correo, password});
-            const token = response.data.token;
+            const token = response.data.token; // body viene en el body
             const claims = JSON.parse(window.atob(token.split(".")[1]));
-            const user = { correo: claims.correo }
+            const rol = { rol: claims.sub }
             console.log(claims)
             dispatch({
                 type: 'login',
-                payload: {user, rol: claims.rol}
+                payload: {rol}
             });
-            localStorage.setItem('login', JSON.stringify({
-                isAuth: true,
-                rol: claims.rol,
-                user,
-            }));
+            localStorage.setItem('rol', login);
             localStorage.setItem('token', `Bearer ${token}`)
-            navigate('/users');
+            if (response.data.rol === 'ROLE_ADMIN')
+                navigate('/administrador');
+            else if (response.data.rol === 'ROLE_OPTOMETRA')
+                navigate('/optometra');
+            else {
+                console.log('Rol: ', 'Es paciente')
+            }
         } catch(error) {
             if (error.response?.status === 401 ) {
                 console.log('Error login', "Correo o contraseña incorrectos")   
