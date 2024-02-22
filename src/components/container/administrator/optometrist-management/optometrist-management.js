@@ -93,9 +93,24 @@ export default function OptometristManagement() {
     const handleCreateOptometrist = async (values) => {
         setLoading(true)
         console.log("El boton de crear optometra: ", values);
-
+        
         try {
-            const response = await create(values); // Call the create function from userService.js
+            const response = await create(
+                {
+                    usuario: {
+                        nombre: values.nombre,
+                        apellido: values.apellido,
+                        direccion: values.direccion,
+                        correo: values.correo,
+                        telefono: values.telefono,
+                        password: values.password,
+                        cedula: values.cedula,
+                    },
+                    optometra: {
+                        numeroTarjeta: values.numeroTarjeta
+                    }
+                }
+            ); // Call the create function from userService.js
             console.log('Response:', response.data);
             // Handle success if needed
         } catch (error) {

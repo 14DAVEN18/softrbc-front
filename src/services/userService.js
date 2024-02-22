@@ -1,13 +1,6 @@
 import axios from "axios";
 import { CREATE_USER } from "../constants/constants";
 
-const config = {
-    headers: {
-        "Authorization": localStorage.getItem('token'),
-        "Content-Type": "application/json"
-    }
-}
-
 export const create = async ({
     usuario: {
         nombre,
@@ -22,7 +15,14 @@ export const create = async ({
         numeroTarjeta
     }
 }) => {
+    const config = {
+        headers: {
+            "Authorization": localStorage.getItem('token'),
+            "Content-Type": "application/json"
+        }
+    }
     try {
+        console.log(localStorage.getItem('token'))
         return await axios.post(CREATE_USER, 
             {
                 usuario: {
@@ -30,9 +30,9 @@ export const create = async ({
                     apellido,
                     direccion,
                     correo,
-                    telefono,
+                    telefono: telefono.toString(),
                     password,
-                    cedula,
+                    cedula: cedula.toString(),
                 },
                 optometra: {
                     numeroTarjeta
@@ -59,6 +59,12 @@ export const update = async ({
     }
 }) => {
     try {
+        const config = {
+            headers: {
+                "Authorization": localStorage.getItem('token'),
+                "Content-Type": "application/json"
+            }
+        }
         return await axios.put(`${CREATE_USER}/${id}`, 
         {
             usuario: {

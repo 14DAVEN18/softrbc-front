@@ -114,24 +114,6 @@ const EmployeeLogin = () => {
                                 {
                                     required: true,
                                     type: "string",
-                                }, {
-                                    message: 'La contraseña debe tener al menos 8 caracteres',
-                                    min: 8
-                                }, {
-                                    max: 15,
-                                    message: "La contraseña no puede tener más de 15 caracteres"
-                                }, {
-                                    pattern: "^(?=.*[a-z]).+$",
-                                    message: "La contraseña debe contener al menos una letra minúscula (a - z)"
-                                }, {
-                                    pattern: "^(?=.*[A-Z]).+$",
-                                    message: "La contraseña debe contener al menos una letra mayúscula (A - Z)"
-                                }, {
-                                    pattern: "^(?=.*[0-9]).+$",
-                                    message: "La contraseña debe contener por lo menos 1 número"
-                                }, {
-                                    pattern: "^(?=.*[*+!.]).+$",
-                                    message: "La contraseña solo puede tener al menos uno de los siguientes caracteres: * + ! ó ."
                                 }
                             ]}
                         >
