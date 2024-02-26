@@ -1,0 +1,44 @@
+.cancel-day {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.calendar-action {
+    height: 10%;
+    width: 100%;
+}
+
+.calendar {
+    align-self: center;
+    border: 1px solid black;
+    border-radius: 10px;
+    border-top: 200px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    height: 70%;
+    justify-content: center;
+    padding: 10px;
+    width: 90%;
+}
+
+.day, .day-header {
+    align-items: center;
+    box-sizing: border-box;
+    display: flex;
+    flex-grow: 1;
+    justify-content: center;    
+    width: calc((14.28% - 20px) - 2px);
+}
+
+.day {
+    border: 1px solid black;
+    border-radius: 10px;
+    margin: 5px;
+}
+
+.day-header {
+    border-left: 1px solid black;
+    border: 1px solid black;
+}

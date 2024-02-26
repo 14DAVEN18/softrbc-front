@@ -117,8 +117,7 @@ export const years = [
 
 export const LOGIN_USER = "http://localhost:8080/login"
 export const CREATE_USER = "http://localhost:8080/usuarios/nueva"
-export const CREATE_TRANSACTION = 'http://localhost:4000/api/transactions/transactions'
-export const GET_TRANSACTIONS = 'http://localhost:4000/api/transactions/transactions'
+export const GET_USER = 'http://localhost:4000/api/transactions/transactions'
 
 
 export const USER_ALREADY_REGISTERED = "Ya tienes una cuenta asociada con ese correo electrónico..";

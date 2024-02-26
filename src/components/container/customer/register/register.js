@@ -146,18 +146,7 @@ export default function Register() {
                             <InputNumber prefix={<PhoneOutlined/>} placeholder='Ingrese su número telefónico'/>
                         </Form.Item>
 
-                        <Form.Item
-                            name="password"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Por favor ingresa tu contraseña!'
-                                }
-                            ]}
-                        >
-                            <Input.Password prefix={<LockOutlined/>} placeholder='Contraseña'/>
-                        </Form.Item>
-
+                        
                         <Form.Item
                             name="identification"
                             rules={[
@@ -172,6 +161,58 @@ export default function Register() {
                             ]}
                         >
                             <InputNumber prefix={<IdcardOutlined/>} placeholder='Ingrese su número de cédula sin puntos'/>
+                        </Form.Item>
+
+                        <Form.Item
+                            name="password"
+                            rules={[
+                                {
+                                    required: true,
+                                    type: "string",
+                                }, {
+                                    message: 'La contraseña debe tener al menos 8 caracteres',
+                                    min: 8
+                                }, {
+                                    max: 15,
+                                    message: "La contraseña no puede tener más de 15 caracteres"
+                                }, {
+                                    pattern: "^(?=.*[a-z]).+$",
+                                    message: "La contraseña debe contener al menos una letra minúscula (a - z)"
+                                }, {
+                                    pattern: "^(?=.*[A-Z]).+$",
+                                    message: "La contraseña debe contener al menos una letra mayúscula (A - Z)"
+                                }, {
+                                    pattern: "^(?=.*[0-9]).+$",
+                                    message: "La contraseña debe contener por lo menos 1 número"
+                                }, {
+                                    pattern: "^(?=.*[*+!.]).+$",
+                                    message: "La contraseña solo puede tener al menos uno de los siguientes caracteres: * + ! ó ."
+                                }
+                            ]}
+                        >
+                            <Input.Password prefix={<LockOutlined/>} placeholder='Contraseña'/>
+                        </Form.Item>
+
+                        <Form.Item
+                            name="confirm"
+                            dependencies={['password']}
+                            hasFeedback
+                            rules={[
+                            {
+                                required: true,
+                                message: 'Por favor confirme su contraseña!',
+                            },
+                            ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                if (!value || getFieldValue('password') === value) {
+                                    return Promise.resolve();
+                                }
+                                return Promise.reject(new Error('La contraseña ingresada no coincide!'));
+                                },
+                            }),
+                            ]}
+                        >
+                            <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} placeholder='Confirmar contraseña'/>
                         </Form.Item>
 
                         <Form.Item {...tailFormItemLayout}>

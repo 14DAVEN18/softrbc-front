@@ -1,16 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, Form, Input, InputNumber, Modal, Space, Table } from 'antd';
-import { UserOutlined, MailOutlined, PhoneOutlined, LockOutlined, IdcardOutlined } from '@ant-design/icons';
-import { Link, useNavigate } from "react-router-dom";
+import { UserOutlined, MailOutlined, PhoneOutlined, IdcardOutlined } from '@ant-design/icons';
+import { useNavigate } from "react-router-dom";
 
-import axios from "axios";
-import { CREATE_USER } from '../../../../constants/constants';
-
-import { create } from '../../../../services/userService';
+import { createOptometrist, getOptometrists } from '../../../../services/adminService';
 
 import './optometrist-management.css';
-
-import { data } from './data';
 
 export default function OptometristManagement() {
 
@@ -23,8 +18,25 @@ export default function OptometristManagement() {
     useEffect(() => {
         setHeight(ref.current.offsetHeight);
         setWidth(ref.current.offsetWidth);
+        fetchOptometrists();
     }, [])
 
+
+    const [optometristsData, setOptometristsData] = useState(null);
+    const fetchOptometrists = async () => {
+        try {
+            const response = await getOptometrists(); // Call the create function from admin Service.js
+            setOptometristsData(response.data)
+            console.log('optometrists:', optometristsData);
+            // Handle success if needed
+        } catch (error) {
+            console.error('Error en la solicitud:', error);
+            // Handle error if needed
+        } finally {
+            setLoading(false);
+            // Handle modal state changes here if needed
+        }
+    }
     const search = (values) => {
         console.log('Received values from form: ', values);
     };
@@ -44,7 +56,7 @@ export default function OptometristManagement() {
         setModalAction(action);
     };  
     
-    const handleActionOk = () => {
+    const changeOptometristStatus = () => {
         if (modalAction === "enable") {
             // Handle logic to enable the optometrist
             console.log("Enable optometrist:", selectedOptometrist);
@@ -64,9 +76,7 @@ export default function OptometristManagement() {
         setIsActionModalOpen(false);
         setModalAction("");
     };
-    /*
-            END of const for handling Disable Modal
-                                                    */
+    
 
     /*
             START of const for handling Creation Modal
@@ -95,7 +105,7 @@ export default function OptometristManagement() {
         console.log("El boton de crear optometra: ", values);
         
         try {
-            const response = await create(
+            const response = await createOptometrist(
                 {
                     usuario: {
                         nombre: values.nombre,
@@ -103,7 +113,6 @@ export default function OptometristManagement() {
                         direccion: values.direccion,
                         correo: values.correo,
                         telefono: values.telefono,
-                        password: values.password,
                         cedula: values.cedula,
                     },
                     optometra: {
@@ -330,14 +339,14 @@ export default function OptometristManagement() {
                         <Button key="cancel" onClick={handleActionCancel}>
                             Cancelar
                         </Button>,
-                        <Button key="action" type="primary" loading={loading} onClick={handleActionOk}>
+                        <Button key="action" type="primary" loading={loading} onClick={changeOptometristStatus}>
                             Habilitar
                         </Button>
                     ] : [
                         <Button key="cancel" onClick={handleActionCancel}>
                             Cancelar
                         </Button>,
-                        <Button key="action" type="primary" danger loading={loading} onClick={handleActionOk}>
+                        <Button key="action" type="primary" danger loading={loading} onClick={changeOptometristStatus}>
                             Inhabilitar
                         </Button>
                     ]}>
@@ -473,66 +482,12 @@ export default function OptometristManagement() {
                             <Input prefix={<UserOutlined/>} placeholder='Número de tarjeta profesional'/>
                         </Form.Item>
 
-                        <Form.Item
-                            name="password"
-                            rules={[
-                                {
-                                    required: true,
-                                    type: "string",
-                                }, {
-                                    message: 'La contraseña debe tener al menos 8 caracteres',
-                                    min: 8
-                                }, {
-                                    max: 15,
-                                    message: "La contraseña no puede tener más de 15 caracteres"
-                                }, {
-                                    pattern: "^(?=.*[a-z]).+$",
-                                    message: "La contraseña debe contener al menos una letra minúscula (a - z)"
-                                }, {
-                                    pattern: "^(?=.*[A-Z]).+$",
-                                    message: "La contraseña debe contener al menos una letra mayúscula (A - Z)"
-                                }, {
-                                    pattern: "^(?=.*[0-9]).+$",
-                                    message: "La contraseña debe contener por lo menos 1 número"
-                                }, {
-                                    pattern: "^(?=.*[*+!.]).+$",
-                                    message: "La contraseña solo puede tener al menos uno de los siguientes caracteres: * + ! ó ."
-                                }
-                            ]}
-                        >
-                            <Input.Password prefix={<LockOutlined/>} placeholder='Contraseña'/>
-                        </Form.Item>
-
-                        <Form.Item
-                            name="confirm"
-                            dependencies={['password']}
-                            hasFeedback
-                            rules={[
-                            {
-                                required: true,
-                                message: 'Por favor confirme su contraseña!',
-                            },
-                            ({ getFieldValue }) => ({
-                                validator(_, value) {
-                                if (!value || getFieldValue('password') === value) {
-                                    return Promise.resolve();
-                                }
-                                return Promise.reject(new Error('La contraseña ingresada no coincide!'));
-                                },
-                            }),
-                            ]}
-                        >
-                            <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} placeholder='Confirmar contraseña'/>
-                        </Form.Item>
-
-                        
-
                     </Form>
                 </Modal>
             </div>
 
             <div className='employee-table'>
-                <Table columns={columns} dataSource={data} />
+                <Table columns={columns} dataSource={optometristsData} />
             </div>
         </div>
     );

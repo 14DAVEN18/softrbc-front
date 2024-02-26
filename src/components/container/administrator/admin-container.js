@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from 'react';
 
-import { BookOutlined, CalendarOutlined, SolutionOutlined } from '@ant-design/icons';
+import { BookOutlined, CalendarOutlined, HistoryOutlined, MinusCircleOutlined, SolutionOutlined } from '@ant-design/icons';
 import { Avatar, Menu } from 'antd';
 import { Link, Outlet, useNavigate } from "react-router-dom";
 
@@ -23,14 +23,19 @@ const items = [
     {
         type: 'divider',
     },
-    getItem(<Link to="/administrador/reportes">Reportes</Link>, '2', <BookOutlined />),
+    getItem(<Link to="/administrador/calendario-laboral">Gestionar calendarios laborales</Link>, '2', <CalendarOutlined />),
     {
         type: 'divider',
     },
-    getItem(<Link to="/administrador/calendario-laboral">Gestionar calendarios laborales</Link>, '3', <CalendarOutlined />),
+    getItem(<Link to="/administrador/cancelar-dia">Cancelar dia laboral</Link>, '3', <MinusCircleOutlined />),
     {
         type: 'divider',
-    }
+    },
+    getItem(<Link to="/administrador/reportes">Reportes</Link>, '4', <BookOutlined />),
+    {
+        type: 'divider',
+    },
+    getItem(<Link to="/administrador/cambios">Registro de cambios</Link>, '5', <HistoryOutlined />)
 ];
 
 const dropdownOptions = [
@@ -91,11 +96,3 @@ export default function Admin() {
     );
 
 }
-
-/*
-<Dropdown menu={{dropdownOptions}}>
-                        <Space>
-                            
-                        </Space>
-                    </Dropdown>
-*/

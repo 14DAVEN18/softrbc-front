@@ -21,6 +21,8 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 
 import './container.css';
 import 'antd/dist/reset.css';
+import CancelWorkDay from './administrator/cancel-work-day/cancel-work-day';
+import Changelog from './administrator/changelog/changelog';
 
 // import RegisterTransaction from './application/register-transaction/register-transaction';
 // import ListTransactions from './application/list-transactions/list-transactions';
@@ -49,8 +51,10 @@ export default function Container() {
             <Route path='/administrador' element={ <Navigate replace to="/administrador/gestion-optometras"/> }></Route>
             <Route path='/administrador' element={ <Admin/> }>
               <Route path='gestion-optometras' element={ <OptometristManagement/> }></Route>
-              <Route path='reportes' element={ <Reports/> }></Route>
               <Route path='calendario-laboral' element={ <WorkCalendar/> }></Route>
+              <Route path='cancelar-dia' element={ <CancelWorkDay/> }></Route>
+              <Route path='reportes' element={ <Reports/> }></Route>
+              <Route path='cambios' element={ <Changelog/> }></Route>
             </Route>
 
             <Route path='/optometra' element={ <Navigate replace to="/optometra/agenda"/> }></Route>

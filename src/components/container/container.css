@@ -48,7 +48,7 @@ img {
     align-items: center;
     display: flex;
     flex-direction: column;
-    height: 20%;
+    height: 10%;
     justify-content: center;
     width: 100%;
 }
@@ -58,7 +58,7 @@ img {
     align-items: center;
     display: flex;
     flex-direction: column;
-    height: 80%;
+    height: 90%;
     width: 100%;
 }
 

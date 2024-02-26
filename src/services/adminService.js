@@ -1,7 +1,23 @@
 import axios from "axios";
-import { CREATE_USER } from "../constants/constants";
+import { CREATE_USER, GET_USER } from "../constants/constants";
 
-export const create = async ({
+export const getOptometrists = async () => {
+    const config = {
+        headers: {
+            "Authorization": localStorage.getItem('token'),
+            "Content-Type": "application/json"
+        }
+    }
+    try {
+        console.log(localStorage.getItem('token'))
+        return await axios.get(GET_USER, config);
+    } catch (error) {
+        throw error;
+    }
+}
+
+
+export const createOptometrist = async ({
     usuario: {
         nombre,
         apellido,
