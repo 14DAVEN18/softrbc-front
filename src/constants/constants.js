@@ -115,9 +115,17 @@ export const years = [
     '2022'
 ]
 
+// USER RELATED URLS
 export const LOGIN_USER = "http://localhost:8080/login"
 export const CREATE_USER = "http://localhost:8080/usuarios/nueva"
-export const GET_USER = 'http://localhost:4000/api/transactions/transactions'
+export const GET_USER = 'http://localhost:8080/usuarios/listaOptometras'
+export const MODIFY_USER = 'http://localhost:8080/usuarios/modificar'
+export const UPDATE_USER_STATUS = 'http://localhost:8080/usuarios/cambiarEstado'
+
+// CALENDAR RELATED URLS
+export const CANCEL_DAY = 'http://localhost:8080/'
+
+
 
 
 export const USER_ALREADY_REGISTERED = "Ya tienes una cuenta asociada con ese correo electrónico..";

@@ -58,7 +58,7 @@ export default function Optometrist() {
             className="optometrist" 
             ref={ref}
         >
-            <div className='header'>
+            <div className='opt-header'>
                 <div className='profile-pic'>
                     <Avatar size={64} src={image} />
                     

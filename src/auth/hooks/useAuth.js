@@ -18,13 +18,16 @@ export const useAuth = () => {
             const token = response.data.token; // body viene en el body
             const claims = JSON.parse(window.atob(token.split(".")[1]));
             const rol = claims.sub
-            console.log(claims)
             dispatch({
                 type: 'login',
                 payload: {rol}
             });
             localStorage.setItem('rol', rol);
             localStorage.setItem('token', `Bearer ${token}`)
+            localStorage.setItem('user', JSON.stringify({
+                'name': response.data.nombre,
+                'surname': response.data.apellido
+            }))
             if (rol === 'ROLE_ADMIN')
                 navigate('/administrador');
             else if (rol === 'ROLE_OPTOMETRA')

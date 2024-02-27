@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CREATE_USER, GET_USER } from "../constants/constants";
+import { CREATE_USER, GET_USER, MODIFY_USER, UPDATE_USER_STATUS } from "../constants/constants";
 
 export const getOptometrists = async () => {
     const config = {
@@ -9,7 +9,6 @@ export const getOptometrists = async () => {
         }
     }
     try {
-        console.log(localStorage.getItem('token'))
         return await axios.get(GET_USER, config);
     } catch (error) {
         throw error;
@@ -38,7 +37,6 @@ export const createOptometrist = async ({
         }
     }
     try {
-        console.log(localStorage.getItem('token'))
         return await axios.post(CREATE_USER, 
             {
                 usuario: {
@@ -59,20 +57,11 @@ export const createOptometrist = async ({
     }
 }
 
-export const update = async ({
-    usuario: {
-        id,
-        nombre,
-        apellido,
-        direccion,
-        correo,
-        telefono,
-        password,
-        cedula,
-    },
-    optometra: {
-        numeroTarjeta
-    }
+export const updateOptometrist = async ({
+    id,
+    direccion,
+    correo,
+    telefono,
 }) => {
     try {
         const config = {
@@ -81,21 +70,27 @@ export const update = async ({
                 "Content-Type": "application/json"
             }
         }
-        return await axios.put(`${CREATE_USER}/${id}`, 
-        {
-            usuario: {
-                nombre,
-                apellido,
-                direccion,
-                correo,
-                telefono,
-                password,
-                cedula,
-            },
-            optometra: {
-                numeroTarjeta
+        return await axios.put(`${MODIFY_USER}/${id}`, 
+            {
+                id,
+                nuevadireccion: direccion,
+                nuevocorreo: correo,
+                nuevotelefono:telefono,
+            }, config);
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const updateOptometristStatus = async (id) => {
+    try {
+        const config = {
+            headers: {
+                "Authorization": localStorage.getItem('token'),
+                "Content-Type": "application/json"
             }
-        }, config);
+        }
+        return await axios.put(`${UPDATE_USER_STATUS}/${id}`, id, config);
     } catch (error) {
         throw error;
     }

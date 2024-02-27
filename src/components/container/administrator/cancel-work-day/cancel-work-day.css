@@ -5,40 +5,80 @@
 }
 
 .calendar-action {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    font-size: 3em;
     height: 10%;
+    justify-content: space-evenly;
     width: 100%;
 }
 
 .calendar {
     align-self: center;
+    background-color: rgb(25, 25, 76, 0.2);
     border: 1px solid black;
     border-radius: 10px;
-    border-top: 200px;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    height: 70%;
+    height: 75%;
     justify-content: center;
-    padding: 10px;
     width: 90%;
 }
-
-.day, .day-header {
-    align-items: center;
-    box-sizing: border-box;
+.calendar-header-row {
+    background-color: rgb(160, 25, 26);
+    border-bottom: 1px solid black; 
+    border-radius: 10px 10px 0 0;
+    color: rgb(250, 255, 0);
     display: flex;
-    flex-grow: 1;
-    justify-content: center;    
-    width: calc((14.28% - 20px) - 2px);
+    width: 100%;
+}
+
+
+.current-date {
+    background-color: rgb(250, 255, 0, 0.3);
+    color: rgb(160, 25, 26); /* Example text color */
+}
+.disabled-date {
+    opacity: 0.5; /* Example disabled style */
+    pointer-events: none; /* Example disabled interaction */
 }
 
 .day {
+    align-items: center;
     border: 1px solid black;
     border-radius: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-basis: calc((100% / 7) - 20px);
+    flex-grow: 1;
+    font-size: 2.7em;
+    font-weight: bold;
+
+    justify-content: center;
     margin: 5px;
+}
+.day:hover {
+    background-color: rgb(25, 25, 76);
+    border: 1px solid rgb(250, 255, 0);
+    color: rgb(250, 255, 0);
+    cursor: pointer;
 }
 
 .day-header {
-    border-left: 1px solid black;
-    border: 1px solid black;
+    align-items: center;
+    box-sizing: border-box;
+    display: flex;
+    flex-basis: calc((100% / 7) - 20px);
+    flex-grow: 1;
+    font-size: 2em;
+    font-weight: bold;
+    justify-content: center;
+    width: 100px;
+}
+
+.calendar-row {
+    display: flex;
+    width: 100%;
 }

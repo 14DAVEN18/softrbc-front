@@ -16,6 +16,7 @@ const initialTargetDays = days.filter((item) => Number(item.key) > 5).map((item)
 
 export default function WorkCalendar() {
 
+    // TO DEFINE THE SIZE OF THE COMPONENT ***********************************************************
     const ref = useRef(null);
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
@@ -24,6 +25,11 @@ export default function WorkCalendar() {
         setHeight(ref.current.offsetHeight);
         setWidth(ref.current.offsetWidth);
     }, [])
+
+
+
+
+    
 
     /* Controls for Select menu */
     const handleChangeOptometrist = (selection) => {
@@ -56,10 +62,7 @@ export default function WorkCalendar() {
         console.log('Selected days: ', selectedDays);
     }, [selectedDays]);
 
-    /*const onScroll = (direction, e) => {
-        console.log('direction:', direction);
-        console.log('target:', e.target);
-    };*/
+    
 
     /* Controls for Select menu */
     const handleChangeDuration = (selection) => {
