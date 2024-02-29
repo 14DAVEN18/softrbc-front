@@ -2,10 +2,12 @@ import {useEffect, useRef, useState} from 'react';
 
 import Login from './customer/login/login';
 import Register from './customer/register/register';
+import AccountRecovery from './common/account-recovery';
+import PasswordReset from './common/reset-password';
 
 
 // Common for both admin and optometrist
-import EmployeeLogin from './common-login/common-login';
+import EmployeeLogin from './common/common-login';
 
 // Components for administrator pages
 import Admin from './administrator/admin-container'
@@ -43,10 +45,12 @@ export default function Container() {
       <div className='container' ref={ref}>
         <div className="content">
           <Routes>
-            <Route path='/' element={ <Navigate replace to="/inicio-de-sesion"/> }></Route>
+            <Route path='/' element={ <Navigate replace to="/inicio-empleados"/> }></Route>
             <Route path='/inicio-de-sesion' element={ <Login/> }></Route>
             <Route path='/registro' element={ <Register/> }></Route>
             <Route path='/inicio-empleados' element={ <EmployeeLogin/> }></Route>
+            <Route path='/recuperacion-de-cuenta' element={ <AccountRecovery/> }></Route>
+            <Route path='/reiniciar-clave' element={ <PasswordReset/> }></Route>
 
             <Route path='/administrador' element={ <Navigate replace to="/administrador/gestion-optometras"/> }></Route>
             <Route path='/administrador' element={ <Admin/> }>

@@ -57,11 +57,14 @@ export default function OptometristManagement() {
     const [filteredData, setFilteredData] = useState([]);
 
     useEffect(() => {
-        const filtered = optometristsData?.filter(optometrist =>
-            optometrist.nombre.toLowerCase().includes(searchText.toLowerCase()) ||
-            optometrist.apellido.toLowerCase().includes(searchText.toLowerCase())
-        );
-        setFilteredData(filtered);
+        setTimeout(() => {
+            const filtered = optometristsData
+            ? optometristsData.filter(optometrist =>
+                optometrist.usuario.nombre.toLowerCase().includes(searchText.toLowerCase()) ||
+                optometrist.usuario.apellido.toLowerCase().includes(searchText.toLowerCase())
+            ): [];
+            setFilteredData(filtered);
+        },500)
     }, [searchText, optometristsData])
 
     const search = (values) => {
@@ -99,7 +102,7 @@ export default function OptometristManagement() {
     const changeOptometristStatus = async () => {
         setLoading(true);
         try {
-            const response = await updateOptometristStatus(selectedOptometrist.idusuario); // Call the create function from userService.js
+            const response = await updateOptometristStatus(selectedOptometrist.usuario.idusuario); // Call the create function from userService.js
             //console.log('Response:', response.data);
             // Handle success if needed
         } catch (error) {
@@ -207,13 +210,13 @@ export default function OptometristManagement() {
         setIsUpdateFormComplete(false);
     }
 
-    const handleUpdateOptometrist = async (values) => {
+    const handleUpdateOptometrist = async () => {
         if (updateForm != null) {
             try {
                 const values = await updateForm.validateFields();
                 const response = await updateOptometrist(
                     {
-                        id: selectedOptometrist.id,
+                        id: selectedOptometrist.usuario.idusuario,
                         direccion: values.direccion,
                         correo: values.correo,
                         telefono: values.telefono,
@@ -233,16 +236,17 @@ export default function OptometristManagement() {
                     setLoading(false);
                     setIsCreationModalOpen(false);
                     setIsUpdateFormComplete(false);
+                    setSelectedOptometrist(null);
                 }, 2000);
             }
         }
         setLoading(true)
-        console.log("El boton de actualizar optometra: ", values);
     };
     
     const handleUpdateModalCancel = () => {
         setIsUpdateModalOpen(false);
         setIsUpdateFormComplete(false);
+        setSelectedOptometrist(null);
     };
 
 
@@ -256,7 +260,7 @@ export default function OptometristManagement() {
             title: 'Nombre',
             key: 'name',
             render: (_, record) => (
-                record.nombre + " " + record.apellido
+                record.usuario.nombre + " " + record.usuario.apellido
             )
         },
         {
@@ -318,7 +322,7 @@ export default function OptometristManagement() {
                             Inhabilitar
                         </Button>
                     ]}>
-                    <p className='confirmation'>¿Está seguro que desea {StatusChangeConfirmationModalAction === "enable" ? "habilitar" : "inhabilitar"} al optómetra {selectedOptometrist ? selectedOptometrist.nombre + ' ' + selectedOptometrist.apellido : ''}?</p>
+                    <p className='confirmation'>¿Está seguro que desea {StatusChangeConfirmationModalAction === "enable" ? "habilitar" : "inhabilitar"} al optómetra {selectedOptometrist ? selectedOptometrist.usuario.nombre + ' ' + selectedOptometrist.usuario.apellido : ''}?</p>
                 </Modal>
             </div>
             
@@ -469,7 +473,6 @@ export default function OptometristManagement() {
                 <p className='confirmation'>Por favor llene los siguientes campos:</p>
                 <Form
                     className='creation-form'
-                    initialValues={{ remember: false }}
                     form={updateForm}
                     name="employee-creation"
                     onFinish={handleUpdateOptometrist}
@@ -477,12 +480,12 @@ export default function OptometristManagement() {
                 >
                     
                     <Typography>
-                        <pre>{selectedOptometrist?.nombre}</pre>
+                        <pre>{selectedOptometrist?.usuario.nombre}</pre>
                     </Typography>
                     
                     
                     <Typography>
-                        <pre>{selectedOptometrist?.apellido}</pre>
+                        <pre>{selectedOptometrist?.usuario.apellido}</pre>
                     </Typography>
 
                     <Form.Item
@@ -492,6 +495,7 @@ export default function OptometristManagement() {
                             required: true,
                             message: 'Por favor ingrese la dirección física del optómetra!',
                         }]}
+                        initialValue={selectedOptometrist?.usuario.direccion}
                     >
                         <Input prefix={<UserOutlined/>} placeholder='Dirección'/>
                     </Form.Item>
@@ -508,6 +512,7 @@ export default function OptometristManagement() {
                             message: 'Por favor ingrese el correo eléctronico del optómetra!',
                         },
                         ]}
+                        initialValue={selectedOptometrist?.usuario.correo}
                     >
                         <Input prefix={<MailOutlined/>} placeholder='Correo eléctronico'/>
                     </Form.Item>
@@ -524,19 +529,20 @@ export default function OptometristManagement() {
                                 message: 'Por favor ingrese el número telefónico del optometra!'
                             }
                         ]}
+                        initialValue={selectedOptometrist?.usuario.telefono}
                     >
                         <InputNumber prefix={<PhoneOutlined/>} placeholder='Número telefónico'/>
                     </Form.Item>
 
 
                     <Typography>
-                        <pre>{selectedOptometrist?.cedula}</pre>
+                        <pre>{selectedOptometrist?.usuario.cedula}</pre>
                     </Typography>
 
                     
 
                     <Typography>
-                        <pre>{selectedOptometrist?.tarjetaprofesional}</pre>
+                        <pre>{selectedOptometrist?.numerotarjeta}</pre>
                     </Typography>
 
                 </Form>
@@ -548,7 +554,7 @@ export default function OptometristManagement() {
 
 
             <div className='employee-table'>
-                <Table columns={columns} dataSource={filteredData} scroll={{y: 600}} pagination={false}/>
+                <Table columns={columns} dataSource={filteredData.map((item, index) => ({ ...item, key: index }))} scroll={{y: 600}} pagination={false}/>
             </div>
         </div>
     );

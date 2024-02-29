@@ -55,7 +55,6 @@ const EmployeeLogin = () => {
     }
     
     const login = (values) => {
-        console.log('values', values)
 
         handlerLogin({correo: values.username, password: values.password})
 
@@ -136,9 +135,14 @@ const EmployeeLogin = () => {
                                 </Button>
                             }}
                         </Form.Item>
+
+                        <Form.Item>
+                            <p>
+                                <Link to="/recuperacion-de-cuenta">¿Olvidó su contraseña?</Link>
+                            </p>
+                        </Form.Item>
                     </Form>
 
-                    <Link to="/inicio-de-sesion">El login normal.</Link>
                     <Link to="/administrador/gestion-optometras">Entrar admin</Link>
                     <Link to="/optometra/agenda">Entrar optometra</Link>
                 </div>

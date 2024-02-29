@@ -149,8 +149,7 @@ export default function Login() {
                             </p>
                         </Form.Item>
                     </Form>
-                    
-                    <Link to="/inicio-empleados">El otro login.</Link>
+                
                 </div>
             </div>
         </div>

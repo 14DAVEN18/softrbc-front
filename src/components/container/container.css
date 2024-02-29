@@ -71,7 +71,7 @@ img {
     border-width: 1px;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.8); /* horizontal-offset vertical-offset blur-radius color */
     display: flex;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: "Gill Sans", sans-serif;
     flex-direction: column;
     min-height: 95%;
     justify-content: center;
@@ -113,9 +113,12 @@ img {
   }
 
   /* Styles for the invisible box that contains the input fields */
-  .frame .ant-form {
+  .frame .ant-form, .instructions {
     width: 80%;
   }
+.instructions {
+  text-align: justify;
+}
   
   /* Style for the error message of the input boxes */
   .error-message {

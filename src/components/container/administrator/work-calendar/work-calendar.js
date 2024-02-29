@@ -1,15 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, Form, Input, InputNumber, Modal, Select, Space, Table, Transfer } from 'antd';
-import { UserOutlined, MailOutlined, PhoneOutlined, LockOutlined, IdcardOutlined } from '@ant-design/icons';
+import { Button, Select, Transfer } from 'antd';
 
-import axios from "axios";
-import { CREATE_USER } from '../../../../constants/constants';
-import { Link, useNavigate } from "react-router-dom";
 
 import './work-calendar.css';
 
-import { data } from '../optometrist-management/data';
 import { durations, days } from '../../../../constants/constants';
+import { getOptometrists } from '../../../../services/optometristService';
 
 
 const initialTargetDays = days.filter((item) => Number(item.key) > 5).map((item) => item.key);
@@ -21,10 +17,34 @@ export default function WorkCalendar() {
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
 
+    const [loading, setLoading] = useState(false);
+
     useEffect(() => {
         setHeight(ref.current.offsetHeight);
         setWidth(ref.current.offsetWidth);
+        fetchOptometrists();
     }, [])
+
+
+
+
+
+    // TO FETCH OPTOMETRIST DATA WHEN COMPONENT IS LOADED FOR THE FIRST TIME ***********************************************************
+    const [optometristsData, setOptometristsData] = useState(null);
+    const fetchOptometrists = async () => {
+        try {
+            const response = await getOptometrists(); // Call the create function from admin Service.js
+            setOptometristsData(response.data)
+            //console.log('optometrists:', optometristsData);
+
+        } catch (error) {
+            console.error('Error en la solicitud:', error);
+            
+        } finally {
+            setLoading(false);
+            
+        }
+    }
 
 
 
@@ -36,9 +56,9 @@ export default function WorkCalendar() {
         console.log("Seleccionado: ", selection)
     };
 
-    const selectOptometristOptions = data.map((optometra) => ({
-        label: optometra.nombre + " " + optometra.apellido,
-        value: optometra.key,
+    const selectOptometristOptions = optometristsData?.map((optometra) => ({
+        label: optometra.usuario.nombre + " " + optometra.usuario.apellido,
+        value: optometra.usuario.idusuario,
     }));
 
     /* Controls for Transfer menu */

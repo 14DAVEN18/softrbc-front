@@ -75,7 +75,7 @@ export const updateOptometrist = async ({
                 id,
                 nuevadireccion: direccion,
                 nuevocorreo: correo,
-                nuevotelefono:telefono,
+                nuevotelefono: telefono.toString(),
             }, config);
     } catch (error) {
         throw error;
@@ -83,6 +83,7 @@ export const updateOptometrist = async ({
 }
 
 export const updateOptometristStatus = async (id) => {
+    console.log(id)
     try {
         const config = {
             headers: {

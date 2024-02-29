@@ -1,3 +1,36 @@
+
+
+// AUTH RELATED URLs
+export const LOGIN_USER = 'http://localhost:8080/login'
+export const VALIDATE_RECOVERY_KEY = 'http://localhost:8080/'
+
+
+// USER RELATED URLs
+export const CREATE_USER = "http://localhost:8080/usuarios/nueva"
+export const GET_USER = 'http://localhost:8080/usuarios/listaOptometras'
+export const MODIFY_USER = 'http://localhost:8080/usuarios/modificar'
+export const UPDATE_USER_STATUS = 'http://localhost:8080/usuarios/cambiarEstado'
+
+// CALENDAR RELATED URL
+export const CANCEL_DAY = 'http://localhost:8080/'
+
+
+
+
+export const USER_ALREADY_REGISTERED = "Ya tienes una cuenta asociada con ese correo electrónico..";
+export const USER_DOES_NOT_EXIST = "No hay cuenta que coincida con las credeciales ingresadas.";
+export const INVALID_PASSWORD = "La contraseña ingresada es invalida.";
+export const USER_NOT_CREATED = "El usuario no se puedo crear.";
+export const TRANSACTION_NOT_CREATED = 'No se puedo registrar el hecho económico.';
+export const NO_TRANSACTIONS_LISTED = 'No existen transacciones que correspondan con el tipo seleccionado.';
+
+export const USER_SUCCESSFULLY_REGISTERED = "El usuario ha sido registrado exitósamente.";
+export const TRANSACTION_SUCCESSFULLY_REGISTERED = "El hecho económico fue registrado exitósamente.";
+export const CREDENTIALS_SUCCESSFULLY_VALIDATED = "Las credenciales de usuario han sido validadas exitósamente.";
+
+
+
+
 export const durations = [
     {
         key: '1',
@@ -103,38 +136,3 @@ export const months = [
     }
     
 ]
-
-export const years = [
-    '2015',
-    '2016',
-    '2017',
-    '2018',
-    '2019',
-    '2020',
-    '2021',
-    '2022'
-]
-
-// USER RELATED URLS
-export const LOGIN_USER = "http://localhost:8080/login"
-export const CREATE_USER = "http://localhost:8080/usuarios/nueva"
-export const GET_USER = 'http://localhost:8080/usuarios/listaOptometras'
-export const MODIFY_USER = 'http://localhost:8080/usuarios/modificar'
-export const UPDATE_USER_STATUS = 'http://localhost:8080/usuarios/cambiarEstado'
-
-// CALENDAR RELATED URLS
-export const CANCEL_DAY = 'http://localhost:8080/'
-
-
-
-
-export const USER_ALREADY_REGISTERED = "Ya tienes una cuenta asociada con ese correo electrónico..";
-export const USER_DOES_NOT_EXIST = "No hay cuenta que coincida con las credeciales ingresadas.";
-export const INVALID_PASSWORD = "La contraseña ingresada es invalida.";
-export const USER_NOT_CREATED = "El usuario no se puedo crear.";
-export const TRANSACTION_NOT_CREATED = 'No se puedo registrar el hecho económico.';
-export const NO_TRANSACTIONS_LISTED = 'No existen transacciones que correspondan con el tipo seleccionado.';
-
-export const USER_SUCCESSFULLY_REGISTERED = "El usuario ha sido registrado exitósamente.";
-export const TRANSACTION_SUCCESSFULLY_REGISTERED = "El hecho económico fue registrado exitósamente.";
-export const CREDENTIALS_SUCCESSFULLY_VALIDATED = "Las credenciales de usuario han sido validadas exitósamente.";

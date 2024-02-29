@@ -64,6 +64,7 @@ export default function Admin() {
             navigation("/login")*/
     }, [])
 
+
     return (
         <div 
             id="administrator" 
@@ -83,7 +84,7 @@ export default function Admin() {
                 <div className='menu'>
                     <div>
                         <Menu
-                            defaultSelectedKeys={['1']}
+                            defaultSelectedKeys={'1'}
                             mode="inline"
                             theme="light"
                             items={items}
