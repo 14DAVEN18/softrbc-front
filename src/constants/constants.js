@@ -2,7 +2,8 @@
 
 // AUTH RELATED URLs
 export const LOGIN_USER = 'http://localhost:8080/login'
-export const VALIDATE_RECOVERY_KEY = 'http://localhost:8080/'
+export const VALIDATE_RECOVERY_KEY = 'http://localhost:8080/usuarios/verificarCodigoRecuperacion'
+export const RESET_PASSWORD = 'http://localhost:8080/usuarios/actualizarContrasena'
 
 
 // USER RELATED URLs

@@ -25,6 +25,7 @@ import './container.css';
 import 'antd/dist/reset.css';
 import CancelWorkDay from './administrator/cancel-work-day/cancel-work-day';
 import Changelog from './administrator/changelog/changelog';
+import Chatbot from './customer/chatbot/chatbot';
 
 // import RegisterTransaction from './application/register-transaction/register-transaction';
 // import ListTransactions from './application/list-transactions/list-transactions';
@@ -46,8 +47,6 @@ export default function Container() {
         <div className="content">
           <Routes>
             <Route path='/' element={ <Navigate replace to="/inicio-empleados"/> }></Route>
-            <Route path='/inicio-de-sesion' element={ <Login/> }></Route>
-            <Route path='/registro' element={ <Register/> }></Route>
             <Route path='/inicio-empleados' element={ <EmployeeLogin/> }></Route>
             <Route path='/recuperacion-de-cuenta' element={ <AccountRecovery/> }></Route>
             <Route path='/reiniciar-clave' element={ <PasswordReset/> }></Route>
@@ -65,6 +64,11 @@ export default function Container() {
             <Route path='/optometra' element={ <Optometrist/> }>
               <Route path='agenda' element={ <OptometristSchedule/> }></Route>
             </Route>
+
+            <Route path='/clientes' element={ <Navigate replace to='/clientes/preguntas'/> }></Route>
+            <Route path='/clientes/preguntas' element={ <Chatbot/> }></Route>
+            <Route path='/clientes/inicio-de-sesion' element={ <Login/> }></Route>
+            <Route path='/clientes/registro' element={ <Register/> }></Route>
           </Routes>
         </div>
       </div>
