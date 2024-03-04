@@ -32,7 +32,6 @@ const AccountRecovery = () => {
         setWidth(ref.current.offsetWidth);
     }, [])
 
-
     // To disable submit button at the beginning.
     useEffect(() => {
         forceUpdate({});
