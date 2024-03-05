@@ -13,6 +13,7 @@ export const MODIFY_USER = 'http://localhost:8080/usuarios/modificar'
 export const UPDATE_USER_STATUS = 'http://localhost:8080/usuarios/cambiarEstado'
 
 // CALENDAR RELATED URL
+export const CREATE_CALENDAR = 'http://localhost:8080/calendario/nueva'
 export const CANCEL_DAY = 'http://localhost:8080/'
 
 
@@ -34,23 +35,23 @@ export const CREDENTIALS_SUCCESSFULLY_VALIDATED = "Las credenciales de usuario h
 
 export const durations = [
     {
-        key: '1',
+        key: 10,
         duration: '10 minutos'
     },
     {
-        key: '2',
+        key: 15,
         duration: '15 minutos'
     },
     {
-        key: '3',
-        duration: '20 minuots'
+        key: 20,
+        duration: '20 minutos'
     },
     {
-        key: '4',
+        key: 25,
         duration: '25 minutos'
     },
     {
-        key: '5',
+        key: 30,
         duration: '30 minutos'
     }
 ];

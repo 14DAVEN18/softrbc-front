@@ -49,9 +49,19 @@ const PasswordReset = () => {
         })
     }
     
-    const validate = (values) => {
+    const validate = async (values) => {
+        
+        try {
+            const response = await resetPassword({correo: localStorage.getItem('correo'), password: values.password})
+            
+            if(response.status === 200) {
+                navigation('/inicio-empleados'); // Example: Redirect to a success page
+            } else {
+                console.log('Unexpected status code:', response.status);
+            }
+        } catch {
 
-        resetPassword({password: values.password})
+        }
 
         setPasswordForm(initialResetForm)
     };

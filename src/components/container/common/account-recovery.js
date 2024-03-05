@@ -49,9 +49,21 @@ const AccountRecovery = () => {
         })
     }
     
-    const reset = (values) => {
+    const reset = async (values) => {
 
-        recoveryAccount({correo: values.username, recoverykey: values.recoverykey})
+        try {
+            const response = await recoveryAccount({ correo: values.username, codigorecuperacion: values.recoverykey });
+
+            if (response.status === 200) {
+                // Redirect to another window or perform other actions
+                localStorage.setItem('correo', values.username)
+                navigation('/reiniciar-clave'); // Example: Redirect to a success page
+            } else {
+                // Handle other status codes if needed
+                console.log('Unexpected status code:', response.status);
+            }
+        } catch {
+        }
 
         setRecoveryForm(initialRecoveryForm)
     };
@@ -113,7 +125,7 @@ const AccountRecovery = () => {
                                     type: "string",
                                 },
                                 {
-                                    min: 15,
+                                    min: 20,
                                     message: "La clave de recuperación digitada no tiene la longitud mínima esperada de 20 caracteres"
                                 }
                             ]}

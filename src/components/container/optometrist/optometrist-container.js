@@ -45,9 +45,12 @@ export default function Optometrist() {
 
     //const navigation = useNavigate();
 
+    const [user, setUser] = useState(undefined);
+
     useEffect(() => {
         setHeight(ref.current.offsetHeight);
         setWidth(ref.current.offsetWidth);
+        setUser(JSON.parse(localStorage.getItem('user')));
         /*if(localStorage.getItem("user_id") === null)
             navigation("/login")*/
     }, [])
@@ -64,7 +67,7 @@ export default function Optometrist() {
                     
                 </div>
                 <div className='employee-data'>
-                    <div>El nombre de un pana</div>
+                    <div>{user?.name} {user?.surname}</div>
                 </div>
             </div>
             <div className='content-optometrist'>
