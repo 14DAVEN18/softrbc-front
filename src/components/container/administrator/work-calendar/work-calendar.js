@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, Select, Transfer } from 'antd';
+import { Button, Form, Select, Transfer } from 'antd';
 
 
 import './work-calendar.css';
@@ -9,7 +9,7 @@ import { getOptometrists } from '../../../../services/optometristService';
 import { createCalendar } from '../../../../services/calendarService';
 
 
-const initialTargetDays = days.filter((item) => Number(item.key) > 5).map((item) => item.key);
+const initialTargetDays = [];
 
 export default function WorkCalendar() {
 
@@ -36,6 +36,7 @@ export default function WorkCalendar() {
         try {
             const response = await getOptometrists(); // Call the create function from admin Service.js
             setOptometristsData(response.data)
+            console.log(response.data)
             //console.log('optometrists:', optometristsData);
 
         } catch (error) {
@@ -111,10 +112,17 @@ export default function WorkCalendar() {
 
 
 
+    // TO HANDLE FORM CHANGES
+    const [isCreationFormComplete, setIsCreationFormComplete] = useState(false);
+    const onCreationValuesChange = (_, allValues) => {
+        const isComplete = Object.values(allValues).every(value => !!value);
+        setIsCreationFormComplete(isComplete);
+    };
 
     // TO CREATE A CALENDAR
+    const [creationForm] = Form.useForm();
     const CreateCalendar = async () => {
-        const diasatencion = days.filter(item => !targetDays.includes(item.key))
+        const diasatencion = days.filter(item => targetDays.includes(item.key))
             .map(item => item.day)
             .join(".")
 
@@ -143,32 +151,35 @@ export default function WorkCalendar() {
     return (
         <div className='work-calendar' ref={ref}>
             <h3>Seleccione un optómetra</h3>
-            <div className='optometrist-selection'>
+            <Form
+                    className='creation-form'
+                    initialValues={{ remember: false }}
+                    form={creationForm}
+                    name="calendar-creation"
+                    onFinish={CreateCalendar}
+                    onValuesChange={onCreationValuesChange}
+            >
                 <Select size={'large'} defaultValue="Seleccione un optómetra" onChange={handleChangeOptometrist} options={selectOptometristOptions} />
-            </div>
 
-            <div className='day-selection'>
                 <Transfer
-                    dataSource={days}
-                    titles={['Días disponibles', 'Días seleccionados']}
-                    targetKeys={targetDays}
-                    selectedKeys={selectedDays}
-                    onChange={onChange}
-                    onSelectChange={onSelectChange}
-                    operations={['Agregar', 'Quitar']}
-                    /*onScroll={onScroll}*/
-                    render={(item) => item.day}
-                />
-            </div>
+                        dataSource={days}
+                        titles={['Días disponibles', 'Días a trabajar']}
+                        targetKeys={targetDays}
+                        selectedKeys={selectedDays}
+                        onChange={onChange}
+                        onSelectChange={onSelectChange}
+                        operations={['Agregar', 'Quitar']}
+                        /*onScroll={onScroll}*/
+                        render={(item) => item.day}
+                    />
 
-            <div className='duration-selection'>
                 <Select size={'large'} defaultValue="Seleccione una duración" onChange={handleChangeDuration} options={selectDurationOptions} />
-            </div>
-            <div className='calendar-button'>
-                <Button type="primary" onClick={() => CreateCalendar()} htmlType='submit'>
+
+                <Button type="primary" onClick={() => CreateCalendar()} disabled={!isCreationFormComplete} htmlType='submit'>
                     Crear calendario
                 </Button>
-            </div>
+
+            </Form>
         </div>
     )
 }

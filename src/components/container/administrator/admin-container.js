@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from 'react';
 
-import { BookOutlined, CalendarOutlined, HistoryOutlined, MinusCircleOutlined, SolutionOutlined } from '@ant-design/icons';
+import { BookOutlined, CalendarOutlined, HistoryOutlined, MinusCircleOutlined, QuestionOutlined, SolutionOutlined } from '@ant-design/icons';
 import { Avatar, Menu } from 'antd';
 import { Link, Outlet, useNavigate } from "react-router-dom";
 
@@ -21,21 +21,25 @@ function getItem(label, key, icon, children, type) {
 const items = [
     getItem(<Link to="/administrador/gestion-optometras">Gestión de optómetras</Link>, '1', <SolutionOutlined style={{ fontsize: '50px'}}/>),
     {
-        type: 'divider',
+        type: 'divider'
     },
     getItem(<Link to="/administrador/calendario-laboral">Gestionar calendarios laborales</Link>, '2', <CalendarOutlined />),
     {
-        type: 'divider',
+        type: 'divider'
     },
     getItem(<Link to="/administrador/cancelar-dia">Cancelar dia laboral</Link>, '3', <MinusCircleOutlined />),
     {
-        type: 'divider',
+        type: 'divider'
     },
-    getItem(<Link to="/administrador/reportes">Reportes</Link>, '4', <BookOutlined />),
+    getItem(<Link to="/administrador/gestion-preguntas">Gestionar preguntas frecuentes</Link>, '4', <QuestionOutlined/>),
     {
-        type: 'divider',
+        type: 'divider'
     },
-    getItem(<Link to="/administrador/cambios">Registro de cambios</Link>, '5', <HistoryOutlined />)
+    getItem(<Link to="/administrador/reportes">Reportes</Link>, '5', <BookOutlined />),
+    {
+        type: 'divider'
+    },
+    getItem(<Link to="/administrador/cambios">Registro de cambios</Link>, '6', <HistoryOutlined />)
 ];
 
 const dropdownOptions = [

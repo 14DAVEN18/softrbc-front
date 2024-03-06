@@ -7,14 +7,20 @@ export const RESET_PASSWORD = 'http://localhost:8080/usuarios/actualizarContrase
 
 
 // USER RELATED URLs
-export const CREATE_USER = "http://localhost:8080/usuarios/nueva"
 export const GET_USER = 'http://localhost:8080/usuarios/listaOptometras'
+export const CREATE_USER = "http://localhost:8080/usuarios/nueva"
 export const MODIFY_USER = 'http://localhost:8080/usuarios/modificar'
 export const UPDATE_USER_STATUS = 'http://localhost:8080/usuarios/cambiarEstado'
 
-// CALENDAR RELATED URL
+// CALENDAR RELATED URLs
 export const CREATE_CALENDAR = 'http://localhost:8080/calendario/nueva'
 export const CANCEL_DAY = 'http://localhost:8080/'
+
+// QUESTION RELATED URLs
+export const GET_QUESTION = 'http://localhost:8080/preguntas/listaPreguntas'
+export const CREATE_QUESTION = 'http://localhost:8080/preguntas/nueva'
+export const MODIFY_QUESTION = 'http://localhost:8080/preguntas/modificar'
+export const DELETE_QUESTION = 'http://localhost:8080/preguntas/eliminar'
 
 
 

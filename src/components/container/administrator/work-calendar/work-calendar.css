@@ -3,6 +3,7 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    justify-content: space-between;
     width: 100%;
 }
 
@@ -11,7 +12,7 @@
 }
 
 /* Styles for optometrist selector */
-.optometrist-selection {
+.calendar-selection {
     align-items: center;
     align-self: center;
     display: flex;

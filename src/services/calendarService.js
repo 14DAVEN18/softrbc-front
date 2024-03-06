@@ -2,10 +2,10 @@ import axios from "axios";
 import { CREATE_CALENDAR, CANCEL_DAY } from "../constants/constants";
 
 
-export const createCalendar = async (idoptometra, diasatencion, duracion) => {
+export const createCalendar = async (idoptometra, diasatencion, duracioncita) => {
     console.log("idoptometra: ", idoptometra)
     console.log("diasatencion: ", diasatencion)
-    console.log("duracion: ", duracion)
+    console.log("duracion: ", duracioncita)
     try {
         const config = {
             headers: {
@@ -16,7 +16,7 @@ export const createCalendar = async (idoptometra, diasatencion, duracion) => {
         return await axios.post(CREATE_CALENDAR, {
             idoptometra,
             diasatencion,
-            duracion
+            duracioncita
         }, config)
     } catch (error) {
         throw error;

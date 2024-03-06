@@ -1,0 +1,42 @@
+/* Style for the selected content */
+.question-management {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+/* Styles for the search bar */
+.search-form {
+    align-items: center;
+    /*background-color: rgb(109, 111, 114);*/
+    display: flex;
+    flex-direction: row;
+    height: 10%;
+    justify-content: center;
+    width: 100%;
+}
+
+/* Styles for create button */
+.modal {
+    align-items: flex-start;
+    align-self: center;
+    display: flex;
+    height: 5%;
+    width: 80%;
+}
+
+/* Styles for table */
+.question-table {
+    align-self: center;
+    height: 85%;
+    width: 80%;
+}
+
+.ant-spin-container {
+    box-shadow: 0px 0px 15px rgb(50, 50, 50, 0.5);
+}
+
+.confirmation {
+    color: black;
+}
