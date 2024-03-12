@@ -27,6 +27,7 @@ import CancelWorkDay from './administrator/cancel-work-day/cancel-work-day';
 import Changelog from './administrator/changelog/changelog';
 import Chatbot from './customer/chatbot/chatbot';
 import FAQManagement from './administrator/faq-management/faq-management';
+import AppointmentManagement from './customer/appointment-management/appointment-management';
 
 // import RegisterTransaction from './application/register-transaction/register-transaction';
 // import ListTransactions from './application/list-transactions/list-transactions';
@@ -67,10 +68,11 @@ export default function Container() {
               <Route path='agenda' element={ <OptometristSchedule/> }></Route>
             </Route>
 
-            <Route path='/clientes' element={ <Navigate replace to='/clientes/preguntas'/> }></Route>
-            <Route path='/clientes/preguntas' element={ <Chatbot/> }></Route>
-            <Route path='/clientes/inicio-de-sesion' element={ <Login/> }></Route>
-            <Route path='/clientes/registro' element={ <Register/> }></Route>
+            <Route path='/cliente' element={ <Navigate replace to='/cliente/preguntas'/> }></Route>
+            <Route path='/cliente/preguntas' element={ <Chatbot/> }></Route>
+            <Route path='/cliente/inicio-de-sesion' element={ <Login/> }></Route>
+            <Route path='/cliente/registro' element={ <Register/> }></Route>
+            <Route path='/cliente/agendamiento' element={ <AppointmentManagement/> }></Route>
           </Routes>
         </div>
       </div>

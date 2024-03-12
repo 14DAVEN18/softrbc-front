@@ -14,6 +14,10 @@ export default function Chatbot() {
     useEffect(() => {
         setHeight(ref.current.offsetHeight);
         setWidth(ref.current.offsetWidth);
+        setMessages([
+            'Bienvenido al Palacio de las Gafas. ¿En qué podemos ayudarle?',
+            '1. Preguntas frecuentes\n2. Citas de optometría'
+        ]);
         /*if(localStorage.getItem("user_id") === null)
             navigation("/login")*/
     }, [])
@@ -46,9 +50,10 @@ export default function Chatbot() {
                 <div className='message-box'>
                     {/* Display chat messages */}
                     {messages.map((message, index) => (
-                        <div key={index}>{message}</div>
+                        <div key={index} className='bot-message'>{message}</div>
                     ))}
                 </div>
+                
                 <div className='text-box'>
                     <input type="text" id="option" name="option" placeholder='Clic aqui. Digite el número que corresponda con la opción dada.'/>
                     <Button onClick={() => {

@@ -1,7 +1,7 @@
 import axios from "axios";
-import { CREATE_QUESTION, GET_QUESTION, MODIFY_QUESTION, DELETE_QUESTION } from "../constants/constants";
+import { GET_APPOINTMENT_DURATION } from "../constants/constants";
 
-export const getQuestions = async () => {
+export const getAppointmentsDuration = async (dia) => {
     const config = {
         headers: {
             "Authorization": localStorage.getItem('token'),
@@ -9,7 +9,7 @@ export const getQuestions = async () => {
         }
     }
     try {
-        return await axios.get(GET_QUESTION, config);
+        return await axios.get(`${GET_APPOINTMENT_DURATION}/${dia}`, config);
     } catch (error) {
         throw error;
     }
@@ -27,7 +27,7 @@ export const createQuestion = async ({
         }
     }
     try {
-        return await axios.post(CREATE_QUESTION, 
+        return await axios.post(GET_APPOINTMENT_DURATION, 
             {
                 pregunta,
                 respuesta
@@ -49,7 +49,7 @@ export const updateQuestion = async ({
                 "Content-Type": "application/json"
             }
         }
-        return await axios.put(`${MODIFY_QUESTION}/${id}`, 
+        return await axios.put(`${GET_APPOINTMENT_DURATION}/${id}`, 
         {
             id,
             pregunta,
@@ -70,7 +70,7 @@ export const deleteQuestion = async (idpregunta) => {
                 "Content-Type": "application/json"
             }
         }
-        return await axios.delete(`${DELETE_QUESTION}/${id}`, config);
+        return await axios.delete(`${GET_APPOINTMENT_DURATION}/${id}`, config);
     } catch (error) {
         throw error;
     }

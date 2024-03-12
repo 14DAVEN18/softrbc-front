@@ -1,19 +1,32 @@
-import { Button, Form, Input, InputNumber } from 'antd';
+import { Button, DatePicker, Form, Input, InputNumber, Select } from 'antd';
 import { UserOutlined, MailOutlined, PhoneOutlined, LockOutlined, IdcardOutlined } from '@ant-design/icons';
+
+import { createPatient } from '../../../../services/patientService';
+
 import { CREATE_USER } from '../../../../constants/constants';
 
 import React, { useEffect , useRef, useState} from 'react';
-import axios from "axios";
 
 import { Link, useNavigate } from "react-router-dom";
 
 import 'antd/dist/reset.css';
+
+const selectGenderOptions = [{
+    label: 'Masculino',
+    value: 'M'
+},{
+    label: 'Femenino',
+    value: 'F'
+}];
 
 export default function Register() {
 
     const ref = useRef(null);
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
+
+
+    const [loading, setLoading] = useState(false);
     const navigation = useNavigate();
 
     useEffect(() => {
@@ -36,40 +49,83 @@ export default function Register() {
     },
     };
 
-    const [form] = Form.useForm();
+    
 
-    const onFinish = (values) => {
-        try {
-            axios.post (
-                CREATE_USER,
-                {
-                    values
-                },
-                {
-                    headers: 
+
+
+
+    // TO DEFINE FORM CONSTANTS ***********************************************************
+    const [creationForm] = Form.useForm();
+
+
+
+
+
+    // TO HANDLE THE OPTOMETRIST SELECTION FROM THE DROPDOWN LIST
+    /*const [selectedGenre, setSelectedOptometrist] = useState(null)
+    const handleChangeOptometrist = (selection) => {
+        setSelectedOptometrist(selection)
+        console.log("Seleccionado: ", selection)
+    };
+
+    const selectOptometristOptions = optometristsData?.map((optometra) => ({
+        label: optometra.usuario.nombre + " " + optometra.usuario.apellido,
+        value: optometra.usuario.idusuario
+    }));*/
+
+
+
+
+
+
+    // START OF HANDLING PATIENT CREATION
+    const [isCreationFormComplete, setIsCreationFormComplete] = useState(false);
+    
+    const onCreationValuesChange = (_, allValues) => {
+        const isComplete = Object.values(allValues).every(value => !!value);
+        setIsCreationFormComplete(isComplete);
+    };
+
+    const handleCreatePatient = async () => {
+        if (creationForm != null) {
+            try {
+                const values = await creationForm.validateFields();
+                console.log("values: ", values)
+                const response = await createPatient(
                     {
-                        'Content-Type': 'application/json',
-                        withCredentials: true,
-                        key: 1,
-                        email: values.email,
-                        username: values.username,
-                        password: values.password
+                        usuario: {
+                            nombre: values.nombre,
+                            apellido: values.apellido,
+                            direccion: values.direccion,
+                            correo: values.correo,
+                            telefono: values.telefono,
+                            password: values.password,
+                            cedula: values.cedula
+                        },
+                        paciente: {
+                            ocupacion: values.ocupacion,
+                            fechanacimiento: values.fechanacimiento,
+                            genero: values.genero,
+                            nombreacompañante: values.nombreacompañante
+                        }
                     }
-                })
-                .then(({data}) => 
-                {
-                    localStorage.setItem("message" , data.message)
-                    if (data.created) {
-                        navigation("/login");
-                    } 
-                })
-                .catch(error => {
-                    console.log(error);
-                })
-        } catch (error) {
-            console.log(error);
+                ); // Call the create function from userService.js
+                //console.log('Response:', response.data);
+                setLoading(true);
+                // Handle success if needed
+            } catch (error) {
+                console.error('Error en la solicitud:', error);
+                // Handle error if needed
+            } finally {
+                setLoading(true);
+                setTimeout(() => {
+                    setLoading(false);
+                    setIsCreationFormComplete(false);
+                }, 2000);
+            }
         }
     };
+
 
     return (
         <div 
@@ -77,45 +133,77 @@ export default function Register() {
             className="page" 
             ref={ref}
         >
-            <div className='top'>
-                <img src={process.env.PUBLIC_URL + "/Expense-Tracker-Logo-192.png"} alt="Expense tracker logo"/>
-            </div>
             <div className='bottom'>
                 <div className='frame'>
                     <h1>Crear cuenta</h1>
                     <Form
-                        className='login-form'
+                        className='creation-form'
                         initialValues={{ remember: false }}
-                        form={form}
-                        name="register"
-                        onFinish={onFinish}
-                        scrollToFirstError
+                        form={creationForm}
+                        name="employee-creation"
+                        onFinish={handleCreatePatient}
+                        onValuesChange={onCreationValuesChange}
                     >
-                        
+                            
                         <Form.Item
-                            name="name"
+                            name="nombre"
                             rules={[
                             {
                                 required: true,
-                                message: 'Por favor ingrese su nombre sin apellidos!',
+                                message: 'Por favor ingrese el nombre del optómetra sin apellidos!',
                             }]}
                         >
                             <Input prefix={<UserOutlined/>} placeholder='Nombres'/>
                         </Form.Item>
-                        
+                            
+                            
                         <Form.Item
-                            name="surname"
+                            name="apellido"
                             rules={[
                             {
                                 required: true,
-                                message: 'Por favor ingrese sus apellidos!',
+                                message: 'Por favor ingrese el apellido del optómetra sin nombres!',
                             }]}
                         >
                             <Input prefix={<UserOutlined/>} placeholder='Apellidos'/>
                         </Form.Item>
 
                         <Form.Item
-                            name="email"
+                            name="fechanacimiento"
+                            rules={[
+                            {
+                                required: true,
+                                message: 'Por favor seleccione su fecha de nacimiento!'
+                            }]}
+                        >
+                            <DatePicker></DatePicker>
+                        </Form.Item>
+
+                        <Form.Item
+                            name="genero"
+                            rules={[
+                            {
+                                required: true,
+                                message: 'Por favor seleccione su sexo'
+                            }
+                            ]}
+                        >
+                            <Select size={'small'} defaultValue="Seleccione un sexo" options={selectGenderOptions} />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="direccion"
+                            rules={[
+                            {
+                                required: true,
+                                message: 'Por favor ingrese la dirección física del optómetra!',
+                            }]}
+                        >
+                            <Input prefix={<UserOutlined/>} placeholder='Dirección'/>
+                        </Form.Item>
+
+                        <Form.Item
+                            name="correo"
                             rules={[
                             {
                                 type: 'email',
@@ -123,7 +211,7 @@ export default function Register() {
                             },
                             {
                                 required: true,
-                                message: 'Por favor ingrese su correo eléctronico!',
+                                message: 'Por favor ingrese el correo eléctronico del optómetra!',
                             },
                             ]}
                         >
@@ -131,7 +219,7 @@ export default function Register() {
                         </Form.Item>
 
                         <Form.Item
-                            name="telephone"
+                            name="telefono"
                             rules={[
                                 {
                                     type: 'number',
@@ -139,16 +227,16 @@ export default function Register() {
                                 },
                                 {
                                     required: true,
-                                    message: 'Por favor ingrese su número telefónico!'
+                                    message: 'Por favor ingrese el número telefónico del optometra!'
                                 }
                             ]}
                         >
-                            <InputNumber prefix={<PhoneOutlined/>} placeholder='Ingrese su número telefónico'/>
+                            <InputNumber prefix={<PhoneOutlined/>} placeholder='Número telefónico'/>
                         </Form.Item>
 
-                        
+
                         <Form.Item
-                            name="identification"
+                            name="cedula"
                             rules={[
                                 {
                                     type: 'number',
@@ -156,11 +244,29 @@ export default function Register() {
                                 },
                                 {
                                     required: true,
-                                    message: 'Por favor ingrese su número telefónico!'
+                                    message: 'Por favor ingrese el número de identificación del optómetra!'
                                 }
                             ]}
                         >
-                            <InputNumber prefix={<IdcardOutlined/>} placeholder='Ingrese su número de cédula sin puntos'/>
+                            <InputNumber prefix={<IdcardOutlined/>} placeholder='Ingrese el número de cédula sin puntos'/>
+                        </Form.Item>
+        
+
+                        <Form.Item
+                            name="ocupacion"
+                            rules={[
+                            {
+                                required: true,
+                                message: 'Por favor ingrese su ocupación!',
+                            }]}
+                        >
+                            <Input prefix={<UserOutlined/>} placeholder='Ocupación'/>
+                        </Form.Item>
+
+                        <Form.Item
+                            name="nombreacompañante"
+                        >
+                            <Input prefix={<UserOutlined/>} placeholder='Nombre de acompañante'/>
                         </Form.Item>
 
                         <Form.Item
@@ -169,55 +275,21 @@ export default function Register() {
                                 {
                                     required: true,
                                     type: "string",
-                                }, {
-                                    message: 'La contraseña debe tener al menos 8 caracteres',
-                                    min: 8
-                                }, {
-                                    max: 15,
-                                    message: "La contraseña no puede tener más de 15 caracteres"
-                                }, {
-                                    pattern: "^(?=.*[a-z]).+$",
-                                    message: "La contraseña debe contener al menos una letra minúscula (a - z)"
-                                }, {
-                                    pattern: "^(?=.*[A-Z]).+$",
-                                    message: "La contraseña debe contener al menos una letra mayúscula (A - Z)"
-                                }, {
-                                    pattern: "^(?=.*[0-9]).+$",
-                                    message: "La contraseña debe contener por lo menos 1 número"
-                                }, {
-                                    pattern: "^(?=.*[*+!.]).+$",
-                                    message: "La contraseña solo puede tener al menos uno de los siguientes caracteres: * + ! ó ."
+                                    message: 'Por favor inserte una contraseña'
                                 }
                             ]}
                         >
-                            <Input.Password prefix={<LockOutlined/>} placeholder='Contraseña'/>
+                            <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} placeholder='Contraseña'/>
                         </Form.Item>
 
-                        <Form.Item
-                            name="confirm"
-                            dependencies={['password']}
-                            hasFeedback
-                            rules={[
-                            {
-                                required: true,
-                                message: 'Por favor confirme su contraseña!',
-                            },
-                            ({ getFieldValue }) => ({
-                                validator(_, value) {
-                                if (!value || getFieldValue('password') === value) {
-                                    return Promise.resolve();
-                                }
-                                return Promise.reject(new Error('La contraseña ingresada no coincide!'));
-                                },
-                            }),
-                            ]}
-                        >
-                            <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} placeholder='Confirmar contraseña'/>
-                        </Form.Item>
-
-                        <Form.Item {...tailFormItemLayout}>
-                            <Button type="primary" htmlType="submit" className="login-form-button">
-                            REGISTRAR
+                        <Form.Item shouldUpdate>
+                            <Button
+                                type="primary"
+                                htmlType="submit"
+                                className="login-form-button"
+                                disabled={!isCreationFormComplete}
+                            >
+                                CREAR CUENTA
                             </Button>
                         </Form.Item>
 

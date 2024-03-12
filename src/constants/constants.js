@@ -6,21 +6,31 @@ export const VALIDATE_RECOVERY_KEY = 'http://localhost:8080/usuarios/verificarCo
 export const RESET_PASSWORD = 'http://localhost:8080/usuarios/actualizarContrasena'
 
 
-// USER RELATED URLs
+// OPTOMETRIST RELATED URLs
 export const GET_USER = 'http://localhost:8080/usuarios/listaOptometras'
 export const CREATE_USER = "http://localhost:8080/usuarios/nueva"
 export const MODIFY_USER = 'http://localhost:8080/usuarios/modificar'
 export const UPDATE_USER_STATUS = 'http://localhost:8080/usuarios/cambiarEstado'
 
+
+// PATIENT RELATED URLs
+export const CREATE_PATIENT = "http://localhost:8080/paciente/nueva"
+
 // CALENDAR RELATED URLs
 export const CREATE_CALENDAR = 'http://localhost:8080/calendario/nueva'
 export const CANCEL_DAY = 'http://localhost:8080/'
+export const GET_APPOINTMENT_DURATION = 'http://localhost:8080/calendario/duracioncita'
+
 
 // QUESTION RELATED URLs
 export const GET_QUESTION = 'http://localhost:8080/preguntas/listaPreguntas'
 export const CREATE_QUESTION = 'http://localhost:8080/preguntas/nueva'
 export const MODIFY_QUESTION = 'http://localhost:8080/preguntas/modificar'
 export const DELETE_QUESTION = 'http://localhost:8080/preguntas/eliminar'
+
+
+// APPOINTMENT RELATED URLs
+export const GET_APPOINTMENTS = ''
 
 
 
@@ -65,27 +75,27 @@ export const durations = [
 export const days = [
     {
         key: '1',
-        day: 'Lunes'
+        day: 'lunes'
     },
     {
         key: '2',
-        day: 'Martes'
+        day: 'martes'
     },
     {
         key: '3',
-        day: 'Miercoles'
+        day: 'miercoles'
     },
     {
         key: '4',
-        day: 'Jueves'
+        day: 'jueves'
     },
     {
         key: '5',
-        day: 'Viernes'
+        day: 'viernes'
     },
     {
         key: '6',
-        day: 'Sábado'
+        day: 'sabado'
     },
     {
         key: '7',

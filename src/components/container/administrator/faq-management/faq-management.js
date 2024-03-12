@@ -61,13 +61,13 @@ export default function FAQManagement() {
 
     useEffect(() => {
         setTimeout(() => {
-            const filtered = questions
-            ? questions.filter(question =>
+            const filtered = questionsData
+            ? questionsData.filter(question =>
                 question.pregunta.toLowerCase().includes(searchText.toLowerCase())
             ): [];
             setFilteredData(filtered);
         },500)
-    }, [searchText, questions])
+    }, [searchText, questionsData])
 
     const search = (values) => {
         console.log('Received values from form: ', values);
@@ -102,7 +102,7 @@ export default function FAQManagement() {
     const removeQuestion = async () => {
         setLoading(true);
         try {
-            const response = await deleteQuestion(selectedQuestion.idpregutna); // Call the create function from userService.js
+            const response = await deleteQuestion(selectedQuestion.id); // Call the create function from userService.js
             //console.log('Response:', response.data);
             // Handle success if needed
         } catch (error) {
