@@ -1,5 +1,6 @@
 import { Button, DatePicker, Form, Input, InputNumber, Select } from 'antd';
 import { UserOutlined, MailOutlined, PhoneOutlined, LockOutlined, IdcardOutlined } from '@ant-design/icons';
+import { format } from 'date-fns';
 
 import { createPatient } from '../../../../services/patientService';
 
@@ -9,14 +10,14 @@ import React, { useEffect , useRef, useState} from 'react';
 
 import { Link, useNavigate } from "react-router-dom";
 
-import 'antd/dist/reset.css';
+import './register.css';
 
 const selectGenderOptions = [{
     label: 'Masculino',
-    value: 'M'
+    value: 'masculino'
 },{
     label: 'Femenino',
-    value: 'F'
+    value: 'femenino'
 }];
 
 export default function Register() {
@@ -104,7 +105,7 @@ export default function Register() {
                         },
                         paciente: {
                             ocupacion: values.ocupacion,
-                            fechanacimiento: values.fechanacimiento,
+                            fechanacimiento: format(values.fechanacimiento, 'yyyy/MM/dd'),
                             genero: values.genero,
                             nombreacompañante: values.nombreacompañante
                         }
@@ -134,7 +135,7 @@ export default function Register() {
             ref={ref}
         >
             <div className='bottom'>
-                <div className='frame'>
+                <div className='frame register-frame'>
                     <h1>Crear cuenta</h1>
                     <Form
                         className='creation-form'
@@ -176,7 +177,7 @@ export default function Register() {
                                 message: 'Por favor seleccione su fecha de nacimiento!'
                             }]}
                         >
-                            <DatePicker></DatePicker>
+                            <DatePicker size={'large'} ></DatePicker>
                         </Form.Item>
 
                         <Form.Item
@@ -188,7 +189,7 @@ export default function Register() {
                             }
                             ]}
                         >
-                            <Select size={'small'} defaultValue="Seleccione un sexo" options={selectGenderOptions} />
+                            <Select size={'large'} defaultValue="Seleccione un sexo" options={selectGenderOptions} />
                         </Form.Item>
 
                         <Form.Item
@@ -275,11 +276,50 @@ export default function Register() {
                                 {
                                     required: true,
                                     type: "string",
-                                    message: 'Por favor inserte una contraseña'
+                                }, {
+                                    message: 'La contraseña debe tener al menos 8 caracteres',
+                                    min: 8
+                                }, {
+                                    max: 15,
+                                    message: "La contraseña no puede tener más de 15 caracteres"
+                                }, {
+                                    pattern: "^(?=.*[a-z]).+$",
+                                    message: "La contraseña debe contener al menos una letra minúscula (a - z)"
+                                }, {
+                                    pattern: "^(?=.*[A-Z]).+$",
+                                    message: "La contraseña debe contener al menos una letra mayúscula (A - Z)"
+                                }, {
+                                    pattern: "^(?=.*[0-9]).+$",
+                                    message: "La contraseña debe contener por lo menos 1 número"
+                                }, {
+                                    pattern: "^(?=.*[*+!.]).+$",
+                                    message: "La contraseña solo puede tener al menos uno de los siguientes caracteres: * + ! ó ."
                                 }
                             ]}
                         >
-                            <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} placeholder='Contraseña'/>
+                            <Input.Password prefix={<LockOutlined/>} placeholder='Contraseña'/>
+                        </Form.Item>
+
+                        <Form.Item
+                            name="confirm"
+                            dependencies={['password']}
+                            hasFeedback
+                            rules={[
+                            {
+                                required: true,
+                                message: 'Por favor confirme su contraseña!',
+                            },
+                            ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                if (!value || getFieldValue('password') === value) {
+                                    return Promise.resolve();
+                                }
+                                return Promise.reject(new Error('La contraseña ingresada no coincide!'));
+                                },
+                            }),
+                            ]}
+                        >
+                            <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} placeholder='Confirmar contraseña'/>
                         </Form.Item>
 
                         <Form.Item shouldUpdate>

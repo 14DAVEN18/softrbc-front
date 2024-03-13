@@ -100,20 +100,26 @@ export default function AppointmentManagement() {
         }
     }, [selectedDay]);
 
-    const showCancelationModal = async (day) =>  {
+    const showAppointmentModal = async (day) =>  {
         
         const selectedDayFormatted = {
             date: format(day, 'dd/MM/yyyy'),
             dayOfWeek: format(day, 'iiii', { locale: es })
         };
     
-        setSelectedDay(selectedDayFormatted);
-        console.log(selectedDayFormatted.dayOfWeek); // Logging the day of the week immediately after setting it
+        const normalizedDayOfWeek = selectedDayFormatted.dayOfWeek.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+
+        setSelectedDay({
+            ...selectedDayFormatted,
+            dayOfWeek: normalizedDayOfWeek
+        });
+        console.log(normalizedDayOfWeek); // Logging the day of the week immediately after setting it
     
         // Assuming getAppointmentsDuration is an asynchronous function, await its result
-        getAppointmentsDuration(selectedDayFormatted.dayOfWeek)
+        getAppointmentsDuration(normalizedDayOfWeek)
             .then(duration => {
-                // Handle the duration if needed
+                console.log('duracion: ', duration)
             })
             .catch(error => {
                 console.error('Error while getting appointments duration:', error);
@@ -176,7 +182,7 @@ export default function AppointmentManagement() {
                                     `day ${isCurrentDate(day) ? 'current-date' : ''}
                                     ${isDisabledDate(day) ? 'disabled-date' : ''}`
                                 }
-                                onClick={() => showCancelationModal(day)}
+                                onClick={() => showAppointmentModal(day)}
                             >
                                     <div>{format(day, 'dd')}</div>
                             </div>
