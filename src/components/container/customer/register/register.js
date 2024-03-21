@@ -62,22 +62,6 @@ export default function Register() {
 
 
 
-    // TO HANDLE THE OPTOMETRIST SELECTION FROM THE DROPDOWN LIST
-    /*const [selectedGenre, setSelectedOptometrist] = useState(null)
-    const handleChangeOptometrist = (selection) => {
-        setSelectedOptometrist(selection)
-        console.log("Seleccionado: ", selection)
-    };
-
-    const selectOptometristOptions = optometristsData?.map((optometra) => ({
-        label: optometra.usuario.nombre + " " + optometra.usuario.apellido,
-        value: optometra.usuario.idusuario
-    }));*/
-
-
-
-
-
 
     // START OF HANDLING PATIENT CREATION
     const [isCreationFormComplete, setIsCreationFormComplete] = useState(false);
@@ -85,6 +69,7 @@ export default function Register() {
     const onCreationValuesChange = (_, allValues) => {
         const isComplete = Object.values(allValues).every(value => !!value);
         setIsCreationFormComplete(isComplete);
+        console.log("allValues: ", allValues)
     };
 
     const handleCreatePatient = async () => {
@@ -105,7 +90,7 @@ export default function Register() {
                         },
                         paciente: {
                             ocupacion: values.ocupacion,
-                            fechanacimiento: format(values.fechanacimiento, 'yyyy/MM/dd'),
+                            fechanacimiento: values.fechanacimiento,
                             genero: values.genero,
                             nombreacompañante: values.nombreacompañante
                         }
@@ -134,11 +119,12 @@ export default function Register() {
             className="page" 
             ref={ref}
         >
-            <div className='bottom'>
-                <div className='frame register-frame'>
-                    <h1>Crear cuenta</h1>
+            <div className='patient-register-top'>
+                <h1>Registro de paciente</h1>
+            </div>
+            <div className='patient-register-bottom'>
+                <div className='patient-creation-form'>
                     <Form
-                        className='creation-form'
                         initialValues={{ remember: false }}
                         form={creationForm}
                         name="employee-creation"

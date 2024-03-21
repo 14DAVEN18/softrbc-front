@@ -1,5 +1,5 @@
 import axios from "axios";
-import { GET_APPOINTMENT_DURATION } from "../constants/constants";
+import { GET_APPOINTMENT_DURATION, CREATE_APPOINTMENT } from "../constants/constants";
 
 export const getAppointmentsDuration = async (dia) => {
     const config = {
@@ -16,9 +16,12 @@ export const getAppointmentsDuration = async (dia) => {
 }
 
 
-export const createQuestion = async ({
-    pregunta,
-    respuesta
+export const createAppointment = async ({
+    fecha,
+    hora,
+    idpaciente,
+    nombre,
+    telefono
 }) => {
     const config = {
         headers: {
@@ -27,10 +30,13 @@ export const createQuestion = async ({
         }
     }
     try {
-        return await axios.post(GET_APPOINTMENT_DURATION, 
+        return await axios.post(CREATE_APPOINTMENT, 
             {
-                pregunta,
-                respuesta
+                fecha,
+                hora,
+                idpaciente,
+                nombre,
+                telefono
             }, config);
     } catch (error) {
         throw error;

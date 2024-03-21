@@ -1,3 +1,33 @@
-.register-frame {
-    overflow-y: scroll;
+.patient-creation-form {
+    padding-top: 5%;
+    width: 60%;
+}
+.patient-creation-form .ant-picker{
+    width: 100%;
+}
+
+/* Styles for the rest of the page from the top edge of the form to the top & bottom of the page */
+.patient-register-top {
+    align-items: center;
+    border-bottom: 1px solid black;
+    box-shadow: black 0 -10px 10px 10px;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    height: 10%;
+    justify-content: center;
+    overflow-x: hidden;
+    width: 100%;
+    z-index: 1;
+}
+.patient-register-top h1 {
+    margin: 0;
+}
+
+.patient-register-bottom {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    width: 100%;
 }

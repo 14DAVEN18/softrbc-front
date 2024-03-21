@@ -2,13 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, addMonths, format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Button, Modal  } from 'antd';
-import { getAppointmentsDuration } from '../../../../services/appointmentService';
+import { getAppointmentsDuration, createAppointment } from '../../../../services/appointmentService';
 
 import './appointment-management.css';
-
-import { cancelWorkDay } from '../../../../services/calendarService';
-
-import { appointments } from './appointment-data';
 
 export default function AppointmentManagement() {
 
@@ -53,6 +49,7 @@ export default function AppointmentManagement() {
 
 
 
+
     // ARRAY TO POPULATE THE CALENDAR IN ROWS
     const daysInMonthRows = [];
     for (let i = 0; i < daysInMonth.length; i += 7) {
@@ -89,14 +86,14 @@ export default function AppointmentManagement() {
 
 
 
-    // TO HANDLE DAY CANCELATION MODAL ***********************************************************
-    const [isCancelationModalOpen, setIsCancelationModalOpen] = useState(false);
+    // TO HANDLE DAY SELECTION MODAL ***********************************************************
+    const [isDaySelectionModalOpen, setIsDaySelectionModalOpen] = useState(false);
     const [selectedDay, setSelectedDay] = useState(null);
+    const [appointments, setAppointments] = useState([]);
 
     useEffect(() => {
         if (selectedDay !== null) {
-            console.log("selectedDay: ", selectedDay)
-            setIsCancelationModalOpen(true);
+            setIsDaySelectionModalOpen(true);
         }
     }, [selectedDay]);
 
@@ -114,24 +111,64 @@ export default function AppointmentManagement() {
             ...selectedDayFormatted,
             dayOfWeek: normalizedDayOfWeek
         });
-        console.log(normalizedDayOfWeek); // Logging the day of the week immediately after setting it
     
         // Assuming getAppointmentsDuration is an asynchronous function, await its result
         getAppointmentsDuration(normalizedDayOfWeek)
             .then(duration => {
-                console.log('duracion: ', duration)
+                setAppointments(generateAppointments("9:00", duration.data, (600/duration.data)-1))
             })
             .catch(error => {
                 console.error('Error while getting appointments duration:', error);
                 // Handle error if needed
-            });
+            })
+            
+    }; 
+    
+    const statusDaySelectionModalCancel = () => {
+        setIsDaySelectionModalOpen(false);
+    };
+
+
+
+
+
+
+    // TO CONFIRM DATE AND TIME
+    const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+    const [selectedTime, setSelectedTime] = useState(null);
+
+    useEffect(() => {
+        if (selectedTime !== null) {
+            setIsConfirmationModalOpen(true);
+        }
+    }, [selectedTime]);
+
+    const showConfirmationModal = async (time) =>  {
+        setSelectedTime(time)
+        console.log("selectedTime: ", selectedTime)
     };  
     
-    // {format(selectedDay, 'dd/MM/yyyy')}
-    const cancelDay = async () => {
+
+
+
+
+
+
+    // TO SCHEDULE APPOINTMENT ON GIVE DATE AND TIME
+    const scheduleAppointment = async (date, time) => {
+        const cita = {
+            fecha: date,
+            hora: time,
+            idpaciente: localStorage.getItem('user').idpaciente,
+            nombre: JSON.parse(localStorage.getItem('user')).nombre + ' ' + JSON.parse(localStorage.getItem('user')).surname,
+            telefono: localStorage.getItem('user').telefono
+        }
+        console.log('cita: ', cita)
         setLoading(true);
         try {
-            const response = await cancelWorkDay(selectedDay); // Call the create function from userService.js
+            // console.log("date: ", date)
+            // console.log("time: ", time)
+            const response = await createAppointment(cita); // Call the create function from userService.js
             //console.log('Response:', response.data);
             // Handle success if needed
         } catch (error) {
@@ -144,13 +181,43 @@ export default function AppointmentManagement() {
         
         setTimeout(() => {
             setLoading(false);
-            setIsCancelationModalOpen(false);
+            setIsDaySelectionModalOpen(false);
+            setIsConfirmationModalOpen(false);
         }, 2000);
     };
     
-    const statusCancelationModalCancel = () => {
-        setIsCancelationModalOpen(false);
+    const statusConfirmationModalCancel = () => {
+        setIsConfirmationModalOpen(false);
     };
+
+
+
+
+
+
+
+    // TO ADD "duration" TO THE START TIME
+    const addMinutesToTime = (timeString, minutesToAdd) => {
+        const [hours, minutes] = timeString.split(':');
+        let time = new Date();
+        time.setHours(parseInt(hours));
+        time.setMinutes(parseInt(minutes) + minutesToAdd);
+        
+        const newHours = time.getHours();
+        const newMinutes = time.getMinutes();
+      
+        return `${newHours < 10 ? '0' + newHours : newHours}:${newMinutes < 10 ? '0' + newMinutes : newMinutes}`;
+    }
+
+    const  generateAppointments = (startTime, duration, numberOfAppointments) => {
+        const appointments = [startTime];
+        let currentAppointment = startTime;
+        for (let i = 0; i < numberOfAppointments; i++) {
+          currentAppointment = addMinutesToTime(currentAppointment, duration);
+          appointments.push(currentAppointment);
+        }
+        return appointments;
+    }
 
 
 
@@ -191,18 +258,40 @@ export default function AppointmentManagement() {
                 ))}
             </div>
 
-            <Modal width={'100%'} title="Cancelar dia laboral" centered open={isCancelationModalOpen} onCancel={statusCancelationModalCancel} footer=
+            <Modal width={'100%'} title={`Agendar cita de optometría. (${selectedDay?.dayOfWeek} - ${selectedDay?.date})`} centered open={isDaySelectionModalOpen} onCancel={statusDaySelectionModalCancel} footer=
                 {<>
-                    <Button key="cancel" onClick={statusCancelationModalCancel}>
+                    <Button key="cancel" onClick={statusDaySelectionModalCancel}>
                         Cancelar
-                    </Button>
-                    <Button key="action" type="primary" danger loading={loading} onClick={cancelDay}>
-                        Cancelar agenda
                     </Button>
                 </>}
             >
                 <p className='confirmation'>Elija la hora de su cita.</p>
+                <div className='time-table'>
+                    {appointments.map((appointment, index) => (
+                        <div key={index} className='time' onClick={() => showConfirmationModal(appointment)}>
+                            <div>{appointment}</div>
+                        </div>
+                    ))}
+                </div>
+            </Modal>
 
+
+
+
+
+            <Modal width={'50%'} title={`Confirmar cita`} centered open={isConfirmationModalOpen   } onCancel={statusConfirmationModalCancel} footer=
+                {<>
+                    <Button key="cancel" onClick={statusConfirmationModalCancel}>
+                        Cancelar
+                    </Button>
+                    <Button key="schedule" type="primary"  onClick={() => scheduleAppointment(selectedDay?.date, selectedTime)}>
+                        Confirmar
+                    </Button>
+                </>}
+            >
+                <p className='confirmation'>¿Está seguro que desea agendar su cita de optometria?</p>
+                <p>Fecha: {selectedDay?.dayOfWeek} {selectedDay?.date}</p>
+                <p>Hora: {selectedTime}</p>
             </Modal>
         </div>
     )

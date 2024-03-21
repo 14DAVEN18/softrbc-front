@@ -102,7 +102,7 @@ export default function FAQManagement() {
     const removeQuestion = async () => {
         setLoading(true);
         try {
-            const response = await deleteQuestion(selectedQuestion.id); // Call the create function from userService.js
+            const response = await deleteQuestion(selectedQuestion.idpregunta); // Call the create function from userService.js
             //console.log('Response:', response.data);
             // Handle success if needed
         } catch (error) {
@@ -410,7 +410,7 @@ export default function FAQManagement() {
                     </Form.Item>
 
                     <Form.Item
-                        name="correo"
+                        name="respuesta"
                         rules={[
                         {
                             required: true,

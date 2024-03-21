@@ -3,16 +3,15 @@ import { Button, Form, Input } from 'antd';
 import { LockOutlined ,UserOutlined } from '@ant-design/icons';
 import { AuthContext } from "../../../../auth/context/AuthContext";
 
-import { LOGIN_USER, CREDENTIALS_SUCCESSFULLY_VALIDATED, USER_DOES_NOT_EXIST, INVALID_PASSWORD } from '../../../../constants/constants';
-
 import { Link, useNavigate } from "react-router-dom";
+import { click } from '@testing-library/user-event/dist/click';
 
 const initialLoginForm = {
     username: '',
     password: ''
 }
 
-export default function Login() {
+export default function Login({onLogin}) {
 
     
 
@@ -27,8 +26,9 @@ export default function Login() {
 
     const [, forceUpdate] = useState({});
     const navigation = useNavigate();
-    const [message, setMessage] = useState("");
+    const [errorMessage, setErrorMessage] = useState('');
     const [match, setMatch] = useState(2)
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         setClientReady(true);
@@ -55,11 +55,14 @@ export default function Login() {
         })
     }
     
-    const login = (values) => {
-
-        handlerLogin({correo: values.username, password: values.password})
-
-        setLoginForm(initialLoginForm)
+    const login = async (values) => {
+        try {
+            await handlerLogin({ correo: values.username, password: values.password });
+            onLogin();
+        } catch (error) {
+            console.error('Login error:', error);
+            setErrorMessage(error.message);
+        }
     };
 
     return (
@@ -68,30 +71,14 @@ export default function Login() {
             className="page" 
             ref={ref}
         >
-            <div className='top'>
-                <img src={process.env.PUBLIC_URL + "/Expense-Tracker-Logo-192.png"} alt="Expense tracker logo"/>
-            </div>
-
-            <div className='bottom'>
+            <div className='patient-login'>
+                { errorMessage && (
+                    <div className='error-message'>
+                        <p>{errorMessage}</p>
+                    </div>
+                )}
                 
-                {   
-                    match === 1 && 
-                    (
-                        <div className='error-message'  onClick={() => setMatch(true)}>
-                            <p>{message}</p>
-                        </div>
-                    )
-                }
-                {   
-                    match === 0 && 
-                    (
-                        <div className='error-message'  onClick={() => setMatch(true)}>
-                            <p>{message}</p>
-                        </div>
-                    )
-                }
-                <div className='frame'>
-                    <h1>Inciar sesión</h1>
+                <h1>Inciar sesión</h1>
                     <Form
                         className="login-form"
                         initialValues={{ remember: false }}
@@ -130,6 +117,7 @@ export default function Login() {
                                     type="primary"
                                     htmlType="submit"
                                     className="login-form-button"
+                                    loading={loading}
                                     disabled={
                                         !clientReady ||
                                         !form.isFieldsTouched(true) ||
@@ -143,12 +131,10 @@ export default function Login() {
 
                         <Form.Item>
                             <p>
-                                ¿No tienes una cuenta? <Link to="/registro">Crea una aqui.</Link>
+                                ¿No tienes una cuenta? <Link to="/cliente/registro">Crea una aqui.</Link>
                             </p>
                         </Form.Item>
                     </Form>
-                
-                </div>
             </div>
         </div>
     );

@@ -31,6 +31,7 @@ export const DELETE_QUESTION = 'http://localhost:8080/preguntas/eliminar'
 
 // APPOINTMENT RELATED URLs
 export const GET_APPOINTMENTS = ''
+export const CREATE_APPOINTMENT = 'http://localhost:8080/citas/nueva'
 
 
 

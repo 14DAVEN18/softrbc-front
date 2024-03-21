@@ -82,3 +82,31 @@
     display: flex;
     width: 100%;
 }
+
+
+.time-table {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    max-height: 80vh;
+}
+
+.time {
+    align-items: center;
+    border: 1px solid black;
+    border-radius: 10px;
+    display: flex;
+    flex-basis: calc((100% / 7) - 20px);
+    flex-grow: 1;
+    font-size: 2.7em;
+    font-weight: bold;
+
+    justify-content: center;
+    margin: 5px;
+}
+.time:hover {
+    background-color: rgb(25, 25, 76, 0.2);
+    border: 1px solid rgb(160, 25, 26);
+    color: rgb(25, 25, 76);
+    cursor: pointer;
+}

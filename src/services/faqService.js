@@ -9,7 +9,7 @@ export const getQuestions = async () => {
         }
     }
     try {
-        return await axios.get(GET_QUESTION, config);
+        return await axios.get(GET_QUESTION);
     } catch (error) {
         throw error;
     }
@@ -61,7 +61,6 @@ export const updateQuestion = async ({
 }
 
 export const deleteQuestion = async (idpregunta) => {
-    console.log(id)
     const id = idpregunta
     try {
         const config = {

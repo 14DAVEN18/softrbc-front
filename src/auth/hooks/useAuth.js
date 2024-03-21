@@ -26,7 +26,9 @@ export const useAuth = () => {
             localStorage.setItem('token', `Bearer ${token}`)
             localStorage.setItem('user', JSON.stringify({
                 'name': response.data.nombre,
-                'surname': response.data.apellido
+                'surname': response.data.apellido,
+                'idpaciente': response.data.idpaciente,
+                'telfono': response.data.telefono
             }))
             if (rol === 'ROLE_ADMIN')
                 navigate('/administrador');
@@ -37,9 +39,9 @@ export const useAuth = () => {
             }
         } catch(error) {
             if (error.response?.status === 401 ) {
-                console.log('Error login', "Correo o contraseña incorrectos")   
+                throw new Error('Correo o contraseña incorrectos.')
             } else if (error.response?.status === 403) {
-                console.log('Error login', "No tiene acceso al recurso o no tiene permisos suficientes")
+                throw new Error('No tiene acceso al recurso o no tiene permisos suficientes')
             } else {
                 throw error;
             }
