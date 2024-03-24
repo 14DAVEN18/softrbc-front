@@ -126,9 +126,11 @@ img {
     align-items: center;
     border: 1px solid red;
     background-color: rgb(255, 184, 184);
-    border-radius: 2%;
+    border-radius: 15px;
     display: flex;
-    width: 98%;
+    justify-content: center;
+    text-align: center;
+    width: 90%;
   }
 
   .ant-form-item-explain-error {

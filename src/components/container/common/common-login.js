@@ -3,7 +3,7 @@ import { Button, Form, Input } from 'antd';
 import { LockOutlined ,UserOutlined } from '@ant-design/icons';
 import { AuthContext } from "../../../auth/context/AuthContext";
 
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const initialLoginForm = {
     username: '',
@@ -11,10 +11,6 @@ const initialLoginForm = {
 }
 
 const EmployeeLogin = () => {
-
-    
-
-    //const navigate = useNavigate();
   
     const ref = useRef(null);
     const [height, setHeight] = useState(0);
@@ -24,9 +20,7 @@ const EmployeeLogin = () => {
     const [clientReady, setClientReady] = useState(false);
 
     const [, forceUpdate] = useState({});
-    const navigation = useNavigate();
-    const [message, setMessage] = useState("");
-    const [match, setMatch] = useState(2)
+    const [errorMessage, setErrorMessage] = useState("");
 
     useEffect(() => {
         setClientReady(true);
@@ -54,9 +48,14 @@ const EmployeeLogin = () => {
         })
     }
     
-    const login = (values) => {
+    const login = async (values) => {
 
-        handlerLogin({correo: values.username, password: values.password})
+        try {
+            await handlerLogin({correo: values.username, password: values.password})
+        } catch(error) {
+            setErrorMessage(error.message); // Set the error message state
+        }
+            
 
         setLoginForm(initialLoginForm)
     };
@@ -70,22 +69,7 @@ const EmployeeLogin = () => {
 
             <div className='bottom'>
                 
-                {   
-                    match === 1 && 
-                    (
-                        <div className='error-message'  onClick={() => setMatch(true)}>
-                            <p>{message}</p>
-                        </div>
-                    )
-                }
-                {   
-                    match === 0 && 
-                    (
-                        <div className='error-message'  onClick={() => setMatch(true)}>
-                            <p>{message}</p>
-                        </div>
-                    )
-                }
+               
                 <div className='frame'>
                     <h1>Inciar sesión</h1>
                     <Form
@@ -142,6 +126,14 @@ const EmployeeLogin = () => {
                             </p>
                         </Form.Item>
                     </Form>
+                    {   
+                        errorMessage && 
+                        (
+                            <div className='error-message'  onClick={() => setErrorMessage("")}>
+                                <p>{errorMessage}</p>
+                            </div>
+                        )
+                    }
 
                     <Link to="/administrador/gestion-optometras">Entrar admin</Link>
                     <Link to="/optometra/agenda">Entrar optometra</Link>

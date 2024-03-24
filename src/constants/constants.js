@@ -30,8 +30,10 @@ export const DELETE_QUESTION = 'http://localhost:8080/preguntas/eliminar'
 
 
 // APPOINTMENT RELATED URLs
-export const GET_APPOINTMENTS = ''
-export const CREATE_APPOINTMENT = 'http://localhost:8080/citas/nueva'
+export const GET_APPOINTMENTS = 'http://localhost:8080/cita/lista' // Param
+export const CREATE_APPOINTMENT = 'http://localhost:8080/cita/nueva'
+export const VERIFY_APPOINTMENT = 'http://localhost:8080/cita/verificarCodigo' // Param
+export const DELETE_APPOINTMENT = 'http://localhost:8080/cita/verificarCodigo' // Path
 
 
 

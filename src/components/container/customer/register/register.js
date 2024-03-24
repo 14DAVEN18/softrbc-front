@@ -1,4 +1,4 @@
-import { Button, DatePicker, Form, Input, InputNumber, Select } from 'antd';
+import { Button, Checkbox, DatePicker, Form, Input, InputNumber, Select } from 'antd';
 import { UserOutlined, MailOutlined, PhoneOutlined, LockOutlined, IdcardOutlined } from '@ant-design/icons';
 import { format } from 'date-fns';
 
@@ -67,9 +67,16 @@ export default function Register() {
     const [isCreationFormComplete, setIsCreationFormComplete] = useState(false);
     
     const onCreationValuesChange = (_, allValues) => {
-        const isComplete = Object.values(allValues).every(value => !!value);
+        // Exclude the optional field from the completeness check
+        const requiredValues = { ...allValues }
+        delete requiredValues.nombreacompañante
+        
+        // Check if all required fields are filled
+        const isComplete = Object.values(requiredValues).every(value => !!value);
+        
+        // Set the state based on the completeness of required fields
         setIsCreationFormComplete(isComplete);
-        console.log("allValues: ", allValues)
+        console.log("allValues: ", allValues);
     };
 
     const handleCreatePatient = async () => {
@@ -98,6 +105,7 @@ export default function Register() {
                 ); // Call the create function from userService.js
                 //console.log('Response:', response.data);
                 setLoading(true);
+                navigation('/cliente/preguntas')
                 // Handle success if needed
             } catch (error) {
                 console.error('Error en la solicitud:', error);
@@ -111,6 +119,17 @@ export default function Register() {
             }
         }
     };
+
+
+
+
+
+    const openPDFInNewWindow = () => {
+        window.open('/Tratamiento de Datos.pdf', '_blank');
+    };
+
+
+
 
 
     return (
@@ -306,6 +325,19 @@ export default function Register() {
                             ]}
                         >
                             <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} placeholder='Confirmar contraseña'/>
+                        </Form.Item>
+
+                        <Form.Item
+                            name="aceptarterminos"
+                            valuePropName='checked'
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Por favor acepte los terminos y condiciones de tratamiento de datos para continuar.'
+                                }
+                            ]}
+                        >
+                            <Checkbox>Aceptar terminos y condiciones de tratamiento de datos. Si desea leer los términos y condiciones, haga clic <a onClick={openPDFInNewWindow} href="public/Tratamiento de Datos.pdf" target="_blank">aqui.</a></Checkbox>
                         </Form.Item>
 
                         <Form.Item shouldUpdate>

@@ -150,18 +150,22 @@ export default function WorkCalendar() {
     // HTML TEMPLATE
     return (
         <div className='work-calendar' ref={ref}>
-            <h3>Seleccione un optómetra</h3>
-            <Form
+            <div className='title'>
+                <h3>Seleccione un optómetra</h3>
+            </div>
+
+            <div className='form-container'>
+                <Form
                     className='creation-form'
                     initialValues={{ remember: false }}
                     form={creationForm}
                     name="calendar-creation"
                     onFinish={CreateCalendar}
                     onValuesChange={onCreationValuesChange}
-            >
-                <Select size={'large'} defaultValue="Seleccione un optómetra" onChange={handleChangeOptometrist} options={selectOptometristOptions} />
+                >
+                    <Select size={'large'} defaultValue="Seleccione un optómetra" onChange={handleChangeOptometrist} options={selectOptometristOptions} />
 
-                <Transfer
+                    <Transfer
                         dataSource={days}
                         titles={['Días disponibles', 'Días a trabajar']}
                         targetKeys={targetDays}
@@ -169,17 +173,17 @@ export default function WorkCalendar() {
                         onChange={onChange}
                         onSelectChange={onSelectChange}
                         operations={['Agregar', 'Quitar']}
-                        /*onScroll={onScroll}*/
                         render={(item) => item.day}
                     />
 
-                <Select size={'large'} defaultValue="Seleccione una duración" onChange={handleChangeDuration} options={selectDurationOptions} />
+                    <Select size={'large'} defaultValue="Seleccione una duración" onChange={handleChangeDuration} options={selectDurationOptions} />
 
-                <Button type="primary" onClick={() => CreateCalendar()} disabled={!isCreationFormComplete} htmlType='submit'>
-                    Crear calendario
-                </Button>
+                    <Button type="primary" onClick={() => CreateCalendar()} disabled={!isCreationFormComplete} htmlType='submit'>
+                        Crear calendario
+                    </Button>
 
-            </Form>
+                </Form>
+            </div>
         </div>
     )
 }

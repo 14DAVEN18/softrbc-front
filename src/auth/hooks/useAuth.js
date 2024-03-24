@@ -28,7 +28,8 @@ export const useAuth = () => {
                 'name': response.data.nombre,
                 'surname': response.data.apellido,
                 'idpaciente': response.data.idpaciente,
-                'telfono': response.data.telefono
+                'telefono': response.data.telefono,
+                'correo': response.data.correo
             }))
             if (rol === 'ROLE_ADMIN')
                 navigate('/administrador');

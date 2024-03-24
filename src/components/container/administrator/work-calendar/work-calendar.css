@@ -1,38 +1,41 @@
 /* Style for the selected content */
 .work-calendar {
+    align-items: center;
     display: flex;
     flex-direction: column;
     height: 100%;
-    justify-content: space-between;
+    justify-content: center;
     width: 100%;
 }
 
+.title {
+    align-items: center;
+    display: flex;
+    height: 5%;
+    justify-content: center;
+    width: 100%;
+}
 .work-calendar h3 {
     color: black;
+    margin: 0px;
 }
 
-/* Styles for optometrist selector */
-.calendar-selection {
+.form-container {
     align-items: center;
-    align-self: center;
     display: flex;
-    height: 10%;
+    height: 95%;
     justify-content: center;
-    width: 70%;
+    width: 100%;
+}
+.creation-form {
+    width: 70%; /* Adjust the width as needed */
 }
 
-/* Style for day selection */
-.day-selection {
-    align-items: center;
-    align-self: center;
-    display: flex;
-    height: 30%;
-    justify-content: center;
-    width: 70%;
-}
 
-.ant-transfer {
+
+.creation-form .ant-select, .creation-form .ant-transfer {
     justify-content: center;
+    margin-bottom: 16px;
     width: 100%;
 }
 .ant-transfer .ant-transfer-list {

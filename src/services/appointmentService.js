@@ -1,5 +1,5 @@
 import axios from "axios";
-import { GET_APPOINTMENT_DURATION, CREATE_APPOINTMENT } from "../constants/constants";
+import { GET_APPOINTMENTS, GET_APPOINTMENT_DURATION, CREATE_APPOINTMENT, VERIFY_APPOINTMENT } from "../constants/constants";
 
 export const getAppointmentsDuration = async (dia) => {
     const config = {
@@ -16,12 +16,28 @@ export const getAppointmentsDuration = async (dia) => {
 }
 
 
+export const getAppointments = async (date) => {
+    const config = {
+        headers: {
+            "Authorization": localStorage.getItem('token'),
+            "Content-Type": "application/json"
+        }
+    }
+    try {
+        return await axios.get(`${GET_APPOINTMENTS}?fecha=${date}`, config);
+    } catch (error) {
+        throw error;
+    }
+}
+
+
 export const createAppointment = async ({
     fecha,
     hora,
     idpaciente,
     nombre,
-    telefono
+    telefono,
+    correo
 }) => {
     const config = {
         headers: {
@@ -36,37 +52,29 @@ export const createAppointment = async ({
                 hora,
                 idpaciente,
                 nombre,
-                telefono
+                telefono,
+                correo
             }, config);
     } catch (error) {
         throw error;
     }
 }
 
-export const updateQuestion = async ({
-    id,
-    pregunta,
-    respuesta
-}) => {
-    try {
-        const config = {
-            headers: {
-                "Authorization": localStorage.getItem('token'),
-                "Content-Type": "application/json"
-            }
+export const verifyAppointmentDetails = async (query) => {
+    const config = {
+        headers: {
+            "Authorization": localStorage.getItem('token'),
+            "Content-Type": "application/json"
         }
-        return await axios.put(`${GET_APPOINTMENT_DURATION}/${id}`, 
-        {
-            id,
-            pregunta,
-            respuesta
-        }, config);
+    }
+    try {
+        return await axios.get(`${VERIFY_APPOINTMENT}?idpaciente=${query.idpaciente}&codigo=${query.codigo}`, config);
     } catch (error) {
         throw error;
     }
 }
 
-export const deleteQuestion = async (idpregunta) => {
+export const cancelAppointment = async (idpregunta) => {
     console.log(id)
     const id = idpregunta
     try {

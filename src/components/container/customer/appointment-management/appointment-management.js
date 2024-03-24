@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, addMonths, format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Button, Modal  } from 'antd';
-import { getAppointmentsDuration, createAppointment } from '../../../../services/appointmentService';
+import { getAppointmentsDuration, getAppointments, createAppointment } from '../../../../services/appointmentService';
 
 import './appointment-management.css';
 
@@ -20,7 +20,7 @@ export default function AppointmentManagement() {
     }, [])
 
     // HEADER OF THE CALENDAR ***********************************************************
-    const weekDays = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+    const weekDays = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
 
 
@@ -63,22 +63,79 @@ export default function AppointmentManagement() {
 
     // TO DETERMINE WHICH DAY IS THE CURRENT DAY
     const isCurrentDate = (date) => {
-        return format(date, 'yyyy-MM-dd') === format(currentDate, 'yyyy-MM-dd');
+        const currentDate = new Date();
+        return (
+            format(date, 'yyyy-MM-dd') === format(currentDate, 'yyyy-MM-dd') &&
+            format(date, 'MM-yyyy') === format(currentDate, 'MM-yyyy')
+        );
     };
-
-
-
-
-
-
 
     // TO DETERMINE WHAT DAYS DON'T BELONG TO THE CURRENT MONTH
     const isCurrentMonth = (date) => {
         return format(date, 'MM-yyyy') === format(currentDate, 'MM-yyyy');
     };
 
+    // TO DETERMINE IF THE DAY IS SUNDAY
+    const isSunday = (date) => {
+         return format(date, 'EEEE') === 'Sunday'
+    }
+
     const isDisabledDate = (date) => {
-        return !isCurrentMonth(date);
+        const currentDate = new Date();
+        const formattedDate = format(date, 'yyyy-MM-dd');
+        const formattedCurrentDate = format(currentDate, 'yyyy-MM-dd');
+        return (!isCurrentMonth(date) || formattedDate < formattedCurrentDate) || isSunday(date);
+    };
+
+
+
+
+
+
+
+
+
+
+    // TO DETERMINE IF A TIME IS EARLIER THAN CURRENT TIME
+    const isDisabledTime = (time) => {
+        const currentTime = new Date();
+        const currentYear = currentTime.getFullYear();
+        const currentMonth = currentTime.getMonth();
+        const currentDate = currentTime.getDate();
+        const currentHours = currentTime.getHours();
+        const currentMinutes = currentTime.getMinutes();
+        const mockCurrentTime = new Date(2024, 2, 21, 12, 0);
+    
+        // Parse hours and minutes from the time string
+        const [appointmentHours, appointmentMinutes] = time.split(':');
+    
+        // Extract day, month, and year from selectedDate
+        const [day, month, year] = selectedDay.date.split('/');
+    
+        // Create a new Date object for the appointment time
+        const appointmentDateTime = new Date(year, parseInt(month) - 1, parseInt(day), appointmentHours, appointmentMinutes);
+    
+        // Compare the appointment time with the current time
+        if (appointmentDateTime < currentTime || isOccupiedTime(time)) {
+            return true; // Appointment time is earlier than current time or is occupied
+        } else if (appointmentDateTime.getDate() === currentDate && appointmentDateTime.getHours() === currentHours && appointmentDateTime.getMinutes() < currentMinutes) {
+            return true; // Appointment hour is the same as current hour but minutes are earlier
+        } else {
+            return false; // Appointment time is not earlier than current time and is available
+        }
+    };
+
+
+
+
+
+
+    // TO DETERMINE IF THE TIME BLOCK IS OCCUPIED
+    const isOccupiedTime = (time) => {
+        if(appointmentTimes.includes(time))
+            return true
+        else
+            return false
     };
 
 
@@ -90,6 +147,7 @@ export default function AppointmentManagement() {
     const [isDaySelectionModalOpen, setIsDaySelectionModalOpen] = useState(false);
     const [selectedDay, setSelectedDay] = useState(null);
     const [appointments, setAppointments] = useState([]);
+    const [appointmentTimes, setAppointmentTimes] = useState([])
 
     useEffect(() => {
         if (selectedDay !== null) {
@@ -111,6 +169,14 @@ export default function AppointmentManagement() {
             ...selectedDayFormatted,
             dayOfWeek: normalizedDayOfWeek
         });
+
+        getAppointments(selectedDayFormatted.date)
+            .then(times => {
+                setAppointmentTimes(times.data)
+            })
+            .catch(error => {
+                console.error('Error while getting appointments', error)
+            })
     
         // Assuming getAppointmentsDuration is an asynchronous function, await its result
         getAppointmentsDuration(normalizedDayOfWeek)
@@ -159,18 +225,15 @@ export default function AppointmentManagement() {
         const cita = {
             fecha: date,
             hora: time,
-            idpaciente: localStorage.getItem('user').idpaciente,
-            nombre: JSON.parse(localStorage.getItem('user')).nombre + ' ' + JSON.parse(localStorage.getItem('user')).surname,
-            telefono: localStorage.getItem('user').telefono
+            idpaciente: JSON.parse(localStorage.getItem('user')).idpaciente,
+            nombre: JSON.parse(localStorage.getItem('user')).name + ' ' + JSON.parse(localStorage.getItem('user')).surname,
+            telefono: JSON.parse(localStorage.getItem('user')).telefono,
+            correo: JSON.parse(localStorage.getItem('user')).correo
         }
         console.log('cita: ', cita)
         setLoading(true);
         try {
-            // console.log("date: ", date)
-            // console.log("time: ", time)
             const response = await createAppointment(cita); // Call the create function from userService.js
-            //console.log('Response:', response.data);
-            // Handle success if needed
         } catch (error) {
             console.error('Error en la solicitud:', error);
             // Handle error if needed
@@ -230,7 +293,7 @@ export default function AppointmentManagement() {
         <div className='cancel-day' ref={ref}>
             <div className='calendar-action'>
                 <Button onClick={handlePrevMonth} size='large'>Mes anterior</Button>
-                <span>{format(currentDate, 'MMMM yyyy')}</span>
+                <span>{format(currentDate, 'MMMM yyyy', {locale: es})}</span>
                 <Button onClick={handleNextMonth} size='large'>Mes siguiente</Button>
             </div>
             <div className='calendar'>
@@ -268,7 +331,13 @@ export default function AppointmentManagement() {
                 <p className='confirmation'>Elija la hora de su cita.</p>
                 <div className='time-table'>
                     {appointments.map((appointment, index) => (
-                        <div key={index} className='time' onClick={() => showConfirmationModal(appointment)}>
+                        <div 
+                            key={index}
+                            className={
+                                `time ${isDisabledTime(appointment) ? 'disabled-time' : ''}`
+                            }
+                            onClick={() => showConfirmationModal(appointment)}
+                        >
                             <div>{appointment}</div>
                         </div>
                     ))}

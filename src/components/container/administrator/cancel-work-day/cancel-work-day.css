@@ -37,8 +37,9 @@
 
 
 .current-date {
-    background-color: rgb(250, 255, 0, 0.3);
-    color: rgb(160, 25, 26); /* Example text color */
+    background-color: rgb(25, 25, 76);
+    border: 1px solid rgb(255, 255, 255);
+    color: rgb(255, 255, 255); /* Example text color */
 }
 .disabled-date {
     opacity: 0.5; /* Example disabled style */
@@ -61,8 +62,8 @@
 }
 .day:hover {
     background-color: rgb(25, 25, 76);
-    border: 1px solid rgb(250, 255, 0);
-    color: rgb(250, 255, 0);
+    border: 1px solid rgb(0, 255, 0);
+    color: rgb(0, 255, 0);
     cursor: pointer;
 }
 

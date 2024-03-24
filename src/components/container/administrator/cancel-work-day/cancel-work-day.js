@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, addMonths, format } from 'date-fns';
+import { addDays, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, addMonths, format } from 'date-fns';
+import { es } from 'date-fns/locale';
 import { Button, Modal  } from 'antd';
 
 import './cancel-work-day.css';
@@ -62,22 +63,28 @@ export default function CancelWorkDay() {
 
     // TO DETERMINE WHICH DAY IS THE CURRENT DAY
     const isCurrentDate = (date) => {
-        return format(date, 'yyyy-MM-dd') === format(currentDate, 'yyyy-MM-dd');
+        const currentDate = new Date();
+        return (
+            format(date, 'yyyy-MM-dd') === format(currentDate, 'yyyy-MM-dd') &&
+            format(date, 'MM-yyyy') === format(currentDate, 'MM-yyyy')
+        );
     };
-
-
-
-
-
-
 
     // TO DETERMINE WHAT DAYS DON'T BELONG TO THE CURRENT MONTH
     const isCurrentMonth = (date) => {
         return format(date, 'MM-yyyy') === format(currentDate, 'MM-yyyy');
     };
 
+    // TO DETERMINE IF THE DAY IS SUNDAY
+    const isSunday = (date) => {
+        return format(date, 'EEEE') === 'Sunday'
+    }
+
     const isDisabledDate = (date) => {
-        return !isCurrentMonth(date);
+        const allowedDate = addDays(new Date(), 2)
+        const formattedDate = format(date, 'yyyy-MM-dd');
+        const formattedCurrentDate = format(allowedDate, 'yyyy-MM-dd');
+        return (!isCurrentMonth(date) || formattedDate < formattedCurrentDate) || isSunday(date);
     };
 
 
@@ -135,7 +142,7 @@ export default function CancelWorkDay() {
         <div className='cancel-day' ref={ref}>
             <div className='calendar-action'>
                 <Button onClick={handlePrevMonth} size='large'>Mes anterior</Button>
-                <span>{format(currentDate, 'MMMM yyyy')}</span>
+                <span>{format(currentDate, 'MMMM yyyy', {locale: es})}</span>
                 <Button onClick={handleNextMonth} size='large'>Mes siguiente</Button>
             </div>
             <div className='calendar'>

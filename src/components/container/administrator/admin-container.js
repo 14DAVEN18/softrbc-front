@@ -76,10 +76,6 @@ export default function Admin() {
             ref={ref}
         >
             <div className='header'>
-                <div className='profile-pic'>
-                    <Avatar size={64} src={image} />
-                    
-                </div>
                 <div className='employee-data'>
                     <div>{user?.name} {user?.surname}</div>
                 </div>
