@@ -5,6 +5,7 @@ import { Button, Modal  } from 'antd';
 import { getAppointmentsDuration, getAppointments, createAppointment } from '../../../../services/appointmentService';
 
 import './appointment-management.css';
+import { useNavigate } from 'react-router-dom';
 
 export default function AppointmentManagement() {
 
@@ -13,6 +14,7 @@ export default function AppointmentManagement() {
     const [width, setWidth] = useState(0);
 
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate()
 
     useEffect(() => {
         setHeight(ref.current.offsetHeight);
@@ -238,6 +240,7 @@ export default function AppointmentManagement() {
             console.error('Error en la solicitud:', error);
             // Handle error if needed
         } finally {
+            navigate('/cliente/preguntas')
             setLoading(false);
             // Handle modal state changes here if needed
         }

@@ -13,8 +13,10 @@
     "date-fns": "^3.3.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-redux": "^9.1.0",
     "react-router-dom": "^6.21.1",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
+    "redux": "^5.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -22,7 +24,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "setup": "npm install && npm install antd && npm install react-router-dom && npm install date-fns"
+    "setup": "npm install && npm install antd && npm install react-router-dom && npm install date-fns && npm install react-redux redux"
   },
   "eslintConfig": {
     "extends": [

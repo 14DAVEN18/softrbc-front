@@ -1,15 +1,38 @@
+// React imports
 import { useEffect, useRef, useState} from 'react';
 import { useNavigate } from "react-router-dom";
 
+// External components / libraries
 import { Button } from 'antd';
+import { connect } from 'react-redux';
 
+// Self created comopnents
+import Login from '../login/login';
+
+// Self created services
+import { getQuestions } from '../../../../services/faqService';
+import { cancelAppointment, verifyAppointmentDetails } from '../../../../services/appointmentService';
+import { addMessage, resetMessage, setDisplayLogin, setDecisionTree, setCurrentLevel, setNewInput } from './redux/chatbotActions';
+
+
+// Styles
 import './chatbot.css';
 
-import Login from '../login/login';
-import { getQuestions } from '../../../../services/faqService';
-import { verifyAppointmentDetails } from '../../../../services/appointmentService';
 
-export default function Chatbot()  {
+
+function Chatbot({
+    messages,
+    displayLogin,
+    decisionTree,
+    currentLevel,
+    input,
+    addMessage,
+    resetMessage,
+    setDisplayLogin,
+    setDecisionTree,
+    setCurrentLevel,
+    setNewInput
+})  {
 
     const navigate = useNavigate();
 
@@ -17,18 +40,10 @@ export default function Chatbot()  {
     const messageBoxRef = useRef(null);
 
     const regex = /^[Oo][Pp]\d+$/
-    const [message, setMessage] = useState('')
 
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
-    const [messages, setMessages] = useState([
-        { text: 'Bienvenido al Palacio de las Gafas. Digite el número de opción que corresponda para navegar.', sender: 'bot' },
-        { text: 'Puede digitar 0 en cualquier momento si desea retornar al menú principal.', sender: 'bot' },
-        { text: '¿En qué podemos ayudarle?', sender: 'bot' },
-        { text: '1. Preguntas frecuentes', sender: 'bot' },
-        { text: '2. Citas de optometría', sender: 'bot' }
-    ]);
-    const [displayLogin, setDisplayLogin] = useState(false);
+    const [inputValue, setInputValue] = useState('');
 
     useEffect(() => {
         setHeight(ref.current.offsetHeight);
@@ -45,7 +60,6 @@ export default function Chatbot()  {
 
 
     // TO FETCH QUESTIONS DATA WHEN COMPONENT IS LOADED FOR THE FIRST TIME ***********************************************************
-    const [decisionTree, setDecisionTree] = useState(null)
     
 
     // Fetch questions data and construct decision tree
@@ -93,14 +107,15 @@ export default function Chatbot()  {
                                         }
                                         try {
                                             const response = await verifyAppointmentDetails(query)
-                                            console.log("detalles: ", response.data)
-                                            setMessages(prevMessages => [...prevMessages, { text: `Estimado(a) ${response.data.nombre}, estos son los detalles de su cita:` , sender: 'bot'}])
-                                            setMessages(prevMessages => [...prevMessages, { text: `Fecha: ${response.data.fecha}`, sender: 'bot' }])
-                                            setMessages(prevMessages => [...prevMessages, { text: `Hora : ${response.data.hora}`, sender: 'bot' }])
-                                            setMessages(prevMessages => [...prevMessages, { text: '0. Menú principal '}])
-                                            setMessage('')
+                                            console.log("Estimado usuario. los detalles son los siguientes: ", response.data)
+                                            addMessage({ text: 'Estimado usuario. los detalles son los siguientes:'})
+                                            addMessage({ text: `Fecha: ${response.data.fecha}`, sender: 'bot' })
+                                            addMessage({ text: `Hora : ${response.data.hora}`, sender: 'bot' })
+                                            addMessage({ text: '0. Menú principal '})
+                                            setNewInput(null)
+                                            setCurrentLevel(decisionTree)
                                         } catch (error) {
-                                            setMessages(prevMessages => [...prevMessages, { text: error.response.data , sender: 'bot'}])
+                                            addMessage({ text: error.response.data , sender: 'bot'})
                                             console.error(error)
                                         }
                                         
@@ -113,18 +128,13 @@ export default function Chatbot()  {
                                 options: {
                                     text: 'Por favor ingrese el código de la cita',
                                     code: async (userMessage) => {
-                                        const query = {
-                                            idpaciente: JSON.parse(localStorage.getItem('user')).idpaciente,
-                                            codigo: userMessage
-                                        }
                                         try {
-                                            const response = await verifyAppointmentDetails(query)
+                                            const response = await cancelAppointment(userMessage)
                                             console.log("detalles: ", response.data)
-                                            setMessages(prevMessages => [...prevMessages, { text: `Estimado(a) ${response.data.nombre}, estos son los detalles de su cita:` , sender: 'bot'}])
-                                            setMessages(prevMessages => [...prevMessages, { text: `Fecha: ${response.data.fecha}`, sender: 'bot' }])
-                                            setMessages(prevMessages => [...prevMessages, { text: `Hora : ${response.data.hora}`, sender: 'bot' }])
-                                            setMessages(prevMessages => [...prevMessages, { text: '0. Menú principal '}])
-                                            setMessage('')
+                                            addMessage({ text: response.data, sender: 'bot'})
+                                            addMessage({ text: '0. Menú principal '})
+                                            setNewInput(null)
+                                            setCurrentLevel(decisionTree)
                                         } catch (error) {
                                             console.error(error)
                                         }
@@ -135,7 +145,7 @@ export default function Chatbot()  {
                         }
                     }
                 };
-
+                console.log("initialDecisionTree: ", initialDecisionTree)
                 
                 // Set questionsData and decisionTree state
                 setCurrentLevel(initialDecisionTree)
@@ -151,40 +161,30 @@ export default function Chatbot()  {
 
 
 
-
-
-
-    const [currentLevel, setCurrentLevel] = useState(decisionTree)
     
 
     const handleLogin = () => {
         setDisplayLogin(false);
 
-        if(message === '1') {
-            setMessages(prevMessages => [...prevMessages, { text: `Ha iniciado sesión correctamente. En breve será redirigido a la página de agendamiento.`, sender: 'bot' }]);
+        if(input === '1') {
+            addMessage({ text: `Ha iniciado sesión correctamente. En breve será redirigido a la página de agendamiento.`, sender: 'bot' });
+            setNewInput(null)
+            setCurrentLevel(decisionTree)
             setTimeout(() => {
+                resetMessage()
                 navigate('/cliente/agendamiento')
-            }, 5000)
-        } else if(message === '2') {
-            setMessages(prevMessages => [...prevMessages, { text: `Ha iniciado sesión correctamente.`, sender: 'bot' }]);
-            setMessages(prevMessages => [...prevMessages, { text: `Por favor digite el número de cita dado en el agendamiento.`, sender: 'bot' }]);
-            setTimeout(() => {
-                setCurrentLevel(currentLevel[message].options)
-                setCurrentLevel(currentLevel[message].options)
-                console.log("currentLevel[message]: ", currentLevel[message])
-            }, 5000)
+            })
+        } else if(input === '2') {
+            addMessage({ text: `Ha iniciado sesión correctamente.`, sender: 'bot' });
+            addMessage({ text: `Por favor digite el número de cita que quiere verificar.`, sender: 'bot' });
+            setCurrentLevel(currentLevel[input].options)
         } else {
-            setMessages(prevMessages => [...prevMessages, { text: `Ha iniciado sesión correctamente.`, sender: 'bot' }]);
-            setMessages(prevMessages => [...prevMessages, { text: `Por favor digite el número de cita dado en el agendamiento.`, sender: 'bot' }]);
-            setTimeout(() => {
-                setCurrentLevel(currentLevel[message].options)
-                setCurrentLevel(currentLevel[message].options)
-                console.log("currentLevel[message]: ", currentLevel[message])
-            }, 5000)
+            addMessage({ text: `Ha iniciado sesión correctamente.`, sender: 'bot' });
+            addMessage({ text: `Por favor digite el número de cita que quiere cancelar.`, sender: 'bot' });
+            setCurrentLevel(currentLevel[input].options)
         }
-        setMessage('')
+        setNewInput(null)
     };
-
 
 
 
@@ -192,102 +192,96 @@ export default function Chatbot()  {
 
 
     const handleUserInput = async (option) => {
-
+        addMessage({ text: option, sender: 'user'})
         if (option === '0') {
-            
-            setCurrentLevel(decisionTree)
-            setMessages([
-                { text: 'Bienvenido al Palacio de las Gafas. Digite el número de opción que corresponda para navegar.', sender: 'bot' },
-                { text: 'Puede digitar 0 en cualquier momento si desea retornar al menú principal.', sender: 'bot' },
-                { text: '¿En qué podemos ayudarle?', sender: 'bot' },
-                { text: '1. Preguntas frecuentes', sender: 'bot' },
-                { text: '2. Citas de optometría', sender: 'bot' }
-            ]);
-            setMessage('')
+            setCurrentLevel(decisionTree);
+            resetMessage();
         } else {
-            const userMessage = `${option}`;
-            setMessage(option)
-            setTimeout(() =>{
-                console.log("TO message: ", message)
-            }, 10000)
-            console.log("message: ", message)
-            
-            
-            setMessages(prevMessages => [...prevMessages, { text: userMessage, sender: 'user' }]);
-            if (regex.test(option)) {
-                console.log("currentLevel: ", currentLevel)
-                if(typeof currentLevel.code === 'function') {
-                    currentLevel.code(userMessage);
-                }
-            } else {
-                if (currentLevel.hasOwnProperty(option)) {                    
-                    console.log("currentLevel: ", currentLevel)
-                    const selectedOption = currentLevel[option];
-                    console.log("selectedOption: ", selectedOption)
-                
-                    if (selectedOption.hasOwnProperty('pregunta')) {
-    
-                        setMessages(prevMessages => [...prevMessages, { text: selectedOption.pregunta, sender: 'bot' }])
-                        setMessages(prevMessages => [...prevMessages, { text: selectedOption.respuesta, sender: 'bot' }])
-                        setMessages(prevMessages => [...prevMessages, { text: '0. Menú principal '}])
-    
+            // To check if the provided option exists in the currentLevel
+            if (currentLevel.hasOwnProperty(option)) {
+                // The provided option exists, now check if the option requires Auth
+                if (currentLevel[option].hasOwnProperty('authRequired')) {
+                    setNewInput(option)
+                    addMessage({text: currentLevel[option].text, sender: 'bot'})
+                    let selectedOption = currentLevel[option]
+                    // This options required Auth, now check if the user is authenticated
+                    if (localStorage.getItem('token')) {
+                        // The user is authenticated, now check if the user wants to schedule an appointment or not.
+                        if(selectedOption.hasOwnProperty('action')) {
+                            // The user wants to schedule an appointment
+                            selectedOption.action()
+                        } else {
+                            // The user wants to verify or cancel an appointment
+                            selectedOption = selectedOption.options
+                            setCurrentLevel(selectedOption)
+                            addMessage({ text: selectedOption.text, sender: 'bot'})
+                        }
                     } else {
-                        setMessages(prevMessages => [...prevMessages, { text: selectedOption.text, sender: 'bot' }])
-                    }
-                    // Check if the selected option requires authentication
-                    if (selectedOption.authRequired && !localStorage.getItem("token")) {
-
-                        setMessages(prevMessages => [...prevMessages, { text: 'Para gestionar citas de optometría debe primero iniciar sesión.', sender: 'bot' }]);
-                        setMessages(prevMessages => [...prevMessages, { text: 'En unos segundos el sistema le pedirá sus credenciales de inicio de sesión.', sender: 'bot' }]);
-                        
-                        setTimeout(() => {
-                            // No hace nada
-                        }, 5000)
-    
-                        let countDown = 6;
+                        // The user is NOT authenticade, now check if the user wants to schedule an appointment or not.
+                        addMessage({ text: 'Para gestionar citas de optometría debe primero iniciar sesión.', sender: 'bot' });
+                        addMessage({ text: 'En unos segundos el sistema le pedirá sus credenciales de inicio de sesión.', sender: 'bot' });
+                           
+                        let countDown = 5;
                         const countDownInterval = setInterval(() => {
-                            if (countDown === 1) {
+                            if (countDown === 0) {
                                 clearInterval(countDownInterval)
                                 setDisplayLogin(true)
                             } else {
-                                setMessages(prevMessages => [...prevMessages, { text: `${countDown} segundo(s)`, sender: 'bot' }]);
+                                addMessage({ text: `${countDown} segundo(s)`, sender: 'bot' });
                                 countDown--;
                             }
                         }, 1000)
-    
-                    } else if (selectedOption.authRequired && localStorage.getItem('token')) {
-                        handleLogin()
-                    } else if (selectedOption.hasOwnProperty('options')) {
-                        console.log("selectedOption.options:", selectedOption.options)
-                        if (selectedOption.options) {
-    
-                            const optionsTexts = Object.keys(selectedOption.options).map(key => {
-                                if(selectedOption.options[key].hasOwnProperty('pregunta'))
-                                    return { text: `${key}. ${selectedOption.options[key].pregunta}`, sender: 'bot' }
-                                else 
-                                    return { text: `${key}. ${selectedOption.options[key].text}`, sender: 'bot' }
-                            });
-    
-                            setMessages(prevMessages => [...prevMessages, ...optionsTexts]);
-                            setCurrentLevel(selectedOption.options)
-                            setCurrentLevel(selectedOption.options)
-                            console.log("currentLevel: ", currentLevel)
-                        } else
-                            console.error('selectedOption.options is not available');
-    
-                    } else if (selectedOption.hasOwnProperty('action'))
-                        selectedOption.action();
-                } else
-                    setMessages(prevMessages => [...prevMessages, { text: 'Opción inválida. Por favor intente de nuevo.', sender: 'bot' }]);   
-            }
+                    }
+                } else {
+                    // this option doesn't require Auth, now check if the option has 'options' property
+                    if (currentLevel[option].hasOwnProperty('options')) {
+                        // The provided option has the 'options' property
+                        const selectedOption = currentLevel[option].options
+                        addMessage({ text: currentLevel[option].text, sender: 'bot'})
+                        const optionsTexts = Object.keys(selectedOption).map(key => {
+                            if(selectedOption[key].hasOwnProperty('pregunta'))
+                                return { text: `${key}. ${selectedOption[key].pregunta}`, sender: 'bot' }
+                            else if (selectedOption[key].hasOwnProperty('text'))
+                                return { text: `${key}. ${selectedOption[key].text}`, sender: 'bot' }
+                        });
+                        optionsTexts.forEach(message => {
+                            addMessage(message)
+                        })
+                        setCurrentLevel(selectedOption)
+                    } else {
+                        // The provided option doesn't have the 'options' property
+                        addMessage({text: currentLevel[option].pregunta, sender: 'bot'})
+                        addMessage({text: currentLevel[option].respuesta, sender: 'bot'})
+                    }
+                }
+            } else if (regex.test(option)) {
+                if (currentLevel.hasOwnProperty('code'))
+                    currentLevel.code(option)
+            } else
+                addMessage({ text: 'Opción inválida. Por favor escriba una de las opcines dadas.', sender: 'bot'});
         }
-        setMessage('')
-    };
+    }
+
+
+
+
     
 
+    // TO HANDLE OTIONS SUBMISSION
+    const handleSendMessage = () => {
+        const option = inputValue.trim();
+        if (option) {
+            handleUserInput(option);
+            setInputValue('');
+        }
+    }
 
-
-
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            handleSendMessage();
+        }
+    }
 
     return (
         <div className='chat-container' ref={ref}>
@@ -306,21 +300,47 @@ export default function Chatbot()  {
                         ) : (
                             <>
                                 { displayLogin && <Login onLogin={() => handleLogin()} /> }
-                                </>
+                            </>
                         )
                     }
                 </div>
                 
                 
                 <div className='text-box'>
-                    <input disabled={displayLogin} type="text" id="option" name="option" autoComplete='off' placeholder='Clic aqui. Digite el número que corresponda con la opción dada.'/>
-                    <Button disabled={displayLogin} onClick={() => {
-                        const option = document.getElementById('option').value.trim();
-                        handleUserInput(option);
-                        document.getElementById('option').value = '';
-                    }}>Enviar</Button>
+                    <input 
+                        disabled={displayLogin}
+                        type="text"
+                        id="option"
+                        name="option"
+                        autoComplete='off'
+                        placeholder='Digite el número que corresponda con la opción dada.'
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                    />
+                    <Button disabled={displayLogin || !inputValue.trim()}
+                        onClick={handleSendMessage}>Enviar</Button>
                 </div>
             </div>
         </div>
     );
 }
+
+const mapStateToProps = (state) => ({
+    messages: state.messages,
+    displayLogin: state.displayLogin,
+    decisionTree: state.decisionTree,
+    currentLevel: state.currentLevel,
+    input: state.input
+})
+
+const mapDispatchToProps = (dispatch) => ({
+    addMessage: (message) => dispatch(addMessage(message)),
+    resetMessage: () => dispatch(resetMessage()),
+    setDisplayLogin: (display) => dispatch(setDisplayLogin(display)),
+    setDecisionTree: (tree) => dispatch(setDecisionTree(tree)),
+    setCurrentLevel: (level) => dispatch(setCurrentLevel(level)),
+    setNewInput: (input) => dispatch(setNewInput(input))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Chatbot)

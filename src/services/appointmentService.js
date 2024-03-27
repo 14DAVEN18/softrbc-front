@@ -1,5 +1,5 @@
 import axios from "axios";
-import { GET_APPOINTMENTS, GET_APPOINTMENT_DURATION, CREATE_APPOINTMENT, VERIFY_APPOINTMENT } from "../constants/constants";
+import { GET_APPOINTMENTS, GET_APPOINTMENT_DURATION, CREATE_APPOINTMENT, VERIFY_APPOINTMENT, DELETE_APPOINTMENT } from "../constants/constants";
 
 export const getAppointmentsDuration = async (dia) => {
     const config = {
@@ -74,9 +74,8 @@ export const verifyAppointmentDetails = async (query) => {
     }
 }
 
-export const cancelAppointment = async (idpregunta) => {
-    console.log(id)
-    const id = idpregunta
+export const cancelAppointment = async (codigo) => {
+    
     try {
         const config = {
             headers: {
@@ -84,7 +83,7 @@ export const cancelAppointment = async (idpregunta) => {
                 "Content-Type": "application/json"
             }
         }
-        return await axios.delete(`${GET_APPOINTMENT_DURATION}/${id}`, config);
+        return await axios.delete(`${DELETE_APPOINTMENT}/${codigo}`, config);
     } catch (error) {
         throw error;
     }

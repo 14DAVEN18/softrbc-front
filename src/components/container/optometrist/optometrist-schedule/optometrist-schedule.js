@@ -1,14 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, Form, Input, InputNumber, Modal, Space, Table } from 'antd';
-import { UserOutlined, MailOutlined, PhoneOutlined, LockOutlined, IdcardOutlined } from '@ant-design/icons';
+import { Button, Form, Input, Space, Table, Tabs } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 
-import axios from "axios";
-import { CREATE_USER } from '../../../../constants/constants';
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-// import './optometrist-management.css';
+import './optometrist-schedule.css';
 
-// import { data } from './data';
+import { appointments } from './appointmentData';
 
 export default function OptometristSchedule() {
 
@@ -23,71 +21,103 @@ export default function OptometristSchedule() {
         setWidth(ref.current.offsetWidth);
     }, [])
 
+
+
+
+
+    // TO FILTER NAMES IN THE TABLE ***********************************************************
+    const [searchText, setSearchText] = useState('');
+    const [filteredData, setFilteredData] = useState([]);
+
+    useEffect(() => {
+        setTimeout(() => {
+            const filtered = appointments
+            ? appointments.filter(appointment =>
+                appointment.nombre.toLowerCase().includes(searchText.toLowerCase())
+            ): [];
+            setFilteredData(filtered);
+        },500)
+    }, [searchText, appointments])
+
+    const search = (values) => {
+        console.log('Received values from form: ', values);
+    };
+
+
+
+
+    // TO MAANGE PATIENT'S INFO
+    const [patient, setPatient] = useState(null)
+
+
     const onFinish = (values) => {
-        /*try {
-            axios.post (
-                CREATE_USER,
-                {
-                    values
-                },
-                {
-                    headers: 
-                    {
-                        'Content-Type': 'application/json',
-                        withCredentials: true,
-                        key: 1,
-                        email: values.email,
-                        username: values.username,
-                        password: values.password
-                    }
-                })
-                .then(({data}) => 
-                {
-                    localStorage.setItem("message" , data.message)
-                    if (data.created) {
-                        navigation("/login");
-                    } 
-                })
-                .catch(error => {
-                    console.log(error);
-                })
-        } catch (error) {
-            console.log(error);
-        }*/
         console.log("El boton de crear optometra: ", JSON.stringify(values) )
     };
     /*
                 End of form controls
                                                 */
 
+    // TO DEFINE TABLES FOR COLUMNS
     const columns = [
         {
             title: 'Hora',
             key: 'time',
-            index: 'hora'
+            render: (_, record) => (
+                record.hora
+            )
         },
         {
             title: 'Nombre del paciente',
+            key: 'nombre',
+            render: (_, record) => (
+                record.nombre
+            )
+        },
+        {
+            title: 'Acciones',
             key: 'action',
-            index: 'nombre_paciente'
+            render: (_, record) => (
+            <Space size="middle">
+                <Button type="primary" onClick={() => setPatient(true)} htmlType='submit'>
+                    Iniciar consulta
+                </Button>
+            </Space>
+            ),
         },
     ];
 
     return (
         /* div optometrist-schedule contains the whole screen in which thd component is displayed */
-        <div className="optometrist-container" ref={ref}>
+        <div className="optometrist-schedule" ref={ref}>
             
-            <div className=''>
-                
+            <div className='search-form'>
+                <Form name="search" layout="inline" onFinish={search}>
+                    <Form.Item name="search-input">
+                        <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Nombre del paciente" onChange={e => setSearchText(e.target.value)}/>
+                    </Form.Item>
+                </Form>
             </div>
 
-            <div className='create'>
-                
-            </div>
-
-            <div className='employee-table'>
-                
-            </div>
+            {!!patient &&
+                <div className='patient-info'>
+                    <div className='tab-header'>
+                        <div></div>
+                    </div>
+                    <div className='tab-content'></div>
+                </div>
+            }
+            {!patient &&
+                <div className='appointment-table'>
+                    <Table
+                        columns={columns}
+                        dataSource={
+                            filteredData.map(appointment => ({
+                                ...appointment,
+                                key: appointment.id
+                            }))} scroll={{y: 600}} pagination={false}/>
+                </div>
+            }
+            
         </div>
     );
 }

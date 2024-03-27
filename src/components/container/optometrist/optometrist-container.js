@@ -51,9 +51,12 @@ export default function Optometrist() {
         setHeight(ref.current.offsetHeight);
         setWidth(ref.current.offsetWidth);
         setUser(JSON.parse(localStorage.getItem('user')));
-        /*if(localStorage.getItem("user_id") === null)
-            navigation("/login")*/
     }, [])
+
+
+
+
+
 
     return (
         <div 
@@ -62,10 +65,6 @@ export default function Optometrist() {
             ref={ref}
         >
             <div className='opt-header'>
-                <div className='profile-pic'>
-                    <Avatar size={64} src={image} />
-                    
-                </div>
                 <div className='employee-data'>
                     <div>{user?.name} {user?.surname}</div>
                 </div>

@@ -1,0 +1,59 @@
+/* Style for the selected content */
+.optometrist-schedule {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: center;
+    width: 100%;
+}
+
+/* Styles for the search bar */
+.search-form {
+    align-items: center;
+    /*background-color: rgb(109, 111, 114);*/
+    display: flex;
+    flex-direction: row;
+    height: 10%;
+    justify-content: center;
+    width: 100%;
+}
+
+.patient-info {
+    height: 100%;
+    width: 80%
+}
+.tab-header {
+    border: 1px solid black;
+    height: 5%;
+    width: 100%;
+}
+.tab-content {
+    border: 1px solid black;
+    height: 85%;
+    width: 100%;
+}
+
+/* Styles for create button */
+.modal {
+    align-items: flex-start;
+    align-self: center;
+    display: flex;
+    height: 5%;
+    width: 80%;
+}
+
+/* Styles for table */
+.appointment-table {
+    align-self: center;
+    height: 85%;
+    width: 80%;
+}
+
+.ant-spin-container {
+    box-shadow: 0px 0px 15px rgb(50, 50, 50, 0.5);
+}
+
+.confirmation {
+    color: black;
+}

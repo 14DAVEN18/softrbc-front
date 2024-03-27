@@ -4,7 +4,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## How to start the project
 
-Clone this repository in your computer in a location of your preference, then via CMD access the folder you just cloned. In order for the project to work, you need to install the some library dependencies, some of them are: devDependencies, antd, react-router-dom and date-fns. You can install them with the following command:
+Clone this repository in your computer in a location of your preference, then via CMD access the folder you just cloned. In order for the project to work, you need to install the some library dependencies, some of them are: devDependencies, antd, react-router-dom, date-fns and react-redux. You can install them with the following command:
 
 ### 1. `npm run setup`
 
