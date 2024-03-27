@@ -23,7 +23,7 @@ export const createCalendar = async (idoptometra, diasatencion, duracioncita) =>
     }
 }
 
-export const cancelWorkDay = async (day) => {
+export const cancelWorkDay = async (fecha) => {
     try {
         const config = {
             headers: {
@@ -31,7 +31,7 @@ export const cancelWorkDay = async (day) => {
                 "Content-Type": "application/json"
             }
         }
-        return await axios.delete(`${CANCEL_DAY}`, day, config);
+        return await axios.get(`${CANCEL_DAY}/?fecha=${fecha}`, config);
     } catch (error) {
         throw error;
     }

@@ -18,7 +18,6 @@ export const CREATE_PATIENT = "http://localhost:8080/paciente/nueva"
 
 // CALENDAR RELATED URLs
 export const CREATE_CALENDAR = 'http://localhost:8080/calendario/nueva'
-export const CANCEL_DAY = 'http://localhost:8080/'
 export const GET_APPOINTMENT_DURATION = 'http://localhost:8080/calendario/duracioncita'
 
 
@@ -34,6 +33,7 @@ export const GET_APPOINTMENTS = 'http://localhost:8080/cita/lista' // Param
 export const CREATE_APPOINTMENT = 'http://localhost:8080/cita/nueva'
 export const VERIFY_APPOINTMENT = 'http://localhost:8080/cita/verificarCodigo' // Param
 export const DELETE_APPOINTMENT = 'http://localhost:8080/cita/eliminar' // Path
+export const CANCEL_DAY = 'http://localhost:8080/cita/exportPDF'
 
 
 

@@ -101,7 +101,9 @@ export default function OptometristSchedule() {
             {!!patient &&
                 <div className='patient-info'>
                     <div className='tab-header'>
-                        <div></div>
+                        <div className='tab'>Datos Personales</div>
+                        <div className='tab'>Historía clínica</div>
+                        <div className='tab'>Formula Clínica</div>
                     </div>
                     <div className='tab-content'></div>
                 </div>

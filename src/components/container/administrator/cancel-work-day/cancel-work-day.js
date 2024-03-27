@@ -108,10 +108,11 @@ export default function CancelWorkDay() {
     
     // {format(selectedDay, 'dd/MM/yyyy')}
     const cancelDay = async () => {
+        console.log(selectedDay)
         setLoading(true);
         try {
             const response = await cancelWorkDay(selectedDay); // Call the create function from userService.js
-            //console.log('Response:', response.data);
+            console.log('Response:', response.data);
             // Handle success if needed
         } catch (error) {
             console.error('Error en la solicitud:', error);
