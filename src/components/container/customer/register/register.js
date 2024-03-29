@@ -99,7 +99,8 @@ export default function Register() {
                             ocupacion: values.ocupacion,
                             fechanacimiento: values.fechanacimiento,
                             genero: values.genero,
-                            nombreacompañante: values.nombreacompañante
+                            nombreacompañante: values.nombreacompañante,
+                            aceptarterminos: values.aceptarterminos
                         }
                     }
                 ); // Call the create function from userService.js

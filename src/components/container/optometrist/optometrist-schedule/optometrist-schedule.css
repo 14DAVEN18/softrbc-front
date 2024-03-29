@@ -20,18 +20,61 @@
 }
 
 .patient-info {
-    height: 100%;
-    width: 80%
+    height: 95%;
+    margin-top: 5%;
+    width: 80%;
 }
 .tab-header {
-    border: 1px solid black;
+    display: flex;
+    flex-direction: row;
     height: 5%;
+    position: relative;
     width: 100%;
 }
 .tab-content {
-    border: 1px solid black;
+    align-items: center;
+    border-bottom: 1px solid black;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    border-top: 1px solid black;
+    box-shadow: 0px 0px 10px 10px rgb(58, 58, 72);
+    display: flex;
     height: 85%;
+    justify-content: center;
+    left: 0;
+    position: relative;
+    right: 0;
+    top: -1px;
     width: 100%;
+    z-index: 0;
+    overflow-y: scroll;
+}
+.tab {
+    align-items: center;
+    background-color: rgb(166, 166, 166);
+    border-bottom: 1px solid black;
+    border-left: 1px solid black;
+    border-top: 1px solid black;
+    border-right: 1px solid black;
+    border-radius: 10px 30px 0 0;
+    cursor: pointer;
+    display: flex;
+    font-size: 1.3em;
+    height: 100%;
+    justify-content: center;
+    margin-right: 5px;
+    position: relative;
+    width: 200px;
+    z-index: 1;
+}
+.active {
+    background-color: rgb(255, 255, 255);
+    color: rgb(160, 25, 26);
+    font-weight: bold;
+    border-bottom: none;
+    border-left: 1px solid black;
+    border-top: 1px solid black;
+    border-right: 1px solid black;
 }
 
 /* Styles for create button */

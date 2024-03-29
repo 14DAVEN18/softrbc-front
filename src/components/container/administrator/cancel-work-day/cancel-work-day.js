@@ -2,6 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { addDays, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, addMonths, format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Button, Modal  } from 'antd';
+import { saveAs } from 'file-saver';
+import download from 'downloadjs';
+
 
 import './cancel-work-day.css';
 
@@ -106,13 +109,30 @@ export default function CancelWorkDay() {
         
     };  
     
+    const [pdf, setPDF] = useState(null)
     // {format(selectedDay, 'dd/MM/yyyy')}
     const cancelDay = async () => {
         console.log(selectedDay)
         setLoading(true);
         try {
             const response = await cancelWorkDay(selectedDay); // Call the create function from userService.js
-            console.log('Response:', response.data);
+            console.log('Response:', response);
+            if (response.headers['content-type'] === 'application/pdf') {
+
+                const blob = new Blob([response.data], { type: 'application/pdf' });
+                setPDF(blob)
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'document.pdf');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                // Handle non-PDF response
+                console.error('Response is not a PDF:', response);
+                // Handle error if needed
+            }
             // Handle success if needed
         } catch (error) {
             console.error('Error en la solicitud:', error);
@@ -169,6 +189,7 @@ export default function CancelWorkDay() {
                         ))}
                     </div>
                 ))}
+                {pdf}
             </div>
 
             <Modal title="Cancelar dia laboral" centered open={isCancelationModalOpen} onCancel={statusCancelationModalCancel} footer=

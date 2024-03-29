@@ -240,8 +240,8 @@ export default function AppointmentManagement() {
             console.error('Error en la solicitud:', error);
             // Handle error if needed
         } finally {
-            navigate('/cliente/preguntas')
             setLoading(false);
+            navigate('/cliente/preguntas')
             // Handle modal state changes here if needed
         }
         

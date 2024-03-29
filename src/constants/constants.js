@@ -15,6 +15,7 @@ export const UPDATE_USER_STATUS = 'http://localhost:8080/usuarios/cambiarEstado'
 
 // PATIENT RELATED URLs
 export const CREATE_PATIENT = "http://localhost:8080/paciente/nueva"
+export const GET_PATIENT_BY_ID = 'http://localhost:8080//pacienteEncontrado/'
 
 // CALENDAR RELATED URLs
 export const CREATE_CALENDAR = 'http://localhost:8080/calendario/nueva'
@@ -29,11 +30,12 @@ export const DELETE_QUESTION = 'http://localhost:8080/preguntas/eliminar'
 
 
 // APPOINTMENT RELATED URLs
-export const GET_APPOINTMENTS = 'http://localhost:8080/cita/lista' // Param
+export const GET_APPOINTMENTS_TIME = 'http://localhost:8080/cita/lista' // Param Retorna solo horas por fecha
+export const GET_APPOINTMENTS = 'http://localhost:8080/cita/listacitas' // Param Retorna un array de listas completas
 export const CREATE_APPOINTMENT = 'http://localhost:8080/cita/nueva'
 export const VERIFY_APPOINTMENT = 'http://localhost:8080/cita/verificarCodigo' // Param
 export const DELETE_APPOINTMENT = 'http://localhost:8080/cita/eliminar' // Path
-export const CANCEL_DAY = 'http://localhost:8080/cita/exportPDF'
+export const CANCEL_DAY = 'http://localhost:8080/cita/export/pdf' // Param
 
 
 

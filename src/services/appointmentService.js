@@ -1,5 +1,5 @@
 import axios from "axios";
-import { GET_APPOINTMENTS, GET_APPOINTMENT_DURATION, CREATE_APPOINTMENT, VERIFY_APPOINTMENT, DELETE_APPOINTMENT } from "../constants/constants";
+import { GET_APPOINTMENTS_TIME, GET_APPOINTMENTS, GET_APPOINTMENT_DURATION, CREATE_APPOINTMENT, VERIFY_APPOINTMENT, DELETE_APPOINTMENT } from "../constants/constants";
 
 export const getAppointmentsDuration = async (dia) => {
     const config = {
@@ -25,6 +25,21 @@ export const getAppointments = async (date) => {
     }
     try {
         return await axios.get(`${GET_APPOINTMENTS}?fecha=${date}`, config);
+    } catch (error) {
+        throw error;
+    }
+}
+
+
+export const getAppointmentTimes = async (date) => {
+    const config = {
+        headers: {
+            "Authorization": localStorage.getItem('token'),
+            "Content-Type": "application/json"
+        }
+    }
+    try {
+        return await axios.get(`${GET_APPOINTMENTS_TIME}?fecha=${date}`, config);
     } catch (error) {
         throw error;
     }

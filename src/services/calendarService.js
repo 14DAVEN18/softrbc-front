@@ -28,10 +28,11 @@ export const cancelWorkDay = async (fecha) => {
         const config = {
             headers: {
                 "Authorization": localStorage.getItem('token'),
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Response-Type": "blob"
             }
         }
-        return await axios.get(`${CANCEL_DAY}/?fecha=${fecha}`, config);
+        return await axios.get(`${CANCEL_DAY}?fecha=${fecha}`, config);
     } catch (error) {
         throw error;
     }

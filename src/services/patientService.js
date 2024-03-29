@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CREATE_PATIENT } from "../constants/constants";
+import { CREATE_PATIENT, GET_PATIENT_BY_ID } from "../constants/constants";
 
 export const getPatients = async () => {
     const config = {
@@ -16,6 +16,21 @@ export const getPatients = async () => {
 }
 
 
+export const getPatientById = async (idpaciente) => {
+    const config = {
+        headers: {
+            "Authorization": localStorage.getItem('token'),
+            "Content-Type": "application/json"
+        }
+    }
+    try {
+        return await axios.get(`${GET_PATIENT_BY_ID}/${idpaciente}`, config);
+    } catch (error) {
+        throw error;
+    }
+}
+
+
 export const createPatient = async ({
     usuario: {
         nombre,
@@ -24,13 +39,14 @@ export const createPatient = async ({
         correo,
         telefono,
         password,
-        cedula,
+        cedula
     },
     paciente: {
         ocupacion,
         fechanacimiento,
         genero,
-        nombreacompañante
+        nombreacompañante,
+        aceptarterminos
     }
 }) => {
     try {
@@ -48,8 +64,9 @@ export const createPatient = async ({
                 paciente: {
                     ocupacion,
                     fechanacimiento,
-                    genero,
-                    nombreacompañante
+                    genero,                    
+                    nombreacompañante,
+                    aceptarterminos
                 }
             });
     } catch (error) {

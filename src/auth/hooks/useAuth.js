@@ -11,10 +11,10 @@ export const useAuth = () => {
     const [login, dispatch] = useReducer(loginReducer, initialLogin);
     const navigate = useNavigate();
 
-    const handlerLogin = async ({ correo, password }) => {
+    const handlerLogin = async ({ cedula, password }) => {
         
         try {
-            const response = await loginUser ({ correo, password});
+            const response = await loginUser ({ cedula, password});
             const token = response.data.token; // body viene en el body
             const claims = JSON.parse(window.atob(token.split(".")[1]));
             const rol = claims.sub
