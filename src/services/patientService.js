@@ -24,6 +24,7 @@ export const getPatientById = async (idpaciente) => {
         }
     }
     try {
+        console.log(`${GET_PATIENT_BY_ID}/${idpaciente}`)
         return await axios.get(`${GET_PATIENT_BY_ID}/${idpaciente}`, config);
     } catch (error) {
         throw error;

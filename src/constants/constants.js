@@ -15,7 +15,7 @@ export const UPDATE_USER_STATUS = 'http://localhost:8080/usuarios/cambiarEstado'
 
 // PATIENT RELATED URLs
 export const CREATE_PATIENT = "http://localhost:8080/paciente/nueva"
-export const GET_PATIENT_BY_ID = 'http://localhost:8080//pacienteEncontrado/'
+export const GET_PATIENT_BY_ID = 'http://localhost:8080/paciente/pacienteEncontrado'
 
 // CALENDAR RELATED URLs
 export const GET_CALENDARS = 'http://localhost:8080/calendario/lista'
@@ -44,7 +44,7 @@ export const CANCEL_DAY = 'http://localhost:8080/cita/export/pdf' // Param
 
 
 // MEDICAL RECORD URLs
-export const CREATE_MEDICAL_RECORD = 'http://localhost:8080/historiaMedica/nueva'
+export const CREATE_MEDICAL_RECORD = 'http://localhost:8080/HistoriaClinica/nueva'
 
 
 

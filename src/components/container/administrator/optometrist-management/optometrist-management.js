@@ -178,12 +178,14 @@ export default function OptometristManagement() {
                 // Handle success if needed
             } catch (error) {
                 console.error('Error en la solicitud:', error);
+                creationForm.resetFields()
                 // Handle error if needed
             } finally {
                 fetchOptometrists();
                 setLoading(false);
                 setIsCreationModalOpen(false);
                 setIsCreationFormComplete(false);
+                creationForm.resetFields()
             }
         }
     };

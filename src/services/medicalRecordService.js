@@ -45,7 +45,7 @@ export const createMedicalRecord = async (
             oftalmoscopiaoi
         },
         Queratometria: {
-            queratomeriaod,
+            queratometriaod,
             queratometriaoi
         },
         Retinoscopia: {
@@ -63,8 +63,11 @@ export const createMedicalRecord = async (
             uso,
             diagnostico,
             conducta,
-            examindador,
+            examinador,
             control
+        },
+        paciente: {
+            idpaciente
         }
     }
 ) => {
@@ -112,7 +115,7 @@ export const createMedicalRecord = async (
                     oftalmoscopiaoi
                 },
                 Queratometria: {
-                    queratomeriaod,
+                    queratometriaod,
                     queratometriaoi
                 },
                 Retinoscopia: {
@@ -130,8 +133,11 @@ export const createMedicalRecord = async (
                     uso,
                     diagnostico,
                     conducta,
-                    examindador,
+                    examinador,
                     control
+                },
+                paciente: {
+                    idpaciente
                 }
             });
     } catch (error) {

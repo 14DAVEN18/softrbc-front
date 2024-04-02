@@ -43,7 +43,8 @@ export default function OptometristSchedule() {
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
     const [loading, setLoading] = useState(false);
-    const optometrist = useState(JSON.parse(localStorage.getItem('user')).name + ' ' + JSON.parse(localStorage.getItem('user')).surname )
+    const optometrist = JSON.parse(localStorage.getItem('user')).name + ' ' + JSON.parse(localStorage.getItem('user')).surname
+    console.log(optometrist)
 
 
     useEffect(() => {
@@ -117,9 +118,17 @@ export default function OptometristSchedule() {
     // TO MANAGE PATIENT'S INFO
     const [patient, setPatient] = useState(null)
 
-
-    const getPatientInfo = (values) => {
-        console.log("El boton de crear optometra: ", JSON.stringify(values) )
+    const getPatientInfo = async (idpaciente) => {
+        try {
+            const response = await getPatientById(idpaciente); // Call the create function from admin Service.js
+            setPatient(response.data)
+            console.log(patient)
+        } catch (error) {
+            console.error('Error en la solicitud:', error);
+        } finally {
+            setLoading(false);
+            
+        }
     };
     
 
@@ -148,7 +157,7 @@ export default function OptometristSchedule() {
             key: 'action',
             render: (_, record) => (
             <Space size="middle">
-                <Button type="primary" onClick={() => setPatient(true)} htmlType='submit'>
+                <Button type="primary" onClick={() => getPatientInfo(record.idpaciente)} htmlType='submit'>
                     Iniciar consulta
                 </Button>
             </Space>
@@ -247,7 +256,7 @@ export default function OptometristSchedule() {
             'oftalmoscopiaod',
             'oftalmoscopiaoi',
 
-            'queratomeriaod',
+            'queratometriaod',
             'queratometriaoi',
 
             'retinoscopiaod',
@@ -324,7 +333,7 @@ export default function OptometristSchedule() {
                             oftalmoscopiaoi: values.oftalmoscopiaoi
                         },
                         Queratometria: {
-                            queratomeriaod: values.queratometriaod,
+                            queratometriaod: values.queratometriaod,
                             queratometriaoi: values.queratometriaoi
                         },
                         Retinoscopia: {
@@ -344,6 +353,9 @@ export default function OptometristSchedule() {
                             conducta: values.conducta,
                             examinador: optometrist,
                             control: values.control 
+                        },
+                        paciente: {
+                            idpaciente: patient.idpaciente
                         }
                     }
                 ); // Call the create function from userService.js
@@ -407,6 +419,7 @@ export default function OptometristSchedule() {
                                         required: true,
                                         message: 'Por favor ingrese el nombre del optómetra sin apellidos!',
                                     }]}
+                                    initialValue={patient?.nombre}
                                 >
                                     <Input prefix={<UserOutlined/>} placeholder='Nombres'/>
                                 </Form.Item>
@@ -420,6 +433,7 @@ export default function OptometristSchedule() {
                                         required: true,
                                         message: 'Por favor ingrese el apellido del optómetra sin nombres!',
                                     }]}
+                                    initialValue={patient?.apellido}
                                 >
                                     <Input prefix={<UserOutlined/>} placeholder='Apellidos'/>
                                 </Form.Item>
@@ -437,6 +451,7 @@ export default function OptometristSchedule() {
                                         message: 'Por favor ingrese el correo eléctronico del optómetra!',
                                     },
                                     ]}
+                                    initialValue={patient?.correo}
                                 >
                                     <Input prefix={<MailOutlined/>} placeholder='Correo eléctronico'/>
                                 </Form.Item>
@@ -449,6 +464,7 @@ export default function OptometristSchedule() {
                                         required: true,
                                         message: 'Por favor ingrese la dirección física del optómetra!',
                                     }]}
+                                    initialValue={patient?.direccion}
                                 >
                                     <Input prefix={<UserOutlined/>} placeholder='Dirección'/>
                                 </Form.Item>
@@ -466,6 +482,7 @@ export default function OptometristSchedule() {
                                             message: 'Por favor ingrese el número telefónico del optometra!'
                                         }
                                     ]}
+                                    initialValue={patient?.telefono}
                                 >
                                     <InputNumber prefix={<PhoneOutlined/>} placeholder='Número telefónico'/>
                                 </Form.Item>
@@ -483,6 +500,7 @@ export default function OptometristSchedule() {
                                             message: 'Por favor ingrese el número de identificación del optómetra!'
                                         }
                                     ]}
+                                    initialValue={patient?.cedula}
                                 >
                                     <InputNumber prefix={<IdcardOutlined/>} placeholder='Ingrese el número de cédula sin puntos'/>
                                 </Form.Item>
@@ -496,6 +514,7 @@ export default function OptometristSchedule() {
                                         required: true,
                                         message: 'Por favor ingrese su ocupación!',
                                     }]}
+                                    initialValue={patient?.ocupacion}
                                 >
                                     <Input prefix={<UserOutlined/>} placeholder='Ocupación'/>
                                 </Form.Item>
@@ -508,6 +527,7 @@ export default function OptometristSchedule() {
                                         required: true,
                                         message: 'Por favor seleccione su fecha de nacimiento!'
                                     }]}
+                                    //initialValue={patient?.fechanacimiento}
                                 >
                                     <DatePicker size={'large'} ></DatePicker>
                                 </Form.Item>
@@ -521,6 +541,7 @@ export default function OptometristSchedule() {
                                         message: 'Por favor seleccione su sexo'
                                     }
                                     ]}
+                                    initialValue={patient?.genero}
                                 >
                                     <Select size={'large'} defaultValue="Seleccione un sexo" options={selectGenderOptions} />
                                 </Form.Item>
@@ -956,7 +977,7 @@ export default function OptometristSchedule() {
                                                     <Space>
                                                         <Form.Item
                                                             label='OD'
-                                                            name="queratomeriaod"
+                                                            name="queratometriaod"
                                                             rules={[
                                                             {
                                                                 required: true,
