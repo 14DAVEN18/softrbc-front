@@ -52,7 +52,7 @@ const PasswordReset = () => {
     const validate = async (values) => {
         
         try {
-            const response = await resetPassword({correo: localStorage.getItem('correo'), password: values.password})
+            const response = await resetPassword({cedula: localStorage.getItem('cedula'), password: values.password})
             
             if(response.status === 200) {
                 navigation('/inicio-empleados'); // Example: Redirect to a success page

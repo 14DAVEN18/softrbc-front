@@ -31,3 +31,7 @@
     overflow-x: hidden;
     width: 100%;
 }
+
+label {
+    align-self: auto;
+}

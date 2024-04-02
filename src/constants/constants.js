@@ -18,8 +18,12 @@ export const CREATE_PATIENT = "http://localhost:8080/paciente/nueva"
 export const GET_PATIENT_BY_ID = 'http://localhost:8080//pacienteEncontrado/'
 
 // CALENDAR RELATED URLs
+export const GET_CALENDARS = 'http://localhost:8080/calendario/lista'
 export const CREATE_CALENDAR = 'http://localhost:8080/calendario/nueva'
+export const MODIFY_CALENDAR = 'http://localhost:8080/calendario/modificar'
+export const DELETE_CALENDAR = 'http://localhost:8080/calendario/eliminar'
 export const GET_APPOINTMENT_DURATION = 'http://localhost:8080/calendario/duracioncita'
+export const GET_DAYS_OPTOMETRIST = 'http://localhost:8080/calendario/calendariooptometra'
 
 
 // QUESTION RELATED URLs
@@ -36,6 +40,11 @@ export const CREATE_APPOINTMENT = 'http://localhost:8080/cita/nueva'
 export const VERIFY_APPOINTMENT = 'http://localhost:8080/cita/verificarCodigo' // Param
 export const DELETE_APPOINTMENT = 'http://localhost:8080/cita/eliminar' // Path
 export const CANCEL_DAY = 'http://localhost:8080/cita/export/pdf' // Param
+
+
+
+// MEDICAL RECORD URLs
+export const CREATE_MEDICAL_RECORD = 'http://localhost:8080/historiaMedica/nueva'
 
 
 
@@ -101,10 +110,6 @@ export const days = [
     {
         key: '6',
         day: 'sabado'
-    },
-    {
-        key: '7',
-        day: 'Domingo'
     }
 ]
 

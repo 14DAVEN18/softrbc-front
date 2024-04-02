@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, Form, Input } from 'antd';
-import { KeyOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Form, Input, InputNumber } from 'antd';
+import { KeyOutlined, IdcardOutlined } from '@ant-design/icons';
 import { recoveryAccount } from "../../../services/recoveryService";
 
 import { Link, useNavigate } from "react-router-dom";
@@ -52,11 +52,11 @@ const AccountRecovery = () => {
     const reset = async (values) => {
 
         try {
-            const response = await recoveryAccount({ correo: values.username, codigorecuperacion: values.recoverykey });
+            const response = await recoveryAccount({ cedula: values.cedula, codigorecuperacion: values.recoverykey });
 
             if (response.status === 200) {
                 // Redirect to another window or perform other actions
-                localStorage.setItem('correo', values.username)
+                localStorage.setItem('cedula', values.cedula)
                 navigation('/reiniciar-clave'); // Example: Redirect to a success page
             } else {
                 // Handle other status codes if needed
@@ -96,7 +96,7 @@ const AccountRecovery = () => {
                 <div className='frame'>
                     <h1>Recuperación de cuenta</h1>
                     <div className='instructions'>
-                        <p>Para reiniciar su contraseña primero ingrese su dirección de correo electrónico y la clave de recuperación que recibió en su correo al momento de registrarse en al plataforma.</p>
+                        <p>Para reiniciar su contraseña primero ingrese su número de identificación y la clave de recuperación que recibió en su correo al momento de registrarse en al plataforma.</p>
                     </div>
                     <Form
                         className="login-form"
@@ -106,15 +106,19 @@ const AccountRecovery = () => {
                         onFinish={reset}
                     >
                         <Form.Item
-                            name="username"
+                            name="cedula"
                             rules={[
                                 {
+                                    type: 'number',
+                                    message: 'El número ingresado no es válido!'
+                                },
+                                {
                                     required: true,
-                                    message: 'La entrada no es un correo electónico válido.',
-                                    type: "email"
-                                }]}
+                                    message: 'Por favor ingrese el número de identificación del paciente!'
+                                }
+                            ]}
                         >
-                            <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Correo electrónico" onChange={ onInputChange } value={username}/>
+                            <InputNumber prefix={<IdcardOutlined/>} placeholder='Ingrese el número de cédula sin puntos'/>
                         </Form.Item>
 
                         <Form.Item
@@ -150,10 +154,6 @@ const AccountRecovery = () => {
                             }}
                         </Form.Item>
                     </Form>
-
-                    <Link to="/reiniciar-clave">Reiniciar contraseña</Link>
-                    <Link to="/inicio-empleados">Inicio de sesión</Link>
-                    <Link to="/optometra/agenda">Entrar optometra</Link>
                 </div>
             </div>
         </div>

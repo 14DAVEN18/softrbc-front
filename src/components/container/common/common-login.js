@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState, useContext } from 'react';
-import { Button, Form, Input } from 'antd';
-import { LockOutlined ,UserOutlined } from '@ant-design/icons';
+import { Button, Form, Input, InputNumber } from 'antd';
+import { IdcardOutlined, LockOutlined } from '@ant-design/icons';
 import { AuthContext } from "../../../auth/context/AuthContext";
 
 import { Link } from "react-router-dom";
 
 const initialLoginForm = {
-    username: '',
+    cedula: '',
     password: ''
 }
 
@@ -38,7 +38,7 @@ const EmployeeLogin = () => {
     const { handlerLogin } = useContext(AuthContext);
 
     const [ loginForm, setLoginForm] = useState(initialLoginForm);
-    const { username, password } = loginForm;
+    const { cedula, password } = loginForm;
 
     const onInputChange = ({ target }) => {
         const { name, value } = target;
@@ -51,7 +51,7 @@ const EmployeeLogin = () => {
     const login = async (values) => {
 
         try {
-            await handlerLogin({correo: values.username, password: values.password})
+            await handlerLogin({cedula: values.cedula, password: values.password})
         } catch(error) {
             setErrorMessage(error.message); // Set the error message state
         }
@@ -80,15 +80,19 @@ const EmployeeLogin = () => {
                         onFinish={login}
                     >
                         <Form.Item
-                            name="username"
+                            name="cedula"
                             rules={[
                                 {
+                                    type: 'number',
+                                    message: 'El número ingresado no es válido!'
+                                },
+                                {
                                     required: true,
-                                    message: 'La entrada no es un correo electónico válido.',
-                                    type: "email"
-                                }]}
+                                    message: 'Por favor ingrese el número de identificación del paciente!'
+                                }
+                            ]}
                         >
-                            <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Correo electrónico" onChange={ onInputChange } value={username}/>
+                            <InputNumber prefix={<IdcardOutlined/>} placeholder='Ingrese el número de cédula sin puntos' value={cedula}/>
                         </Form.Item>
 
                         <Form.Item
@@ -97,6 +101,7 @@ const EmployeeLogin = () => {
                                 {
                                     required: true,
                                     type: "string",
+                                    message: 'Por favor digite su contraseña.'
                                 }
                             ]}
                         >
@@ -134,9 +139,6 @@ const EmployeeLogin = () => {
                             </div>
                         )
                     }
-
-                    <Link to="/administrador/gestion-optometras">Entrar admin</Link>
-                    <Link to="/optometra/agenda">Entrar optometra</Link>
                 </div>
             </div>
         </div>

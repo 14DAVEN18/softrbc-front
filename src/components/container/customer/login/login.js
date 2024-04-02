@@ -57,7 +57,7 @@ export default function Login({onLogin}) {
     
     const login = async (values) => {
         try {
-            await handlerLogin({ cedula: values.cedula, password: values.password });
+            const response = await handlerLogin({ cedula: values.cedula, password: values.password });
             onLogin();
         } catch (error) {
             console.error('Login error:', error);
@@ -108,6 +108,7 @@ export default function Login({onLogin}) {
                                 {
                                     required: true,
                                     type: "string",
+                                    message: 'Por favor digite su contraseña.'
                                 }
                             ]}
                         >

@@ -5,7 +5,8 @@ import { Button, Modal  } from 'antd';
 import { getAppointmentsDuration, getAppointments, createAppointment } from '../../../../services/appointmentService';
 
 import './appointment-management.css';
-import { useNavigate } from 'react-router-dom';
+import { useAsyncError, useNavigate } from 'react-router-dom';
+import { getDaysOptometrist } from '../../../../services/calendarService';
 
 export default function AppointmentManagement() {
 
@@ -15,11 +16,26 @@ export default function AppointmentManagement() {
 
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate()
+    const [errorMessage, setErrorMessage] = useState('');
+    const [successMessage, setSuccessMessage] = useState('')
+    const [workDays, setWorkDays] = useState(null)
 
     useEffect(() => {
         setHeight(ref.current.offsetHeight);
         setWidth(ref.current.offsetWidth);
+        getDaysOptometrist()
+            .then(dayOptometrist => {
+                setWorkDays(workDays.data)
+            })
+            .catch(error => {
+                console.error('Error while getting work days', error)
+            });
+        console.log(workDays)
     }, [])
+
+
+
+
 
     // HEADER OF THE CALENDAR ***********************************************************
     const weekDays = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
@@ -134,7 +150,10 @@ export default function AppointmentManagement() {
 
     // TO DETERMINE IF THE TIME BLOCK IS OCCUPIED
     const isOccupiedTime = (time) => {
-        if(appointmentTimes.includes(time))
+        console.log('Checking if time is occupied:', time);
+        console.log('Appointment times:', appointmentTimes);
+        console.log(appointmentTimes.includes(time))
+        if(appointmentTimes.some(appointment => appointment.hora === time))
             return true
         else
             return false
@@ -177,6 +196,8 @@ export default function AppointmentManagement() {
                 setAppointmentTimes(times.data)
             })
             .catch(error => {
+                if(error.response.status === 403)
+                    setErrorMessage("Su sesión ha expirado o no tiene los permisos necesarios para realizar esta acción.")
                 console.error('Error while getting appointments', error)
             })
     
@@ -186,14 +207,15 @@ export default function AppointmentManagement() {
                 setAppointments(generateAppointments("9:00", duration.data, (600/duration.data)-1))
             })
             .catch(error => {
-                console.error('Error while getting appointments duration:', error);
-                // Handle error if needed
+                if(error.response.status === 403)
+                    setErrorMessage("Su sesión ha expirado o no tiene los permisos necesarios para realizar esta acción.")
             })
             
     }; 
     
     const statusDaySelectionModalCancel = () => {
         setIsDaySelectionModalOpen(false);
+        setErrorMessage('')
     };
 
 
@@ -233,16 +255,24 @@ export default function AppointmentManagement() {
             correo: JSON.parse(localStorage.getItem('user')).correo
         }
         console.log('cita: ', cita)
-        setLoading(true);
+        
         try {
+            setLoading(true);
             const response = await createAppointment(cita); // Call the create function from userService.js
+            console.log("response appo: ", response)
         } catch (error) {
-            console.error('Error en la solicitud:', error);
+            console.log('Error en la solicitud:', error);
+            if(error.response.status === 403)
+                setErrorMessage("Su sesión ha expirado o no tiene los permisos necesarios para realizar esta acción.")
             // Handle error if needed
         } finally {
+            setIsConfirmationModalOpen(false)
+            setIsDaySelectionModalOpen(false)
             setLoading(false);
-            navigate('/cliente/preguntas')
-            // Handle modal state changes here if needed
+            setSuccessMessage(`Su cita para el dia ${selectedDay?.dayOfWeek} (${selectedDay?.date}) a las ${selectedTime} fue agendada exitosamente. En breve será redirigido al chat.`)
+            setTimeout(() => {
+                navigate('/cliente/preguntas')
+            }, 10000)
         }
         
         setTimeout(() => {
@@ -254,6 +284,7 @@ export default function AppointmentManagement() {
     
     const statusConfirmationModalCancel = () => {
         setIsConfirmationModalOpen(false);
+        setErrorMessage('')
     };
 
 
@@ -323,6 +354,16 @@ export default function AppointmentManagement() {
                     </div>
                 ))}
             </div>
+            { errorMessage && (
+                <div className='error-message'>
+                    <p>{errorMessage}</p>
+                </div>
+            )}
+            { successMessage && (
+                <div className='success-message'>
+                    <p>{successMessage}</p>
+                </div>
+            )}
 
             <Modal width={'100%'} title={`Agendar cita de optometría. (${selectedDay?.dayOfWeek} - ${selectedDay?.date})`} centered open={isDaySelectionModalOpen} onCancel={statusDaySelectionModalCancel} footer=
                 {<>
@@ -356,7 +397,7 @@ export default function AppointmentManagement() {
                     <Button key="cancel" onClick={statusConfirmationModalCancel}>
                         Cancelar
                     </Button>
-                    <Button key="schedule" type="primary"  onClick={() => scheduleAppointment(selectedDay?.date, selectedTime)}>
+                    <Button key="schedule" type="primary" loading={loading} onClick={() => scheduleAppointment(selectedDay?.date, selectedTime)}>
                         Confirmar
                     </Button>
                 </>}

@@ -7,6 +7,15 @@ import { createOptometrist, getOptometrists, updateOptometrist, updateOptometris
 
 import './optometrist-management.css';
 
+const layout = {
+    labelCol: {
+      span: 8,
+    },
+    wrapperCol: {
+      span: 16,
+    },
+};
+
 export default function OptometristManagement() {
 
     // TO DEFINE THE SIZE OF THE COMPONENT ***********************************************************
@@ -109,16 +118,14 @@ export default function OptometristManagement() {
             console.error('Error en la solicitud:', error);
             // Handle error if needed
         } finally {
-            fetchOptometrists();
-            setLoading(false);
-            // Handle modal state changes here if needed
+            setTimeout(() => {
+                fetchOptometrists();
+                setLoading(false);
+                setIsStatusChangeConfirmationModalOpen(false);
+                setStatusChangeConfirmationModalAction("");
+            }, 2000)
+            
         }
-        
-        setTimeout(() => {
-            setLoading(false);
-            setIsStatusChangeConfirmationModalOpen(false);
-            setStatusChangeConfirmationModalAction("");
-        }, 2000);
     };
     
     const statusChangeConfirmationModalCancel = () => {
@@ -150,6 +157,7 @@ export default function OptometristManagement() {
     const handleCreateOptometrist = async () => {
         if (creationForm != null) {
             try {
+                setLoading(true);
                 const values = await creationForm.validateFields();
                 const response = await createOptometrist(
                     {
@@ -167,19 +175,15 @@ export default function OptometristManagement() {
                     }
                 ); // Call the create function from userService.js
                 //console.log('Response:', response.data);
-                setLoading(true);
                 // Handle success if needed
             } catch (error) {
                 console.error('Error en la solicitud:', error);
                 // Handle error if needed
             } finally {
                 fetchOptometrists();
-                setLoading(true);
-                setTimeout(() => {
-                    setLoading(false);
-                    setIsCreationModalOpen(false);
-                    setIsCreationFormComplete(false);
-                }, 2000);
+                setLoading(false);
+                setIsCreationModalOpen(false);
+                setIsCreationFormComplete(false);
             }
         }
     };
@@ -213,6 +217,7 @@ export default function OptometristManagement() {
     const handleUpdateOptometrist = async () => {
         if (updateForm != null) {
             try {
+                setLoading(true);
                 const values = await updateForm.validateFields();
                 const response = await updateOptometrist(
                     {
@@ -231,16 +236,12 @@ export default function OptometristManagement() {
                 // Handle error if needed
             } finally {
                 fetchOptometrists();
-                setLoading(true);
-                setTimeout(() => {
-                    setLoading(false);
-                    setIsCreationModalOpen(false);
-                    setIsUpdateFormComplete(false);
-                    setSelectedOptometrist(null);
-                }, 2000);
+                setIsUpdateModalOpen(false);
+                setIsUpdateFormComplete(false);
+                setSelectedOptometrist(null);
+                setLoading(false);
             }
         }
-        setLoading(true)
     };
     
     const handleUpdateModalCancel = () => {
@@ -349,6 +350,7 @@ export default function OptometristManagement() {
 
                 <p className='confirmation'>Por favor llene los siguientes campos:</p>
                 <Form
+                    {...layout}
                     className='creation-form'
                     initialValues={{ remember: false }}
                     form={creationForm}
@@ -358,6 +360,7 @@ export default function OptometristManagement() {
                 >
                         
                     <Form.Item
+                        label='Nombres'
                         name="nombre"
                         rules={[
                         {
@@ -370,6 +373,7 @@ export default function OptometristManagement() {
                         
                         
                     <Form.Item
+                        label='Apellidos'
                         name="apellido"
                         rules={[
                         {
@@ -381,6 +385,7 @@ export default function OptometristManagement() {
                     </Form.Item>
 
                     <Form.Item
+                        label='Dirección'
                         name="direccion"
                         rules={[
                         {
@@ -392,6 +397,7 @@ export default function OptometristManagement() {
                     </Form.Item>
 
                     <Form.Item
+                        label='Correo electrónico'
                         name="correo"
                         rules={[
                         {
@@ -408,6 +414,7 @@ export default function OptometristManagement() {
                     </Form.Item>
 
                     <Form.Item
+                        label='Número telefónico'
                         name="telefono"
                         rules={[
                             {
@@ -425,6 +432,7 @@ export default function OptometristManagement() {
 
 
                     <Form.Item
+                        label='Documento de identidad'
                         name="cedula"
                         rules={[
                             {
@@ -442,6 +450,7 @@ export default function OptometristManagement() {
     
 
                     <Form.Item
+                        label='Tarjeta profesional'
                         name="numeroTarjeta"
                         rules={[
                         {
@@ -472,23 +481,35 @@ export default function OptometristManagement() {
 
                 <p className='confirmation'>Por favor llene los siguientes campos:</p>
                 <Form
+                    {...layout}
                     className='creation-form'
                     form={updateForm}
                     name="employee-creation"
                     onFinish={handleUpdateOptometrist}
                     onValuesChange={onUpdateValuesChange}
                 >
+                    <Form.Item
+                        label='Nombres'
+                        name='nombre'
+                    >
+                        <Typography>
+                            <pre>{selectedOptometrist?.usuario.nombre}</pre>
+                        </Typography>
+                    </Form.Item>
                     
-                    <Typography>
-                        <pre>{selectedOptometrist?.usuario.nombre}</pre>
-                    </Typography>
                     
+                    <Form.Item
+                        label='Apellidos'
+                        name='apellido'
+                    >
+                        <Typography>
+                            <pre>{selectedOptometrist?.usuario.apellido}</pre>
+                        </Typography>
+                    </Form.Item>
                     
-                    <Typography>
-                        <pre>{selectedOptometrist?.usuario.apellido}</pre>
-                    </Typography>
 
                     <Form.Item
+                        label='Dirección'
                         name="direccion"
                         rules={[
                         {
@@ -501,6 +522,7 @@ export default function OptometristManagement() {
                     </Form.Item>
 
                     <Form.Item
+                        label='Correo electrónico'
                         name="correo"
                         rules={[
                         {
@@ -518,6 +540,7 @@ export default function OptometristManagement() {
                     </Form.Item>
 
                     <Form.Item
+                        label='Número telefónico'
                         name="telefono"
                         rules={[
                             {
@@ -534,17 +557,22 @@ export default function OptometristManagement() {
                         <InputNumber prefix={<PhoneOutlined/>} placeholder='Número telefónico'/>
                     </Form.Item>
 
-
-                    <Typography>
-                        <pre>{selectedOptometrist?.usuario.cedula}</pre>
-                    </Typography>
-
+                    <Form.Item
+                        label='Documento de identidad'
+                    >
+                        <Typography>
+                            <pre>{selectedOptometrist?.usuario.cedula}</pre>
+                        </Typography>
+                    </Form.Item>
                     
 
-                    <Typography>
-                        <pre>{selectedOptometrist?.numerotarjeta}</pre>
-                    </Typography>
-
+                    <Form.Item
+                        label='Tarjeta profesional'
+                    >
+                        <Typography>
+                            <pre>{selectedOptometrist?.numerotarjeta}</pre>
+                        </Typography>
+                    </Form.Item>
                 </Form>
             </Modal>
 

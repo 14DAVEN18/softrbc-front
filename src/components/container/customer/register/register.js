@@ -1,16 +1,22 @@
 import { Button, Checkbox, DatePicker, Form, Input, InputNumber, Select } from 'antd';
 import { UserOutlined, MailOutlined, PhoneOutlined, LockOutlined, IdcardOutlined } from '@ant-design/icons';
-import { format } from 'date-fns';
 
 import { createPatient } from '../../../../services/patientService';
-
-import { CREATE_USER } from '../../../../constants/constants';
 
 import React, { useEffect , useRef, useState} from 'react';
 
 import { Link, useNavigate } from "react-router-dom";
 
 import './register.css';
+
+const layout = {
+    labelCol: {
+      span: 5,
+    },
+    wrapperCol: {
+      span: 16,
+    },
+};
 
 const selectGenderOptions = [{
     label: 'Masculino',
@@ -145,14 +151,15 @@ export default function Register() {
             <div className='patient-register-bottom'>
                 <div className='patient-creation-form'>
                     <Form
+                        {...layout}
                         initialValues={{ remember: false }}
                         form={creationForm}
                         name="employee-creation"
                         onFinish={handleCreatePatient}
                         onValuesChange={onCreationValuesChange}
                     >
-                            
                         <Form.Item
+                            label='Nombres'
                             name="nombre"
                             rules={[
                             {
@@ -165,6 +172,7 @@ export default function Register() {
                             
                             
                         <Form.Item
+                            label='Apellidos'
                             name="apellido"
                             rules={[
                             {
@@ -176,6 +184,7 @@ export default function Register() {
                         </Form.Item>
 
                         <Form.Item
+                            label='Fecha de nacimiento'
                             name="fechanacimiento"
                             rules={[
                             {
@@ -187,6 +196,7 @@ export default function Register() {
                         </Form.Item>
 
                         <Form.Item
+                            label='Genero'
                             name="genero"
                             rules={[
                             {
@@ -199,6 +209,7 @@ export default function Register() {
                         </Form.Item>
 
                         <Form.Item
+                            label='Dirección'
                             name="direccion"
                             rules={[
                             {
@@ -210,6 +221,7 @@ export default function Register() {
                         </Form.Item>
 
                         <Form.Item
+                            label='Correo electrónico'
                             name="correo"
                             rules={[
                             {
@@ -226,6 +238,7 @@ export default function Register() {
                         </Form.Item>
 
                         <Form.Item
+                            label='Teléfono'
                             name="telefono"
                             rules={[
                                 {
@@ -243,6 +256,7 @@ export default function Register() {
 
 
                         <Form.Item
+                            label='Documento de identidad'
                             name="cedula"
                             rules={[
                                 {
@@ -251,15 +265,16 @@ export default function Register() {
                                 },
                                 {
                                     required: true,
-                                    message: 'Por favor ingrese el número de identificación del optómetra!'
+                                    message: 'Por favor ingrese el número documento de documento de identidad del paciente'
                                 }
                             ]}
                         >
-                            <InputNumber prefix={<IdcardOutlined/>} placeholder='Ingrese el número de cédula sin puntos'/>
+                            <InputNumber prefix={<IdcardOutlined/>} placeholder='Ingrese el número de document de identidad sin puntos'/>
                         </Form.Item>
         
 
                         <Form.Item
+                            label='Ocupación'
                             name="ocupacion"
                             rules={[
                             {
@@ -271,12 +286,14 @@ export default function Register() {
                         </Form.Item>
 
                         <Form.Item
+                            label='Nombre del acompañante'
                             name="nombreacompañante"
                         >
                             <Input prefix={<UserOutlined/>} placeholder='Nombre de acompañante'/>
                         </Form.Item>
 
                         <Form.Item
+                            label='Contraseña'
                             name="password"
                             rules={[
                                 {
@@ -307,6 +324,7 @@ export default function Register() {
                         </Form.Item>
 
                         <Form.Item
+                            label='Contraseña'
                             name="confirm"
                             dependencies={['password']}
                             hasFeedback
@@ -329,6 +347,7 @@ export default function Register() {
                         </Form.Item>
 
                         <Form.Item
+                            wrapperCol={{ offset: 5, span: 16 }}    
                             name="aceptarterminos"
                             valuePropName='checked'
                             rules={[
@@ -341,7 +360,10 @@ export default function Register() {
                             <Checkbox>Aceptar terminos y condiciones de tratamiento de datos. Si desea leer los términos y condiciones, haga clic <a onClick={openPDFInNewWindow} href="public/Tratamiento de Datos.pdf" target="_blank">aqui.</a></Checkbox>
                         </Form.Item>
 
-                        <Form.Item shouldUpdate>
+                        <Form.Item 
+                            shouldUpdate
+                            wrapperCol={{ offset: 5, span: 16 }}    
+                        >
                             <Button
                                 type="primary"
                                 htmlType="submit"

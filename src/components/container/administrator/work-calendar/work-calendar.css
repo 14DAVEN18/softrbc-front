@@ -1,11 +1,33 @@
 /* Style for the selected content */
 .work-calendar {
-    align-items: center;
     display: flex;
     flex-direction: column;
     height: 100%;
+    width: 100%;
+}
+
+.form-container {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    height: 10%;
     justify-content: center;
     width: 100%;
+}
+
+/* Styles for create button */
+.modal {
+    align-items: flex-start;
+    align-self: center;
+    display: flex;
+    height: 5%;
+    width: 80%;
+}
+
+.question-table {
+    align-self: center;
+    height: 85%;
+    width: 80%;
 }
 
 .title {
@@ -20,13 +42,7 @@
     margin: 0px;
 }
 
-.form-container {
-    align-items: center;
-    display: flex;
-    height: 95%;
-    justify-content: center;
-    width: 100%;
-}
+
 .creation-form {
     width: 70%; /* Adjust the width as needed */
 }

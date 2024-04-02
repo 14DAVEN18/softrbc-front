@@ -3,7 +3,6 @@ import { Button, Form, Input, Modal, Space, Table, Typography } from 'antd';
 import { CheckOutlined, UserOutlined, QuestionOutlined,  } from '@ant-design/icons';
 import { useNavigate } from "react-router-dom";
 
-import { createOptometrist, getOptometrists, updateOptometrist, updateOptometristStatus } from '../../../../services/optometristService';
 
 import './faq-management.css';
 
@@ -146,6 +145,7 @@ export default function FAQManagement() {
     }
 
     const handleCreateQuestion = async () => {
+        setLoading(true);
         if (creationForm != null) {
             try {
                 const values = await creationForm.validateFields();
@@ -163,12 +163,9 @@ export default function FAQManagement() {
                 // Handle error if needed
             } finally {
                 fetchQuestions();
-                setLoading(true);
-                setTimeout(() => {
-                    setLoading(false);
-                    setIsCreationModalOpen(false);
-                    setIsCreationFormComplete(false);
-                }, 2000);
+                setLoading(false);
+                setIsCreationModalOpen(false);
+                setIsCreationFormComplete(false);
             }
         }
     };
@@ -202,6 +199,7 @@ export default function FAQManagement() {
     const handleUpdateQuestion = async () => {
         if (updateForm != null) {
             try {
+                setLoading(true);
                 const values = await updateForm.validateFields();
                 const response = await updateQuestion(
                     {
@@ -219,13 +217,10 @@ export default function FAQManagement() {
                 // Handle error if needed
             } finally {
                 fetchQuestions();
-                setLoading(true);
-                setTimeout(() => {
-                    setLoading(false);
-                    setIsCreationModalOpen(false);
-                    setIsUpdateFormComplete(false);
-                    setSelectedQuestion(null);
-                }, 2000);
+                setIsUpdateModalOpen(false);
+                setIsUpdateFormComplete(false);
+                setSelectedQuestion(null);
+                setLoading(false);
             }
         }
         setLoading(true)
@@ -393,7 +388,6 @@ export default function FAQManagement() {
                     className='update-form'
                     form={updateForm}
                     name="question-update"
-                    onFinish={handleUpdateQuestion}
                     onValuesChange={onUpdateValuesChange}
                 >
 

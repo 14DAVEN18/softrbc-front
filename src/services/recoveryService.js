@@ -1,9 +1,9 @@
 import axios from "axios";
 import { VALIDATE_RECOVERY_KEY, RESET_PASSWORD } from "../constants/constants"
 
-export const recoveryAccount = async ({correo, codigorecuperacion}) => {
+export const recoveryAccount = async ({cedula, codigorecuperacion}) => {
 
-    const queryParams = `?correo=${correo}&codigorecuperacion=${codigorecuperacion}`;
+    const queryParams = `?correo=${cedula}&codigorecuperacion=${codigorecuperacion}`;
     try {
         return await axios.get(`${VALIDATE_RECOVERY_KEY}${queryParams}`);
     } catch (error) {
@@ -12,13 +12,13 @@ export const recoveryAccount = async ({correo, codigorecuperacion}) => {
 }
 
 export const resetPassword = async ({
-    correo,
+    cedula,
     password
 }) => {
     try {
         return await axios.put(RESET_PASSWORD, 
             {
-                correo: correo,
+                cedula: cedula,
                 nuevacontrasena: password,
             });
     } catch (error) {

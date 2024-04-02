@@ -40,3 +40,7 @@
 .confirmation {
     color: black;
 }
+
+pre {
+    margin: 0px;
+}
