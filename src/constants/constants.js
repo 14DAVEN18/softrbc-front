@@ -44,8 +44,8 @@ export const CANCEL_DAY = 'http://localhost:8080/cita/export/pdf' // Param
 
 
 // MEDICAL RECORD URLs
-export const CREATE_MEDICAL_RECORD = 'http://localhost:8080/HistoriaClinica/nueva'
-
+export const CREATE_MEDICAL_RECORD = 'http://localhost:8080/HistoriaClinica/crearhistoria'
+export const ADD_MEDICAL_RECORD = 'http://localhost:8080/HistoriaClinica/nueva'
 
 
 

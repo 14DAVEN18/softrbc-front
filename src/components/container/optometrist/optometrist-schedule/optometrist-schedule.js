@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, Collapse, DatePicker, Form, Input, InputNumber, Progress, Select, Space, Table, Typography } from 'antd';
+import { Button, Collapse, DatePicker, Form, Input, InputNumber, Modal, Progress, Select, Space, Table, Typography } from 'antd';
 import { UserOutlined, MailOutlined, PhoneOutlined, IdcardOutlined } from '@ant-design/icons';
 import { format } from 'date-fns';
 
@@ -9,7 +9,7 @@ import './optometrist-schedule.css';
 
 import { getPatientById, updatePatient } from '../../../../services/patientService';
 import { getAppointments } from '../../../../services/appointmentService';
-import { createMedicalRecord } from '../../../../services/medicalRecordService';
+import { addMedicalRecord, createMedicalRecord } from '../../../../services/medicalRecordService';
 
 
 const layout = {
@@ -44,7 +44,6 @@ export default function OptometristSchedule() {
     const [width, setWidth] = useState(0);
     const [loading, setLoading] = useState(false);
     const optometrist = JSON.parse(localStorage.getItem('user')).name + ' ' + JSON.parse(localStorage.getItem('user')).surname
-    console.log(optometrist)
 
 
     useEffect(() => {
@@ -120,7 +119,7 @@ export default function OptometristSchedule() {
 
     const getPatientInfo = async (idpaciente) => {
         try {
-            const response = await getPatientById(idpaciente); // Call the create function from admin Service.js
+            const response = await getPatientById(idpaciente); 
             setPatient(response.data)
             console.log(patient)
         } catch (error) {
@@ -216,8 +215,28 @@ export default function OptometristSchedule() {
 
 
 
-
     // TO CREATE PATIENT'S MEDICAL RECORD
+    const createMedicalRecord = async () => {
+        try {
+            const response = createMedicalRecord(
+                setPatient(prevPatient => ({
+                    ...prevPatient,
+                    idhistoriaclinica: response.data
+                }))
+            )
+        } catch (error ){
+            console.error("Error actualizando historia clínica", error)
+        }
+    }
+
+
+
+
+
+
+
+
+    // TO ADD PATIENT'S MEDICAL RECORD
     const [isMedicalRecordFormComplete, setIsMedicalRecordFormComplete] = useState(false);
     const [progress, setProgress] = useState(0)
 
@@ -225,54 +244,14 @@ export default function OptometristSchedule() {
         console.log(allValues)
         const requiredFields = [
             'anamnesis',
-
-            'antecedentesFamiliares',
-            'antecedentesOculares',
-            'antecedentesGenerales',
-
-            'rxusood',
-            'rxusooi',
-            'rxusoadd',
-            'vlejanarxod',
-            'vlejanarxoi',
-            'vlejanaod',
-            'vlejanaoi',
-            'distanciapupilar',
-            'externo',
-
-            'vproximarxod',
-            'vproximarxoi',
-            'vproximaod',
-            'vproximaoi',
-
-            'ducciones',
-            'versiones',
-            'ppc',
-            'ct6m',
-            'cm',
-            'ojodominante',
-            'manodominante',
-
-            'oftalmoscopiaod',
-            'oftalmoscopiaoi',
-
-            'queratometriaod',
-            'queratometriaoi',
-
-            'retinoscopiaod',
-            'retinoscopiaoi',
-
-            'rxfinalod',
-            'rxfinaloi',
-            'avl',
-            'avp',
-            'color',
-            'rxfinaladd',
-            'bif',
-            'uso',
-            'diagnostico',
-            'conducta',
-            'control' 
+            'antecedentesFamiliares', 'antecedentesOculares', 'antecedentesGenerales',
+            'rxusood', 'rxusooi', 'rxusoadd', 'vlejanarxod', 'vlejanarxoi', 'vlejanaod', 'vlejanaoi', 'distanciapupilar', 'externo',
+            'vproximarxod', 'vproximarxoi', 'vproximaod', 'vproximaoi',
+            'ducciones', 'versiones', 'ppc', 'ct6m', 'cm', 'ojodominante', 'manodominante',
+            'oftalmoscopiaod', 'oftalmoscopiaoi', 
+            'queratometriaod', 'queratometriaoi',
+            'retinoscopiaod', 'retinoscopiaoi',
+            'rxfinalod', 'rxfinaloi', 'avl', 'avp', 'color', 'rxfinaladd', 'bif', 'uso', 'diagnostico', 'conducta', 'control' 
         ];
         const totalFields = requiredFields.length
         let count = 0;
@@ -285,14 +264,15 @@ export default function OptometristSchedule() {
         setIsMedicalRecordFormComplete(isComplete);
     };
     
-    const handleCreateMedicalRecord = async () => {
+    
+    const handleAddMedicalRecord = async () => {
         if (medicalRecordForm != null) {
             try {
                 setLoading(true);
                 const values = await medicalRecordForm.validateFields();
-                const response = await createMedicalRecord(
+                const response = await addMedicalRecord(
                     {
-                        Anamnesis: {
+                        Anamnesis: { 
                             anamnesis: values.anamnesis,
                         },
                         Antecedentes: {
@@ -399,164 +379,113 @@ export default function OptometristSchedule() {
                         <div className={`tab ${activeTab === 2 ? 'active' : ''}`} onClick={() => setActiveTab(2)}>Historía clínica</div>
                         <div className={`tab ${activeTab === 3 ? 'active' : ''}`} onClick={() => setActiveTab(3)}>Formula Clínica</div>
                     </div>
+                    
                     {activeTab === 1 &&
                         <div className='tab-content'>
-                            <Form
-                                {...layout}
-                                className='creation-form'
-                                initialValues={{ remember: false }}
-                                form={updateForm}
-                                name="patientUpdate"
-                                onFinish={handleUpdatePatient}
-                                onValuesChange={onUpdateValuesChange}
-                            >
-                                 
-                                <Form.Item
-                                    label='Nombres'
-                                    name="nombre"
-                                    rules={[
-                                    {
+                            <Form {...layout} className='creation-form' initialValues={{ remember: false }} form={updateForm} name="patientUpdate" onFinish={handleUpdatePatient} onValuesChange={onUpdateValuesChange} >                                 
+                                <Form.Item label='Nombres' name="nombre" 
+                                    rules={[{
                                         required: true,
-                                        message: 'Por favor ingrese el nombre del optómetra sin apellidos!',
+                                        message: 'Por favor ingrese el nombre del paciente sin apellidos!',
                                     }]}
-                                    initialValue={patient?.nombre}
+                                    initialValue={patient?.usuario.nombre}
                                 >
                                     <Input prefix={<UserOutlined/>} placeholder='Nombres'/>
                                 </Form.Item>
                                     
-                                    
-                                <Form.Item
-                                    label='Apellidos'
-                                    name="apellido"
-                                    rules={[
-                                    {
+                                <Form.Item label='Apellidos' name="apellido" 
+                                    rules={[{
                                         required: true,
-                                        message: 'Por favor ingrese el apellido del optómetra sin nombres!',
+                                        message: 'Por favor ingrese el apellido del paciente sin nombres!',
                                     }]}
-                                    initialValue={patient?.apellido}
+                                    initialValue={patient?.usuario.apellido}
                                 >
                                     <Input prefix={<UserOutlined/>} placeholder='Apellidos'/>
                                 </Form.Item>
 
-                                <Form.Item
-                                    label='Correo electrónico'
-                                    name="correo"
-                                    rules={[
-                                    {
+                                <Form.Item label='Correo electrónico' name="correo"
+                                    rules={[{
                                         type: 'email',
                                         message: 'El correo ingresado no es válido',
                                     },
                                     {
                                         required: true,
-                                        message: 'Por favor ingrese el correo eléctronico del optómetra!',
+                                        message: 'Por favor ingrese el correo eléctronico del paciente!',
                                     },
                                     ]}
-                                    initialValue={patient?.correo}
+                                    initialValue={patient?.usuario.correo}
                                 >
                                     <Input prefix={<MailOutlined/>} placeholder='Correo eléctronico'/>
                                 </Form.Item>
                                 
-                                <Form.Item
-                                    label='Dirección'
-                                    name="direccion"
-                                    rules={[
-                                    {
+                                <Form.Item label='Dirección' name="direccion"
+                                    rules={[{
                                         required: true,
-                                        message: 'Por favor ingrese la dirección física del optómetra!',
+                                        message: 'Por favor ingrese la dirección física del paciente!',
                                     }]}
-                                    initialValue={patient?.direccion}
+                                    initialValue={patient?.usuario.direccion}
                                 >
                                     <Input prefix={<UserOutlined/>} placeholder='Dirección'/>
                                 </Form.Item>
 
-                                <Form.Item
-                                    label='Número telefónico'
-                                    name="telefono"
-                                    rules={[
-                                        {
-                                            type: 'number',
-                                            message: 'El número ingresado no es válido!'
-                                        },
-                                        {
-                                            required: true,
-                                            message: 'Por favor ingrese el número telefónico del optometra!'
-                                        }
-                                    ]}
-                                    initialValue={patient?.telefono}
+                                <Form.Item label='Número telefónico' name="telefono"
+                                    rules={[{
+                                        type: 'number',
+                                        message: 'El número ingresado no es válido!'
+                                    },{
+                                        required: true,
+                                        message: 'Por favor ingrese el número telefónico del paciente!'
+                                    }]}
+                                    initialValue={patient?.usuario.telefono}
                                 >
                                     <InputNumber prefix={<PhoneOutlined/>} placeholder='Número telefónico'/>
                                 </Form.Item>
 
-                                <Form.Item
-                                    label='Documento de identidad'
-                                    name="cedula"
-                                    rules={[
-                                        {
+                                <Form.Item label='Documento de identidad' name="cedula" 
+                                    rules={[{
                                             type: 'number',
                                             message: 'El número ingresado no es válido!'
-                                        },
-                                        {
+                                    },{
                                             required: true,
-                                            message: 'Por favor ingrese el número de identificación del optómetra!'
-                                        }
-                                    ]}
-                                    initialValue={patient?.cedula}
+                                            message: 'Por favor ingrese el número de identificación del paciente!'
+                                    }]}
+                                    initialValue={patient?.usuario.cedula}
                                 >
                                     <InputNumber prefix={<IdcardOutlined/>} placeholder='Ingrese el número de cédula sin puntos'/>
                                 </Form.Item>
                 
 
-                                <Form.Item
-                                    label='Ocupación'
-                                    name="ocupacion"
-                                    rules={[
-                                    {
+                                <Form.Item label='Ocupación' name="ocupacion" 
+                                    rules={[{
                                         required: true,
                                         message: 'Por favor ingrese su ocupación!',
                                     }]}
-                                    initialValue={patient?.ocupacion}
+                                    initialValue={patient?.paciente.ocupacion}
                                 >
                                     <Input prefix={<UserOutlined/>} placeholder='Ocupación'/>
                                 </Form.Item>
 
-                                <Form.Item
-                                    label='Fecha de nacimiento'
-                                    name="fechanacimiento"
-                                    rules={[
-                                    {
+                                <Form.Item label='Fecha de nacimiento' name="fechanacimiento"
+                                    rules={[{
                                         required: true,
-                                        message: 'Por favor seleccione su fecha de nacimiento!'
+                                        message: 'Por favor seleccione la fecha de nacimiento del paciente!'
                                     }]}
-                                    //initialValue={patient?.fechanacimiento}
                                 >
                                     <DatePicker size={'large'} ></DatePicker>
                                 </Form.Item>
 
-                                <Form.Item
-                                    label='Género'
-                                    name="genero"
-                                    rules={[
-                                    {
+                                <Form.Item label='Género' name="genero"
+                                    rules={[{
                                         required: true,
-                                        message: 'Por favor seleccione su sexo'
-                                    }
-                                    ]}
-                                    initialValue={patient?.genero}
+                                        message: 'Por favor seleccione el sexo paciente'
+                                    }]}
+                                    initialValue={patient?.paciente.genero}
                                 >
                                     <Select size={'large'} defaultValue="Seleccione un sexo" options={selectGenderOptions} />
                                 </Form.Item>
 
-                                <Form.Item
-                                    shouldUpdate
-                                    wrapperCol={{ offset: 8, span: 14 }}   
-                                >
-                                    <Button
-                                        loading={loading}
-                                        type="primary"
-                                        htmlType="submit"
-                                        className="login-form-button"
-                                        disabled={!isConfirmationFormComplete}
-                                    >
+                                <Form.Item shouldUpdate wrapperCol={{ offset: 8, span: 14 }} >
+                                    <Button loading={loading}type="primary" htmlType="submit" className="login-form-button" disabled={!isConfirmationFormComplete} >
                                         CONFIRMAR INFORMACIÓN
                                     </Button>
                                 </Form.Item>
@@ -570,33 +499,29 @@ export default function OptometristSchedule() {
 
 
 
-
-                    {activeTab === 2 &&
+                    {activeTab === 2 && !(!!patient?.paciente.idhistoriaclinica) &&
+                        <div className='tab-content'>
+                            <Modal title="No se encontró una historia clínica" centered open={!(!!patient?.idhistoriaclinica)} footer=
+                                {<>
+                                    <Button key="action" type="primary" loading={loading} onClick={createMedicalRecord}>
+                                        Crear historia clínica
+                                    </Button>
+                                </>}
+                            >
+                                <p className='confirmation'>El paciente {patient?.nombre} no tiene una historia clínica asignada. Primero debe crear una historia clínica para proceder con la consulta</p>
+                            </Modal>
+                        </div>
+                    }
+                    {activeTab === 2 && (!!patient?.paciente.idhistoriaclinica) &&
                         <div className='tab-content2'>
                             <div className='progress-bar'>
                                 <Progress percent={progress} />
                             </div>
-
-                            <Form
-                                {...layout}
-                                className='medical-record-form'
-                                initialValues={{ remember: false }}
-                                form={medicalRecordForm}
-                                name="medicalRecord"
-                                onFinish={handleCreateMedicalRecord}
-                                onValuesChange={onMedicalRecordValuesChange}
-                            >
+                            {!!patient?.idpaciente}
+                            <Form {...layout} className='medical-record-form' initialValues={{ remember: false }} form={medicalRecordForm} name="medicalRecord" onFinish={handleAddMedicalRecord} onValuesChange={onMedicalRecordValuesChange} >
                                 <Collapse
-                                    items={[
-                                        {
-                                            key: 1,
-                                            label: 'Anamnesis',
-                                            children:
-                                                <Form.Item
-                                                    label='Anamnesis'
-                                                    name="anamnesis"
-                                                    rules={[
-                                                    {
+                                    items={[{ key: 1, label: 'Anamnesis', children:
+                                                <Form.Item label='Anamnesis' name="anamnesis" rules={[{
                                                         required: true,
                                                         message: 'Por favor ingrese el diagnostico de anamensis del paciente!',
                                                     }]}
@@ -604,16 +529,10 @@ export default function OptometristSchedule() {
                                                     <Input placeholder='Anamnesis' autoComplete='off'/>
                                                 </Form.Item>
                                         },
-                                        {
-                                            key: 2,
-                                            label: 'Antecedentes',
-                                            children:
+                                        { key: 2, label: 'Antecedentes', children:
                                                 <>
-                                                    <Form.Item
-                                                        label='Antecedentes familiares'
-                                                        name="antecedentesFamiliares"
-                                                        rules={[
-                                                        {
+                                                    <Form.Item label='Antecedentes familiares' name="antecedentesFamiliares"
+                                                        rules={[{
                                                             required: true,
                                                             message: 'Por favor ingrese los antecedentes familiares del paciente!',
                                                         }]}
@@ -621,11 +540,8 @@ export default function OptometristSchedule() {
                                                         <Input placeholder='Antecedentes familiares' autoComplete='off'/>
                                                     </Form.Item>
                     
-                                                    <Form.Item
-                                                        label='Antecedentes oculares'
-                                                        name="antecedentesOculares"
-                                                        rules={[
-                                                        {
+                                                    <Form.Item label='Antecedentes oculares' name="antecedentesOculares"
+                                                        rules={[{
                                                             required: true,
                                                             message: 'Por favor ingrese los antecedentes oculares del paciente!',
                                                         }]}
@@ -633,11 +549,8 @@ export default function OptometristSchedule() {
                                                         <Input placeholder='Antecedentes oculares' autoComplete='off'/>
                                                     </Form.Item>
                     
-                                                    <Form.Item
-                                                        label='Antecedentes generales'
-                                                        name="antecedentesGenerales"
-                                                        rules={[
-                                                        {
+                                                    <Form.Item label='Antecedentes generales' name="antecedentesGenerales"
+                                                        rules={[{
                                                             required: true,
                                                             message: 'Por favor ingrese los antecedentes generales del paciente!',
                                                         }]}
@@ -646,80 +559,54 @@ export default function OptometristSchedule() {
                                                     </Form.Item>
                                                 </>
                                         },
-                                        {
-                                            key: 3,
-                                            label: 'RX en uso',
-                                            children:
+                                        { key: 3, label: 'RX en uso', children:
                                             <Space>
-                                                <Form.Item
-                                                    label='OD'
-                                                    name='rxusood'
-                                                    rules={[
-                                                        {
+                                                <Form.Item label='OD' name='rxusood'
+                                                    rules={[{
                                                             required: true,
                                                             message: 'Por favor ingrese el valor para el ojo derecho!'
-                                                        }
-                                                    ]}
+                                                    }]}
                                                 >
                                                     <Input placeholder='OD' autoComplete='off'/>
                                                 </Form.Item>
             
-                                                <Form.Item
-                                                    label='OI'
-                                                    name='rxusooi'
-                                                    rules={[
-                                                        {
+                                                <Form.Item label='OI' name='rxusooi'
+                                                    rules={[{
                                                             required: true,
                                                             message: 'Por favor ingrese el valor para el ojo izquierdo'
-                                                        }
-                                                    ]}
+                                                    }]}
                                                 >
                                                     <Input placeholder='OI' autoComplete='off'/>
                                                 </Form.Item>
             
-                                                <Form.Item
-                                                    label='ADD+'
-                                                    name='rxusoadd'
-                                                    rules={[
-                                                        {
+                                                <Form.Item label='ADD+' name='rxusoadd'
+                                                    rules={[{
                                                             required: true,
                                                             message: 'Por favor ingrese el valor add+'
-                                                        }
-                                                    ]}
+                                                    }]}
                                                 >
                                                     <Input placeholder='ADD+' autoComplete='off'/>
                                                 </Form.Item>
                                             </Space>
                                         },
-                                        {
-                                            key: 4,
-                                            label: 'Visión lejana',
-                                            children:
+                                        { key: 4, label: 'Visión lejana', children:
                                                 <>
                                                     <h3>Con RX</h3>
                                                     <Space>
-                                                        <Form.Item
-                                                            label='OD'
-                                                            name='vlejanarxod'
-                                                            rules={[
-                                                                {
+                                                        <Form.Item label='OD' name='vlejanarxod'
+                                                            rules={[{
                                                                     required: true,
                                                                     message: 'Por favor ingrese el valor OD'
-                                                                }
-                                                            ]}
+                                                            }]}
                                                         >
                                                             <Input placeholder='OD' autoComplete='off'/>
                                                         </Form.Item>
 
-                                                        <Form.Item
-                                                            label='OI'
-                                                            name='vlejanarxoi'
-                                                            rules={[
-                                                                {
+                                                        <Form.Item label='OI' name='vlejanarxoi'
+                                                            rules={[{
                                                                     required: true,
                                                                     message: 'Por favor ingrese el valor OI'
-                                                                }
-                                                            ]}
+                                                            }]}
                                                         >
                                                             <Input placeholder='OI' autoComplete='off'/>
                                                         </Form.Item>
@@ -727,38 +614,27 @@ export default function OptometristSchedule() {
 
                                                     <h3>Sin RX</h3>
                                                     <Space>
-                                                        <Form.Item
-                                                            label='OD'
-                                                            name='vlejanaod'
-                                                            rules={[
-                                                                {
+                                                        <Form.Item label='OD' name='vlejanaod'
+                                                            rules={[{
                                                                     required: true,
                                                                     message: 'Por favor ingrese el valor OD'
-                                                                }
-                                                            ]}
+                                                            }]}
                                                         >
                                                             <Input placeholder='OD' autoComplete='off'/>
                                                         </Form.Item>
 
-                                                        <Form.Item
-                                                            label='OI'
-                                                            name='vlejanaoi'
-                                                            rules={[
-                                                                {
+                                                        <Form.Item label='OI' name='vlejanaoi'
+                                                            rules={[{
                                                                     required: true,
                                                                     message: 'Por favor ingrese el valor OI'
-                                                                }
-                                                            ]}
+                                                            }]}
                                                         >
                                                             <Input placeholder='OI' autoComplete='off'/>
                                                         </Form.Item>
                                                     </Space>
                                                     
-                                                    <Form.Item
-                                                        label='Distancia pupilar'
-                                                        name="distanciapupilar"
-                                                        rules={[
-                                                        {
+                                                    <Form.Item label='Distancia pupilar' name="distanciapupilar"
+                                                        rules={[{
                                                             required: true,
                                                             message: 'Por favor ingrese la distancia pupilar del paciente!',
                                                         }]}
@@ -766,11 +642,8 @@ export default function OptometristSchedule() {
                                                         <Input placeholder='Distancia pupilar' autoComplete='off'/>
                                                     </Form.Item>
 
-                                                    <Form.Item
-                                                        label='Examen externo'
-                                                        name="externo"
-                                                        rules={[
-                                                        {
+                                                    <Form.Item label='Examen externo' name="externo"
+                                                        rules={[{
                                                             required: true,
                                                             message: 'Por favor ingrese los datos del examen externo!',
                                                         }]}
@@ -779,35 +652,24 @@ export default function OptometristSchedule() {
                                                     </Form.Item>
                                                 </>
                                         },
-                                        {
-                                            key: 5,
-                                            label: 'Visión próxima',
-                                            children:
+                                        { key: 5, label: 'Visión próxima', children:
                                                 <>
                                                     <h3>Con RX</h3>
                                                     <Space>
-                                                        <Form.Item
-                                                            label='OD'
-                                                            name='vproximarxod'
-                                                            rules={[
-                                                                {
+                                                        <Form.Item label='OD' name='vproximarxod'
+                                                            rules={[{
                                                                     required: true,
                                                                     message: 'Por favor ingrese el valor OD'
-                                                                }
-                                                            ]}
+                                                            }]}
                                                         >
                                                             <Input placeholder='OD' autoComplete='off'/>
                                                         </Form.Item>
 
-                                                        <Form.Item
-                                                            label='OI'
-                                                            name='vproximarxoi'
-                                                            rules={[
-                                                                {
+                                                        <Form.Item label='OI' name='vproximarxoi'
+                                                            rules={[{
                                                                     required: true,
                                                                     message: 'Por favor ingrese el valor OI'
-                                                                }
-                                                            ]}
+                                                            }]}
                                                         >
                                                             <Input placeholder='OI' autoComplete='off'/>
                                                         </Form.Item>
@@ -815,44 +677,30 @@ export default function OptometristSchedule() {
 
                                                     <h3>Sin RX</h3>
                                                     <Space>
-                                                        <Form.Item
-                                                            label='OD'
-                                                            name='vproximaod'
-                                                            rules={[
-                                                                {
+                                                        <Form.Item label='OD' name='vproximaod'
+                                                            rules={[{
                                                                     required: true,
                                                                     message: 'Por favor ingrese el valor OD'
-                                                                }
-                                                            ]}
+                                                            }]}
                                                         >
                                                             <Input placeholder='OD' autoComplete='off'/>
                                                         </Form.Item>
 
-                                                        <Form.Item
-                                                            label='OI'
-                                                            name='vproximaoi'
-                                                            rules={[
-                                                                {
+                                                        <Form.Item label='OI' name='vproximaoi'
+                                                            rules={[{
                                                                     required: true,
                                                                     message: 'Por favor ingrese el valor OI'
-                                                                }
-                                                            ]}
+                                                            }]}
                                                         >
                                                             <Input placeholder='OI' autoComplete='off'/>
                                                         </Form.Item>
                                                     </Space>
                                                 </>
                                         },
-                                        {
-                                            key: 6,
-                                            label: 'Motilidad',
-                                            children:
+                                        { key: 6, label: 'Motilidad', children:
                                                 <>
-                                                    <Form.Item
-                                                        label='Ducciones'
-                                                        name="ducciones"
-                                                        rules={[
-                                                        {
+                                                    <Form.Item label='Ducciones' name="ducciones"
+                                                        rules={[{
                                                             required: true,
                                                             message: 'Por favor ingrese las ducciones del paciente!',
                                                         }]}
@@ -860,11 +708,8 @@ export default function OptometristSchedule() {
                                                         <Input placeholder='Ducciones' autoComplete='off'/>
                                                     </Form.Item>
 
-                                                    <Form.Item
-                                                        label='Versiones'
-                                                        name="versiones"
-                                                        rules={[
-                                                        {
+                                                    <Form.Item label='Versiones' name="versiones"
+                                                        rules={[{
                                                             required: true,
                                                             message: 'Por favor ingrese las versiones del paciente!',
                                                         }]}
@@ -873,11 +718,8 @@ export default function OptometristSchedule() {
                                                     </Form.Item>
 
                                                     <Space>
-                                                        <Form.Item
-                                                            label='PPC'
-                                                            name="ppc"
-                                                            rules={[
-                                                            {
+                                                        <Form.Item label='PPC' name="ppc"
+                                                            rules={[{
                                                                 required: true,
                                                                 message: 'Por favor ingrese el PPC!',
                                                             }]}
@@ -885,11 +727,8 @@ export default function OptometristSchedule() {
                                                             <Input placeholder='PPC' autoComplete='off'/>
                                                         </Form.Item>
 
-                                                        <Form.Item
-                                                            label='CT6m'
-                                                            name="ct6m"
-                                                            rules={[
-                                                            {
+                                                        <Form.Item label='CT6m' name="ct6m"
+                                                            rules={[{
                                                                 required: true,
                                                                 message: 'Por favor ingrese el CT6m!',
                                                             }]}
@@ -897,11 +736,8 @@ export default function OptometristSchedule() {
                                                             <Input placeholder='ct6m' autoComplete='off'/>
                                                         </Form.Item>
 
-                                                        <Form.Item
-                                                            label='33cm'
-                                                            name="cm"
-                                                            rules={[
-                                                            {
+                                                        <Form.Item label='33cm' name="cm"
+                                                            rules={[{
                                                                 required: true,
                                                                 message: 'Por favor ingrese el 33cm!',
                                                             }]}
@@ -911,11 +747,8 @@ export default function OptometristSchedule() {
                                                     </Space>
 
                                                     <Space>
-                                                        <Form.Item
-                                                            label='Ojo dominante'
-                                                            name="ojodominante"
-                                                            rules={[
-                                                            {
+                                                        <Form.Item label='Ojo dominante' name="ojodominante"
+                                                            rules={[{
                                                                 required: true,
                                                                 message: 'Por favor seleccione el ojo dominante!',
                                                             }]}
@@ -923,11 +756,8 @@ export default function OptometristSchedule() {
                                                             <Select size={'large'} defaultValue="Seleccione el ojo dominante" options={selectOjoDominante} />
                                                         </Form.Item>
 
-                                                        <Form.Item
-                                                            label='Mano dominante'
-                                                            name="manodominante"
-                                                            rules={[
-                                                            {
+                                                        <Form.Item label='Mano dominante' name="manodominante"
+                                                            rules={[{
                                                                 required: true,
                                                                 message: 'Por favor seleccione la mano dominante!',
                                                             }]}
@@ -937,17 +767,11 @@ export default function OptometristSchedule() {
                                                     </Space>
                                                 </>
                                         },
-                                        {
-                                            key: 7,
-                                            label: 'Oftalmoscopia',
-                                            children:
+                                        { key: 7, label: 'Oftalmoscopia', children:
                                                 <>
                                                     <Space>
-                                                        <Form.Item
-                                                            label='OD'
-                                                            name="oftalmoscopiaod"
-                                                            rules={[
-                                                            {
+                                                        <Form.Item label='OD' name="oftalmoscopiaod"
+                                                            rules={[{
                                                                 required: true,
                                                                 message: 'Por favor digite el valor del ojo derecho!',
                                                             }]}
@@ -955,11 +779,8 @@ export default function OptometristSchedule() {
                                                             <Input placeholder='OD' autoComplete='off'/>
                                                         </Form.Item>
 
-                                                        <Form.Item
-                                                            label='OI'
-                                                            name="oftalmoscopiaoi"
-                                                            rules={[
-                                                            {
+                                                        <Form.Item label='OI' name="oftalmoscopiaoi"
+                                                            rules={[{
                                                                 required: true,
                                                                 message: 'Por favor digite el valor del ojo izquierdo!',
                                                             }]}
@@ -969,17 +790,11 @@ export default function OptometristSchedule() {
                                                     </Space>
                                                 </>
                                         },
-                                        {
-                                            key: 8,
-                                            label: 'Queratometría',
-                                            children:
+                                        { key: 8, label: 'Queratometría', children:
                                                 <>
                                                     <Space>
-                                                        <Form.Item
-                                                            label='OD'
-                                                            name="queratometriaod"
-                                                            rules={[
-                                                            {
+                                                        <Form.Item label='OD' name="queratometriaod"
+                                                            rules={[{
                                                                 required: true,
                                                                 message: 'Por favor digite el valor del ojo derecho!',
                                                             }]}
@@ -987,11 +802,8 @@ export default function OptometristSchedule() {
                                                             <Input placeholder='OD' autoComplete='off'/>
                                                         </Form.Item>
 
-                                                        <Form.Item
-                                                            label='OI'
-                                                            name="queratometriaoi"
-                                                            rules={[
-                                                            {
+                                                        <Form.Item label='OI' name="queratometriaoi"
+                                                            rules={[{
                                                                 required: true,
                                                                 message: 'Por favor digite el valor del ojo izquierdo!',
                                                             }]}
@@ -1001,17 +813,11 @@ export default function OptometristSchedule() {
                                                     </Space>
                                                 </>
                                         },
-                                        {
-                                            key: 9,
-                                            label: 'Retinoscopia',
-                                            children:
+                                        { key: 9, label: 'Retinoscopia', children:
                                                 <>
                                                     <Space>
-                                                        <Form.Item
-                                                            label='OD'
-                                                            name="retinoscopiaod"
-                                                            rules={[
-                                                            {
+                                                        <Form.Item label='OD' name="retinoscopiaod"
+                                                            rules={[{
                                                                 required: true,
                                                                 message: 'Por favor digite el valor del ojo derecho!',
                                                             }]}
@@ -1019,11 +825,8 @@ export default function OptometristSchedule() {
                                                             <Input placeholder='OD' autoComplete='off'/>
                                                         </Form.Item>
 
-                                                        <Form.Item
-                                                            label='OI'
-                                                            name="retinoscopiaoi"
-                                                            rules={[
-                                                            {
+                                                        <Form.Item label='OI' name="retinoscopiaoi"
+                                                            rules={[{
                                                                 required: true,
                                                                 message: 'Por favor digite el valor del ojo izquierdo!',
                                                             }]}
@@ -1033,17 +836,11 @@ export default function OptometristSchedule() {
                                                     </Space>
                                                 </>
                                         },
-                                        {
-                                            key: 10,
-                                            label: 'Rx Final',
-                                            children:
+                                        { key: 10, label: 'Rx Final', children:
                                                 <>
                                                     <Space>
-                                                        <Form.Item
-                                                            label='OD'
-                                                            name="rxfinalod"
-                                                            rules={[
-                                                            {
+                                                        <Form.Item label='OD'name="rxfinalod"
+                                                            rules={[{
                                                                 required: true,
                                                                 message: 'Por favor digite el valor del ojo derecho!',
                                                             }]}
@@ -1051,11 +848,8 @@ export default function OptometristSchedule() {
                                                             <Input placeholder='OD' autoComplete='off'/>
                                                         </Form.Item>
 
-                                                        <Form.Item
-                                                            label='OI'
-                                                            name="rxfinaloi"
-                                                            rules={[
-                                                            {
+                                                        <Form.Item label='OI' name="rxfinaloi"
+                                                            rules={[{
                                                                 required: true,
                                                                 message: 'Por favor digite el valor del ojo izquierdo!',
                                                             }]}
@@ -1063,11 +857,8 @@ export default function OptometristSchedule() {
                                                             <Input placeholder='OI' autoComplete='off'/>
                                                         </Form.Item>
 
-                                                        <Form.Item
-                                                            label='AVL'
-                                                            name="avl"
-                                                            rules={[
-                                                            {
+                                                        <Form.Item label='AVL' name="avl"
+                                                            rules={[{
                                                                 required: true,
                                                                 message: 'Por favor digite el valor de AVL!',
                                                             }]}
@@ -1075,11 +866,8 @@ export default function OptometristSchedule() {
                                                             <Input placeholder='AVL' autoComplete='off'/>
                                                         </Form.Item>
 
-                                                        <Form.Item
-                                                            label='AVP'
-                                                            name="avp"
-                                                            rules={[
-                                                            {
+                                                        <Form.Item label='AVP' name="avp"
+                                                            rules={[{
                                                                 required: true,
                                                                 message: 'Por favor digite el valor de AVP!',
                                                             }]}
@@ -1089,11 +877,8 @@ export default function OptometristSchedule() {
                                                     </Space>
 
                                                     <Space>
-                                                        <Form.Item
-                                                            label='Color'
-                                                            name="color"
-                                                            rules={[
-                                                            {
+                                                        <Form.Item label='Color' name="color"
+                                                            rules={[{
                                                                 required: true,
                                                                 message: 'Por favor digite el color!',
                                                             }]}
@@ -1101,11 +886,8 @@ export default function OptometristSchedule() {
                                                             <Input placeholder='Color' autoComplete='off'/>
                                                         </Form.Item>
 
-                                                        <Form.Item
-                                                            label='ADD+'
-                                                            name="rxfinaladd"
-                                                            rules={[
-                                                            {
+                                                        <Form.Item label='ADD+' name="rxfinaladd"
+                                                            rules={[{
                                                                 required: true,
                                                                 message: 'Por favor digite el valor de ADD+!',
                                                             }]}
@@ -1113,11 +895,8 @@ export default function OptometristSchedule() {
                                                             <Input placeholder='ADD+' autoComplete='off'/>
                                                         </Form.Item>
 
-                                                        <Form.Item
-                                                            label='BIF'
-                                                            name="bif"
-                                                            rules={[
-                                                            {
+                                                        <Form.Item label='BIF' name="bif"
+                                                            rules={[{
                                                                 required: true,
                                                                 message: 'Por favor digite el valor de BIF!',
                                                             }]}
@@ -1126,11 +905,8 @@ export default function OptometristSchedule() {
                                                         </Form.Item>
                                                     </Space>
 
-                                                    <Form.Item
-                                                        label='Uso'
-                                                        name="uso"
-                                                        rules={[
-                                                        {
+                                                    <Form.Item label='Uso' name="uso"
+                                                        rules={[{
                                                             required: true,
                                                             message: 'Por favor digite el uso.',
                                                         }]}
@@ -1138,11 +914,8 @@ export default function OptometristSchedule() {
                                                         <Input placeholder='Uso' autoComplete='off'/>
                                                     </Form.Item>
 
-                                                    <Form.Item
-                                                        label='Diagnostico'
-                                                        name="diagnostico"
-                                                        rules={[
-                                                        {
+                                                    <Form.Item label='Diagnostico' name="diagnostico"
+                                                        rules={[{
                                                             required: true,
                                                             message: 'Por favor digite el diagnostico.',
                                                         }]}
@@ -1150,11 +923,8 @@ export default function OptometristSchedule() {
                                                         <Input placeholder='Diagnostico' autoComplete='off'/>
                                                     </Form.Item>
 
-                                                    <Form.Item
-                                                        label='Conducta'
-                                                        name="conducta"
-                                                        rules={[
-                                                        {
+                                                    <Form.Item label='Conducta' name="conducta"
+                                                        rules={[{
                                                             required: true,
                                                             message: 'Por favor digite la conducta.',
                                                         }]}
@@ -1165,19 +935,14 @@ export default function OptometristSchedule() {
                                                     <Form.Item
                                                         label='Examinador'
                                                     >
-                                                        <Typography>
-                                                            <pre>{optometrist}</pre>
-                                                        </Typography>
+                                                        <Typography><pre>{optometrist}</pre></Typography>
                                                     </Form.Item>
 
-                                                    <Form.Item
-                                                        label='Control'
-                                                        name='control'
-                                                        rules={[
-                                                            {
+                                                    <Form.Item label='Control' name='control'
+                                                        rules={[{
                                                                 required: true,
                                                                 message: 'Por favor digite el tiempo para control.',
-                                                            }]}
+                                                        }]}
                                                     >
                                                         <Input placeholder='Control' autoComplete='off'/>
                                                     </Form.Item>
@@ -1186,16 +951,8 @@ export default function OptometristSchedule() {
                                     ]}      
                                 />
 
-                                <Form.Item 
-                                    shouldUpdate
-                                    wrapperCol={{ offset: 5, span: 16 }}    
-                                >
-                                    <Button
-                                        type="primary"
-                                        htmlType="submit"
-                                        className="login-form-button"
-                                        disabled={!isMedicalRecordFormComplete}
-                                    >
+                                <Form.Item shouldUpdate wrapperCol={{ offset: 5, span: 16 }} >
+                                    <Button type="primary" htmlType="submit" className="login-form-button" disabled={!isMedicalRecordFormComplete} >
                                         CONFIRMAR REGISTRO
                                     </Button>
                                 </Form.Item>
@@ -1210,17 +967,12 @@ export default function OptometristSchedule() {
             }
             {!patient &&
                 <div className='appointment-table'>
-                    <Table
-                        columns={columns}
-                        dataSource={
+                    <Table columns={columns} dataSource={
                             filteredData.map(appointment => ({
                                 ...appointment,
                                 key: appointment.idcita
                             }))
-                        }
-                        scroll={{y: 600}}
-                        pagination={false}
-                    />
+                        } scroll={{y: 600}} pagination={false} />
                 </div>
             }
         </div>

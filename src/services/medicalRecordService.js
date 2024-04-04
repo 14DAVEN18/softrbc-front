@@ -1,8 +1,22 @@
 import axios from "axios";
-import { CREATE_MEDICAL_RECORD } from "../constants/constants";
+import { CREATE_MEDICAL_RECORD, ADD_MEDICAL_RECORD } from "../constants/constants";
 
 
-export const createMedicalRecord = async (
+export const createMedicalRecord = async () => {
+    const config = {
+        headers: {
+            "Authorization": localStorage.getItem('token'),
+            "Content-Type": "application/json"
+        }
+    }
+    try {
+        return await axios.get(CREATE_MEDICAL_RECORD, config);
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const addMedicalRecord = async (
     {
         Anamnesis: {
             anamnesis
@@ -68,11 +82,12 @@ export const createMedicalRecord = async (
         },
         paciente: {
             idpaciente
-        }
+        },
+        idhistoriaclinica
     }
 ) => {
     try {
-        return await axios.post(CREATE_MEDICAL_RECORD, 
+        return await axios.post(ADD_MEDICAL_RECORD, 
             {
                 Anamnesis: {
                     anamnesis
@@ -138,7 +153,8 @@ export const createMedicalRecord = async (
                 },
                 paciente: {
                     idpaciente
-                }
+                },
+                idhistoriaclinica
             });
     } catch (error) {
         throw error;
