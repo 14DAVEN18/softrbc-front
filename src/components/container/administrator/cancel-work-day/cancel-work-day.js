@@ -112,34 +112,22 @@ export default function CancelWorkDay() {
     //const [pdf, setPDF] = useState(null)
     // {format(selectedDay, 'dd/MM/yyyy')}
     const cancelDay = async () => {
-        console.log(selectedDay)
         setLoading(true);
         try {
-            const response = await cancelWorkDay(selectedDay); // Call the create function from userService.js
-            console.log('Response:', response);
-            if (response.headers['content-type'] === 'application/pdf') {
+            const blobData = await cancelWorkDay(selectedDay);
+            console.log('Received blob data:', blobData);
+            console.log('Blob size:', blobData.size);
+            console.log('Blob type:', blobData.type);
 
-                const blob = new Blob([response.data], { type: 'application/pdf' });
-                saveAs(blob, 'document.pdf');
-
-            } else {
-                // Handle non-PDF response
-                console.error('Response is not a PDF:', response);
-                // Handle error if needed
-            }
-            // Handle success if needed
+            const blob = new Blob([blobData], { type: 'application/json' });
+            saveAs(blob, `citas_${selectedDay}.pdf`); // Trigger download
         } catch (error) {
             console.error('Error en la solicitud:', error);
             // Handle error if needed
         } finally {
             setLoading(false);
-            // Handle modal state changes here if needed
-        }
-        
-        setTimeout(() => {
-            setLoading(false);
             setIsCancelationModalOpen(false);
-        }, 2000);
+        }
     };
     
     const statusCancelationModalCancel = () => {

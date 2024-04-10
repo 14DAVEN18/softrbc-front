@@ -1,4 +1,7 @@
 .chat-container {
+    background-image: url('/public/El\ palacio\ de\ las\ gafas.jpg');
+    background-size: 100% 100%;
+    background-position: center;
     display: flex;
     height: 100%;
     width: 100%;
@@ -11,9 +14,9 @@
     border-radius: 10px 10px 0 0;
     display: flex;
     flex-direction: column;
-    height: 70%;
+    height: 80%;
     margin-left: 1%;
-    width: 30%;
+    width: 40%;
 }
 
 .chat-header {
@@ -22,14 +25,23 @@
     border-radius: 10px 10px 0 0;
     color: white;
     display: flex;
-    height: 40px;
-    justify-content: end;
-    text-align: right;
+    height: 70px;
+    justify-content: space-between;
+    padding: 0 10px;
     width: 100%;
+}
+.chat-header img {
+    max-height: 100%; /* Scale image height to fit within parent */
+    max-width: 135px; /* Scale image width to fit within parent */
+    margin-right: 10px; /* Optional: Add margin between image and text */
+}
+.chat-header h2 {
+    margin: 0; /* Reset margin for heading */
 }
 
 .message-box {
-    height: calc(100% - 80px);
+    background-color: white;
+    height: calc(100% - 110px);
     overflow-y: scroll;
     width: 100%;
 }
@@ -90,10 +102,11 @@
 
 .text-box {
     align-items: center;
+    background-color: white;
     border-top: 1px solid black;
     display: flex;
     flex-direction: row;
-    height: 39px;
+    height: 40px;
     width: 100%;
 }
 #option {

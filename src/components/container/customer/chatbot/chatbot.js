@@ -14,7 +14,6 @@ import { getQuestions } from '../../../../services/faqService';
 import { cancelAppointment, verifyAppointmentDetails } from '../../../../services/appointmentService';
 import { addMessage, resetMessage, setDisplayLogin, setDecisionTree, setCurrentLevel, setNewInput } from './redux/chatbotActions';
 
-
 // Styles
 import './chatbot.css';
 
@@ -34,6 +33,7 @@ function Chatbot({
     setNewInput
 })  {
 
+    const logoUrl = `${process.env.PUBLIC_URL}/Logo.png`
     const navigate = useNavigate();
 
     const ref = useRef(null);
@@ -287,6 +287,7 @@ function Chatbot({
         <div className='chat-container' ref={ref}>
             <div className='chat'>
                 <div className='chat-header'>
+                    <img src={logoUrl}/>
                     <h2>Chat</h2>
                 </div>
 
