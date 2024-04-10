@@ -18,19 +18,29 @@ export default function AppointmentManagement() {
     const navigate = useNavigate()
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('')
-    const [workDays, setWorkDays] = useState(null)
+    const [workDays, setWorkDays] = useState([])
 
     useEffect(() => {
         setHeight(ref.current.offsetHeight);
         setWidth(ref.current.offsetWidth);
-        getDaysOptometrist()
-            .then(dayOptometrist => {
-                setWorkDays(workDays.data)
-            })
-            .catch(error => {
+        const fecthWorkdays = async ()  => {
+            try {
+                const response = await getDaysOptometrist()
+                const newWorkDays = response.data
+                    .flatMap(calendar => calendar.split('.'));
+                console.log("newWorkDays ", newWorkDays)
+                
+                    setWorkDays(prevWorkDays => [
+                        ...prevWorkDays,
+                        ...newWorkDays
+                    ])
+            } catch (error) {
                 console.error('Error while getting work days', error)
-            });
-        console.log(workDays)
+            } finally{
+                console.log("workDays: ", workDays)
+            }
+        }
+        fecthWorkdays();        
     }, [])
 
 
@@ -102,7 +112,10 @@ export default function AppointmentManagement() {
         const currentDate = new Date();
         const formattedDate = format(date, 'yyyy-MM-dd');
         const formattedCurrentDate = format(currentDate, 'yyyy-MM-dd');
-        return (!isCurrentMonth(date) || formattedDate < formattedCurrentDate) || isSunday(date);
+        return (!isCurrentMonth(date) || 
+                formattedDate < formattedCurrentDate) ||
+                isSunday(date) ||
+                !workDays.includes(format(date, 'EEEE', { locale: es }).toLowerCase());
     };
 
 
@@ -193,11 +206,11 @@ export default function AppointmentManagement() {
 
         getAppointments(selectedDayFormatted.date)
             .then(times => {
-                setAppointmentTimes(times.data)
+            setAppointmentTimes(times.data)
             })
             .catch(error => {
-                if(error.response.status === 403)
-                    setErrorMessage("Su sesión ha expirado o no tiene los permisos necesarios para realizar esta acción.")
+            if(error.response.status === 403)
+                setErrorMessage("Su sesión ha expirado o no tiene los permisos necesarios para realizar esta acción.")
                 console.error('Error while getting appointments', error)
             })
     
@@ -362,6 +375,11 @@ export default function AppointmentManagement() {
             { successMessage && (
                 <div className='success-message'>
                     <p>{successMessage}</p>
+                </div>
+            )}
+            { !successMessage && !errorMessage && (
+                <div className='alert-message'>
+                    <p>Si no hay fechas activas, puede deberse a varias razones: 1. No hay optometras disponibles en el momento. 2. Los domingos no son dias laborales. 3. El dia no pertenece al mes actual, en ese caso, avance al siguiente mes para acceder a dichos dias.</p>
                 </div>
             )}
 

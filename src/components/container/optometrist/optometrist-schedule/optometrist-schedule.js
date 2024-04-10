@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Button, Collapse, DatePicker, Form, Input, InputNumber, Modal, Progress, Select, Space, Table, Typography } from 'antd';
 import { UserOutlined, MailOutlined, PhoneOutlined, IdcardOutlined } from '@ant-design/icons';
 import { format } from 'date-fns';
+import dayjs from "dayjs";
 
 import './optometrist-schedule.css';
 
@@ -44,6 +45,8 @@ export default function OptometristSchedule() {
     const [width, setWidth] = useState(0);
     const [loading, setLoading] = useState(false);
     const optometrist = JSON.parse(localStorage.getItem('user')).name + ' ' + JSON.parse(localStorage.getItem('user')).surname
+    const [errorMessage, setErrorMessage] = useState('');
+    const [successMessage, setSuccessMessage] = useState('')
 
 
     useEffect(() => {
@@ -62,7 +65,7 @@ export default function OptometristSchedule() {
     const [appointments, setAppointments] = useState([])
     
     useEffect(() => {
-        const today = new Date(2024, 3, 1)
+        const today = new Date(2024, 3, 8)
         const selectedDayFormatted = format(today, 'dd/MM/yyyy');
     
         getAppointments(selectedDayFormatted)
@@ -99,13 +102,39 @@ export default function OptometristSchedule() {
     const [filteredData, setFilteredData] = useState([]);
 
     useEffect(() => {
-        setTimeout(() => {
-            const filtered = Array.isArray(appointments) ? appointments.filter(appointment =>
-                appointment.nombre.toLowerCase().includes(searchText.toLowerCase())
-            ) : [];
-            setFilteredData(filtered);
-        }, 500);
+        const filterAndSortAppointments = () => {
+            const filteredAppointments = Array.isArray(appointments)
+                ? appointments.filter(appointment =>
+                      appointment.nombre.toLowerCase().includes(searchText.toLowerCase())
+                  )
+                : [];
+
+            // Sort filtered appointments by time
+            filteredAppointments.sort((a, b) => {
+                const timeA = parseTime(a.hora);
+                const timeB = parseTime(b.hora);
+                return compareTimes(timeA, timeB);
+            });
+
+            setFilteredData(filteredAppointments);
+        };
+
+        // Use a timeout to debounce the filtering and sorting
+        const timeoutId = setTimeout(filterAndSortAppointments, 500);
+
+        return () => clearTimeout(timeoutId);
     }, [searchText, appointments]);
+
+    // Function to parse time string like '9:00' into a sortable value
+    const parseTime = (timeString) => {
+        const [hours, minutes] = timeString.split(':').map(part => parseInt(part, 10));
+        return hours * 60 + minutes; // Convert time to minutes since midnight
+    };
+
+    // Function to compare two time values
+    const compareTimes = (timeA, timeB) => {
+        return timeA - timeB; // Compare time values
+    };
 
     const search = (values) => {
         console.log('Received values from form: ', values);
@@ -120,14 +149,14 @@ export default function OptometristSchedule() {
     const getPatientInfo = async (idpaciente) => {
         try {
             const response = await getPatientById(idpaciente); 
-            setPatient(response.data)
+            setPatient(response.data[0])
             console.log(patient)
         } catch (error) {
             console.error('Error en la solicitud:', error);
         } finally {
             setLoading(false);
-            
         }
+        console.log(patient)
     };
     
 
@@ -171,7 +200,6 @@ export default function OptometristSchedule() {
 
     // TO UPDATE PATIENT'S INFO
     const [isConfirmationFormComplete, setIsConfirmationFormComplete] = useState(false);
-    const [selectedPatient, setSelectedPatient] = useState(null);
 
     const onUpdateValuesChange = (_, allValues) => {
         const isComplete = Object.values(allValues).every(value => !!value);
@@ -180,12 +208,12 @@ export default function OptometristSchedule() {
 
     const handleUpdatePatient = async () => {
         setLoading(true);
-        if (isConfirmationFormComplete != null) {
+        if (updateForm != null) {
             try {
-                const values = await isConfirmationFormComplete.validateFields();
+                const values = await updateForm.validateFields();
                 const response = await updatePatient(
                     {
-                        id: selectedPatient.idpaciente,
+                        id: patient?.paciente.idpaciente,
                         direccion: values.direccion,
                         correo: values.correo,
                         telefono: values.telefono,
@@ -194,16 +222,14 @@ export default function OptometristSchedule() {
                 ); // Call the create function from userService.js
                 console.log('Response:', response.data);
                 setLoading(true);
-                // Handle success if needed
             } catch (error) {
                 console.error('Error en la solicitud:', error);
-                // Handle error if needed
+                setErrorMessage(`Ocurrió un error al registrar los datos del paciente: ${error.data}`)
             } finally {
-                getPatientById(selectedPatient.idpaciente)
+                setSuccessMessage(`Los datos personales de ${patient?.usuario.nombre} ${patient?.usuario.apellido} fueron guardados correctamente.`)
                 setLoading(false);
                 setTimeout(() => {
                     setLoading(false);
-                    setSelectedPatient(null);
                 }, 2000);
             }
         }
@@ -216,16 +242,22 @@ export default function OptometristSchedule() {
 
 
     // TO CREATE PATIENT'S MEDICAL RECORD
-    const createMedicalRecord = async () => {
+    const handleMedicalRecord = async () => {
         try {
-            const response = createMedicalRecord(
+            const response = await createMedicalRecord(patient.paciente.idpaciente);
+            setTimeout(() => {
                 setPatient(prevPatient => ({
                     ...prevPatient,
-                    idhistoriaclinica: response.data
+                    paciente: {
+                        ...prevPatient.paciente,
+                        idhistoriaclinica: response.data.idhistoriaclinica
+                    }
                 }))
-            )
+            }, 1000)
+            setSuccessMessage(`La historia clínica para ${patient?.usuario.nombre} ${patient?.usuario.apellido} fue creada exitosamente`)
         } catch (error ){
             console.error("Error actualizando historia clínica", error)
+            setErrorMessage(`Ocurrió un error al crear la historia médica del paciente: ${error.data}`)
         }
     }
 
@@ -239,6 +271,7 @@ export default function OptometristSchedule() {
     // TO ADD PATIENT'S MEDICAL RECORD
     const [isMedicalRecordFormComplete, setIsMedicalRecordFormComplete] = useState(false);
     const [progress, setProgress] = useState(0)
+    const [medicalRecord, setMedicalRecord] = useState(null)
 
     const onMedicalRecordValuesChange = (_, allValues) => {
         console.log(allValues)
@@ -270,6 +303,7 @@ export default function OptometristSchedule() {
             try {
                 setLoading(true);
                 const values = await medicalRecordForm.validateFields();
+                setMedicalRecord(values)
                 const response = await addMedicalRecord(
                     {
                         Anamnesis: { 
@@ -335,15 +369,16 @@ export default function OptometristSchedule() {
                             control: values.control 
                         },
                         paciente: {
-                            idpaciente: patient.idpaciente
-                        }
+                            idpaciente: patient.paciente.idpaciente
+                        },
+                        idhistoriaclinica: patient.paciente.idhistoriaclinica
                     }
                 ); // Call the create function from userService.js
                 //console.log('Response:', response.data);
-                // Handle success if needed
+                setSuccessMessage(`El registro de la consulta fue agregado a la historia clínica del paciente de manera exitosa`)
             } catch (error) {
                 console.error('Error en la solicitud:', error);
-                // Handle error if needed
+                setErrorMessage(`Ocurrió un error al anexar los datos de la consulta a la historia clínica del paciente: ${error.data}`)
             } finally {
                 setLoading(false);
                 setIsMedicalRecordFormComplete(false);
@@ -359,7 +394,16 @@ export default function OptometristSchedule() {
     return (
         /* div optometrist-schedule contains the whole screen in which thd component is displayed */
         <div className="optometrist-schedule" ref={ref}>
-            
+            { errorMessage && (
+                <div className='error-message' onClick={setErrorMessage('')}>
+                    <p>{errorMessage}</p>
+                </div>
+            )}
+            { successMessage && (
+                <div className='success-message' onClick={setSuccessMessage('')}>
+                    <p>{successMessage}</p>
+                </div>
+            )}
             {
                 !patient &&
                 <div className='search-form'>
@@ -503,12 +547,12 @@ export default function OptometristSchedule() {
                         <div className='tab-content'>
                             <Modal title="No se encontró una historia clínica" centered open={!(!!patient?.idhistoriaclinica)} footer=
                                 {<>
-                                    <Button key="action" type="primary" loading={loading} onClick={createMedicalRecord}>
+                                    <Button key="action" type="primary" loading={loading} onClick={handleMedicalRecord}>
                                         Crear historia clínica
                                     </Button>
                                 </>}
                             >
-                                <p className='confirmation'>El paciente {patient?.nombre} no tiene una historia clínica asignada. Primero debe crear una historia clínica para proceder con la consulta</p>
+                                <p className='confirmation'>El paciente {patient?.usuario.nombre} no tiene una historia clínica asignada. Primero debe crear una historia clínica para proceder con la consulta</p>
                             </Modal>
                         </div>
                     }
@@ -961,7 +1005,9 @@ export default function OptometristSchedule() {
                     }
 
                     {activeTab === 3 &&
-                        <div className='tab-content'></div>
+                        <div className='tab-content'>
+                            Nombre: {patient?.usuario.nombre} {patient?.usuario.apellido}
+                        </div>
                     }
                 </div>
             }

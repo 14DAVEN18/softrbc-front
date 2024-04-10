@@ -139,6 +139,12 @@ export default function Login({onLogin}) {
                                 ¿No tienes una cuenta? <Link to="/cliente/registro">Crea una aqui.</Link>
                             </p>
                         </Form.Item>
+
+                        <Form.Item>
+                            <p>
+                                <Link to="/recuperacion-de-cuenta">¿Olvidó su contraseña?</Link>
+                            </p>
+                        </Form.Item>
                     </Form>
             </div>
         </div>

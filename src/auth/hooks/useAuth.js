@@ -15,27 +15,44 @@ export const useAuth = () => {
         
         try {
             const response = await loginUser ({ cedula, password});
+            console.log("login response: ", response)
             const token = response.data.token; // body viene en el body
             const claims = JSON.parse(window.atob(token.split(".")[1]));
             const rol = claims.sub
+            console.log("claims: ", claims)
             dispatch({
                 type: 'login',
                 payload: {rol}
             });
             localStorage.setItem('rol', rol);
             localStorage.setItem('token', `Bearer ${token}`)
-            localStorage.setItem('user', JSON.stringify({
-                'name': response.data.nombre,
-                'surname': response.data.apellido,
-                'idpaciente': response.data.idpaciente,
-                'telefono': response.data.telefono,
-                'correo': response.data.correo
-            }))
-            if (rol === 'ROLE_ADMIN')
+            
+            if (rol === 'ROLE_ADMIN') {
+                localStorage.setItem('user', JSON.stringify({
+                    'name': response.data.nombre,
+                    'surname': response.data.apellido,
+                    'telefono': response.data.telefono,
+                    'correo': response.data.correo
+                }))
                 navigate('/administrador');
-            else if (rol === 'ROLE_OPTOMETRA')
+            }
+            else if (rol === 'ROLE_OPTOMETRA') {
+                localStorage.setItem('user', JSON.stringify({
+                    'name': response.data.nombre,
+                    'surname': response.data.apellido,
+                    'telefono': response.data.telefono,
+                    'correo': response.data.correo
+                }))
                 navigate('/optometra');
+            }
             else {
+                localStorage.setItem('user', JSON.stringify({
+                    'name': response.data.nombre,
+                    'surname': response.data.apellido,
+                    'telefono': response.data.telefono,
+                    'correo': response.data.correo,
+                    'idpaciente': claims.idpaciente
+                }))
                 console.log('Rol: ', 'Es paciente')
             }
         } catch(error) {

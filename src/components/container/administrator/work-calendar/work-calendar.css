@@ -72,3 +72,8 @@
 .work-calendar .calendar button{
     width: 100%;
 }
+
+.alert {
+    font-size: 1.5em;
+    color: red;
+}

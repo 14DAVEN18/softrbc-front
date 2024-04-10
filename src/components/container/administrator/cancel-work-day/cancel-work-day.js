@@ -109,7 +109,7 @@ export default function CancelWorkDay() {
         
     };  
     
-    const [pdf, setPDF] = useState(null)
+    //const [pdf, setPDF] = useState(null)
     // {format(selectedDay, 'dd/MM/yyyy')}
     const cancelDay = async () => {
         console.log(selectedDay)
@@ -120,14 +120,8 @@ export default function CancelWorkDay() {
             if (response.headers['content-type'] === 'application/pdf') {
 
                 const blob = new Blob([response.data], { type: 'application/pdf' });
-                setPDF(blob)
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.setAttribute('download', 'document.pdf');
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                saveAs(blob, 'document.pdf');
+
             } else {
                 // Handle non-PDF response
                 console.error('Response is not a PDF:', response);
@@ -189,7 +183,6 @@ export default function CancelWorkDay() {
                         ))}
                     </div>
                 ))}
-                {pdf}
             </div>
 
             <Modal title="Cancelar dia laboral" centered open={isCancelationModalOpen} onCancel={statusCancelationModalCancel} footer=

@@ -18,7 +18,7 @@ export const CREATE_PATIENT = "http://localhost:8080/paciente/nueva"
 export const GET_PATIENT_BY_ID = 'http://localhost:8080/paciente/pacienteEncontrado'
 
 // CALENDAR RELATED URLs
-export const GET_CALENDARS = 'http://localhost:8080/calendario/lista'
+export const GET_CALENDARS = 'http://localhost:8080/calendario/calendariolista'
 export const CREATE_CALENDAR = 'http://localhost:8080/calendario/nueva'
 export const MODIFY_CALENDAR = 'http://localhost:8080/calendario/modificar'
 export const DELETE_CALENDAR = 'http://localhost:8080/calendario/eliminar'

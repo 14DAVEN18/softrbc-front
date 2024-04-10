@@ -2,7 +2,7 @@ import axios from "axios";
 import { CREATE_MEDICAL_RECORD, ADD_MEDICAL_RECORD } from "../constants/constants";
 
 
-export const createMedicalRecord = async () => {
+export const createMedicalRecord = async (idpaciente) => {
     const config = {
         headers: {
             "Authorization": localStorage.getItem('token'),
@@ -10,7 +10,7 @@ export const createMedicalRecord = async () => {
         }
     }
     try {
-        return await axios.get(CREATE_MEDICAL_RECORD, config);
+        return await axios.post(`${CREATE_MEDICAL_RECORD}/${idpaciente}`, config);
     } catch (error) {
         throw error;
     }

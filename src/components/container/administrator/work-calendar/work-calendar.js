@@ -24,7 +24,7 @@ export default function WorkCalendar() {
         setHeight(ref.current.offsetHeight);
         setWidth(ref.current.offsetWidth);
         fetchOptometrists();
-        //fetchCalendars();
+        fetchCalendars();
     }, [])
 
 
@@ -156,7 +156,7 @@ export default function WorkCalendar() {
             console.error('Error en la solicitud:', error);
         } finally {
             fetchOptometrists();
-            //fetchCalendars();
+            fetchCalendars();
             setLoading(false);
             setIsCreationModalOpen(false);
             setIsCreationFormComplete(false);
@@ -251,7 +251,6 @@ export default function WorkCalendar() {
         } finally {
             fetchCalendars();
             setLoading(false);
-            // Handle modal state changes here if needed
         }
         
         setTimeout(() => {
@@ -325,8 +324,8 @@ export default function WorkCalendar() {
                         </Button>
                     </>}
                 >
-                    {!!filteredData &&
-                        <Typography>No hay optometras activos en este momento. Por favor registre un optometra o habilite alguno existente</Typography>
+                    {filteredData.length === 0 &&
+                        <div className='alert'>No hay optometras activos en este momento. Por favor registre un optometra o habilite alguno existente</div>
                     }
                     <p className='confirmation'>Por favor llene los siguientes campos:</p>
                     <Form
@@ -350,7 +349,7 @@ export default function WorkCalendar() {
                                 defaultValue="Seleccione un optómetra"
                                 onChange={handleChangeOptometrist}
                                 options={selectOptometristOptions}
-                                
+                                disabled={filteredData.length===0}
                             />
                         </Form.Item>
 
@@ -372,6 +371,7 @@ export default function WorkCalendar() {
                                 onSelectChange={onSelectChange}
                                 operations={['Agregar', 'Quitar']}
                                 render={(item) => item.day}
+                                disabled={filteredData.length===0}
                             />
                         </Form.Item>
                         
@@ -389,7 +389,8 @@ export default function WorkCalendar() {
                                 size={'large'}
                                 defaultValue="Seleccione una duración"
                                 onChange={handleChangeDuration}
-                                options={selectDurationOptions} />
+                                options={selectDurationOptions} 
+                                disabled={filteredData.length===0}/>
                         </Form.Item>
                     </Form>
                 </Modal>
