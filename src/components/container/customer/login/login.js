@@ -27,7 +27,7 @@ export default function Login({onLogin}) {
     const [, forceUpdate] = useState({});
     const navigation = useNavigate();
     const [errorMessage, setErrorMessage] = useState('');
-    const [match, setMatch] = useState(2)
+    const [successMessage, setSuccessMessage] = useState('');
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -58,7 +58,11 @@ export default function Login({onLogin}) {
     const login = async (values) => {
         try {
             const response = await handlerLogin({ cedula: values.cedula, password: values.password });
-            onLogin();
+            setSuccessMessage("Ha iniciado sesión exitosamente. En breve podrá continuar con su interacción.")
+            setTimeout(() => {                
+                onLogin();
+            }, 7000)
+            
         } catch (error) {
             console.error('Login error:', error);
             setErrorMessage(error.message);
@@ -75,6 +79,11 @@ export default function Login({onLogin}) {
                 { errorMessage && (
                     <div className='error-message'>
                         <p>{errorMessage}</p>
+                    </div>
+                )}
+                { successMessage && (
+                    <div className='success-message'>
+                        <p>{successMessage}</p>
                     </div>
                 )}
                 

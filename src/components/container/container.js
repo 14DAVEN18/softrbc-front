@@ -18,6 +18,7 @@ import WorkCalendar from './administrator/work-calendar/work-calendar';
 // Components for optometrist pages
 import Optometrist from './optometrist/optometrist-container';
 import OptometristSchedule from './optometrist/optometrist-schedule/optometrist-schedule';
+import FindPatient from './optometrist/find-patient/find-patient';
 
 import { Routes, Route, Navigate } from 'react-router-dom';
 
@@ -28,6 +29,7 @@ import Changelog from './administrator/changelog/changelog';
 import Chatbot from './customer/chatbot/chatbot';
 import FAQManagement from './administrator/faq-management/faq-management';
 import AppointmentManagement from './customer/appointment-management/appointment-management';
+
 
 // import RegisterTransaction from './application/register-transaction/register-transaction';
 // import ListTransactions from './application/list-transactions/list-transactions';
@@ -66,6 +68,7 @@ export default function Container() {
             <Route path='/optometra' element={ <Navigate replace to="/optometra/agenda"/> }></Route>
             <Route path='/optometra' element={ <Optometrist/> }>
               <Route path='agenda' element={ <OptometristSchedule/> }></Route>
+              <Route path='consultar-paciente' element= { <FindPatient/> }></Route>
             </Route>
 
             <Route path='/cliente' element={ <Navigate replace to='/cliente/preguntas'/> }></Route>

@@ -95,14 +95,14 @@ export const deleteCalendar = async (idcalendario) => {
 
 
 export const cancelWorkDay = async (fecha) => {
-    try {
-        const config = {
-            headers: {
-                "Authorization": localStorage.getItem('token'),
-                "Content-Type": "application/json"
-            },
-            responseType: 'blob'
-        }
+    const config = {
+        headers: {
+            "Authorization": localStorage.getItem('token'),
+            "Content-Type": "application/json"
+        },
+        responseType: 'blob'
+    }
+    try {   
         const response = await axios.get(`${CANCEL_DAY}?fecha=${fecha}`, config);
         return response.data;
     } catch (error) {

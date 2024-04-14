@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CREATE_PATIENT, GET_PATIENT_BY_ID } from "../constants/constants";
+import { CREATE_PATIENT, GET_PATIENT_BY_ID, UPDATE_PATIENT } from "../constants/constants";
 
 export const getPatients = async () => {
     const config = {
@@ -75,10 +75,21 @@ export const createPatient = async ({
 }
 
 export const updatePatient = async ({
-    id,
-    direccion,
-    correo,
-    telefono,
+    usuario: {
+        idusuario,
+        nombre,
+        apellido,
+        correo,
+        direccion,
+        telefono,
+        cedula
+    },
+    paciente:{
+        idpaciente,
+        ocupacion,
+        fechanacimiento,
+        genero
+    }
 }) => {
     try {
         const config = {
@@ -87,12 +98,23 @@ export const updatePatient = async ({
                 "Content-Type": "application/json"
             }
         }
-        return await axios.put(`${CREATE_PATIENT}/${id}`, 
+        return await axios.put(`${UPDATE_PATIENT}`, 
             {
-                id,
-                nuevadireccion: direccion,
-                nuevocorreo: correo,
-                nuevotelefono: telefono.toString(),
+                usuario: {
+                    idusuario: idusuario,
+                    nombre: nombre,
+                    apellido: apellido,
+                    correo: correo,
+                    direccion: direccion,
+                    telefono: telefono,
+                    cedula: cedula
+                },
+                paciente:{
+                    idpaciente: idpaciente,
+                    ocupacion: ocupacion,
+                    fechanacimiento: fechanacimiento,
+                    genero: genero
+                }
             }, config);
     } catch (error) {
         throw error;

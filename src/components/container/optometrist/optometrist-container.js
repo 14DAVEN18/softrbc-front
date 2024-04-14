@@ -23,7 +23,7 @@ const items = [
     {
         type: 'divider',
     },
-    getItem(<Link to="/optometra/consultar-paciente">Consultar</Link>, '2', <SolutionOutlined style={{ fontsize: '50px'}}/>),
+    getItem(<Link to="/optometra/consultar-paciente">Consultar paciente</Link>, '2', <SolutionOutlined style={{ fontsize: '50px'}}/>),
     {
         type: 'divider',
     }

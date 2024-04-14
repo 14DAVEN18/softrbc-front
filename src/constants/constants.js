@@ -16,6 +16,8 @@ export const UPDATE_USER_STATUS = 'http://localhost:8080/usuarios/cambiarEstado'
 // PATIENT RELATED URLs
 export const CREATE_PATIENT = "http://localhost:8080/paciente/nueva"
 export const GET_PATIENT_BY_ID = 'http://localhost:8080/paciente/pacienteEncontrado'
+export const UPDATE_PATIENT = "http://localhost:8080/paciente/actualizar"
+export const FIND_PATIENT_MEDICAL_RECORDS = 'http:/localhost:8080/HistoriaClinica/buscarHistoria'
 
 // CALENDAR RELATED URLs
 export const GET_CALENDARS = 'http://localhost:8080/calendario/calendariolista'
@@ -46,6 +48,7 @@ export const CANCEL_DAY = 'http://localhost:8080/cita/export/pdf' // Param
 // MEDICAL RECORD URLs
 export const CREATE_MEDICAL_RECORD = 'http://localhost:8080/HistoriaClinica/crearhistoria'
 export const ADD_MEDICAL_RECORD = 'http://localhost:8080/HistoriaClinica/nueva'
+export const GENERATE_PDF_FORMULA = 'http://localhost:8080/HistoriaClinica/generarFormula'
 
 
 
@@ -55,7 +58,6 @@ export const INVALID_PASSWORD = "La contraseña ingresada es invalida.";
 export const USER_NOT_CREATED = "El usuario no se puedo crear.";
 export const TRANSACTION_NOT_CREATED = 'No se puedo registrar el hecho económico.';
 export const NO_TRANSACTIONS_LISTED = 'No existen transacciones que correspondan con el tipo seleccionado.';
-
 export const USER_SUCCESSFULLY_REGISTERED = "El usuario ha sido registrado exitósamente.";
 export const TRANSACTION_SUCCESSFULLY_REGISTERED = "El hecho económico fue registrado exitósamente.";
 export const CREDENTIALS_SUCCESSFULLY_VALIDATED = "Las credenciales de usuario han sido validadas exitósamente.";

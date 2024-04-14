@@ -10,7 +10,7 @@ import './optometrist-schedule.css';
 
 import { getPatientById, updatePatient } from '../../../../services/patientService';
 import { getAppointments } from '../../../../services/appointmentService';
-import { addMedicalRecord, createMedicalRecord } from '../../../../services/medicalRecordService';
+import { addMedicalRecord, createMedicalRecord, generatePdfFormula } from '../../../../services/medicalRecordService';
 
 
 const layout = {
@@ -65,7 +65,7 @@ export default function OptometristSchedule() {
     const [appointments, setAppointments] = useState([])
     
     useEffect(() => {
-        const today = new Date(2024, 3, 8)
+        const today = new Date(2024, 3, 12)
         const selectedDayFormatted = format(today, 'dd/MM/yyyy');
     
         getAppointments(selectedDayFormatted)
@@ -212,21 +212,30 @@ export default function OptometristSchedule() {
             try {
                 const values = await updateForm.validateFields();
                 const response = await updatePatient(
-                    {
-                        id: patient?.paciente.idpaciente,
-                        direccion: values.direccion,
-                        correo: values.correo,
-                        telefono: values.telefono,
-                    }
-    
-                ); // Call the create function from userService.js
+                    { 
+                        usuario: {
+                            idusuario: patient?.usuario.idusuario,
+                            nombre: values.nombre,
+                            apellido: values.apellido,
+                            correo: values.correo,
+                            direccion: values.direccion,
+                            telefono: values.telefono,
+                            cedula: values.cedula
+                        },
+                        paciente:{
+                            idpaciente: patient?.paciente.idpaciente,
+                            ocupacion: values.ocupacion,
+                            fechanacimiento: values.fechanacimiento,
+                            genero: values.genero
+                        }
+                   }
+                ); 
                 console.log('Response:', response.data);
-                setLoading(true);
+                setSuccessMessage(`Los datos personales del usuario ${patient?.usuario.nombre} ${patient?.usuario.apellido} fueron actualizados correctamente`)
             } catch (error) {
                 console.error('Error en la solicitud:', error);
                 setErrorMessage(`Ocurrió un error al registrar los datos del paciente: ${error.data}`)
             } finally {
-                setSuccessMessage(`Los datos personales de ${patient?.usuario.nombre} ${patient?.usuario.apellido} fueron guardados correctamente.`)
                 setLoading(false);
                 setTimeout(() => {
                     setLoading(false);
@@ -244,7 +253,7 @@ export default function OptometristSchedule() {
     // TO CREATE PATIENT'S MEDICAL RECORD
     const handleMedicalRecord = async () => {
         try {
-            const response = await createMedicalRecord(patient.paciente.idpaciente);
+            const response = await createMedicalRecord();
             setTimeout(() => {
                 setPatient(prevPatient => ({
                     ...prevPatient,
@@ -366,10 +375,12 @@ export default function OptometristSchedule() {
                             diagnostico: values.diagnostico,
                             conducta: values.conducta,
                             examinador: optometrist,
+                            observaciones: values.observaciones,
                             control: values.control 
                         },
                         paciente: {
-                            idpaciente: patient.paciente.idpaciente
+                            idpaciente: patient.paciente.idpaciente,
+                            idoptometra: JSON.parse(localStorage.getItem('user')).idoptometra
                         },
                         idhistoriaclinica: patient.paciente.idhistoriaclinica
                     }
@@ -385,6 +396,42 @@ export default function OptometristSchedule() {
             }
         }
     };
+
+
+
+
+
+
+    // TO HANDLE END CONSULTATION
+    const endConsultation = async () => {
+        if (medicalRecordForm != null) {
+            try {
+                setLoading(true);
+                const blobData = await generatePdfFormula(
+                    {
+                        rxfinalod: medicalRecord.rxfinalod,
+                        rxfinaloi: medicalRecord.rxfinaloi,
+                        avl: medicalRecord.avl,
+                        avp: medicalRecord.avp,
+                        add: medicalRecord.rxfinaladd,
+                        bif: medicalRecord.bif,
+                        uso: medicalRecord.uso,
+                        diagnostico: medicalRecord.diagnostico,
+                        observaciones: medicalRecord.observaciones
+                    }
+                );
+                const blob = new Blob([blobData], { type: 'application/json' });
+                saveAs(blob, `formula.pdf`); 
+                setSuccessMessage(`El registro de la consulta fue agregado a la historia clínica del paciente de manera exitosa. Un PDF con la formula será descargado`)
+            } catch (error) {
+                console.error('Error en la solicitud:', error);
+                setErrorMessage(`Ocurrió un error al anexar los datos de la consulta a la historia clínica del paciente: ${error.data}`)
+            } finally {
+                setLoading(false);
+                setIsMedicalRecordFormComplete(false);
+            }
+        }
+    }
     
 
 
@@ -533,7 +580,16 @@ export default function OptometristSchedule() {
                                         CONFIRMAR INFORMACIÓN
                                     </Button>
                                 </Form.Item>
-
+                                { errorMessage && (
+                                    <div className='error-message'>
+                                        <p>{errorMessage}</p>
+                                    </div>
+                                )}
+                                { successMessage && (
+                                    <div className='success-message'>
+                                        <p>{successMessage}</p>
+                                    </div>
+                                )}
                             </Form>
                         </div>
                     }
@@ -561,7 +617,6 @@ export default function OptometristSchedule() {
                             <div className='progress-bar'>
                                 <Progress percent={progress} />
                             </div>
-                            {!!patient?.idpaciente}
                             <Form {...layout} className='medical-record-form' initialValues={{ remember: false }} form={medicalRecordForm} name="medicalRecord" onFinish={handleAddMedicalRecord} onValuesChange={onMedicalRecordValuesChange} >
                                 <Collapse
                                     items={[{ key: 1, label: 'Anamnesis', children:
@@ -982,6 +1037,10 @@ export default function OptometristSchedule() {
                                                         <Typography><pre>{optometrist}</pre></Typography>
                                                     </Form.Item>
 
+                                                    <Form.Item label='Observaciones' name='observaciones'>
+                                                        <Input placeholder='Observaciones' autoComplete='off'/>
+                                                    </Form.Item>
+
                                                     <Form.Item label='Control' name='control'
                                                         rules={[{
                                                                 required: true,
@@ -1005,8 +1064,77 @@ export default function OptometristSchedule() {
                     }
 
                     {activeTab === 3 &&
-                        <div className='tab-content'>
-                            Nombre: {patient?.usuario.nombre} {patient?.usuario.apellido}
+                        <div className='tab-content3'>
+                            <h2>Nombre del paciente: {patient?.usuario.nombre} {patient?.usuario.apellido}</h2>
+                            <div className='table-rx'>
+                                <div className='right-eye'>
+                                    <h2>Ojo derecho</h2>
+                                    <div className='table-line'>
+                                        <p>RX final lejos</p><p>{medicalRecord?.rxfinalod}</p>
+                                    </div>
+                                    <div className='table-line'>
+                                        <p>Agudeza visual lejos</p><p>{medicalRecord?.avl}</p>
+                                    </div>
+                                    <div className='table-line'>
+                                        <p>RX final cerca</p><p>{medicalRecord?.rxfinalod} + {medicalRecord?.rxfinaladd}</p>
+                                    </div>
+                                    <div className='table-line'>
+                                        <p>Agudeza visual cerca</p><p>{medicalRecord?.avp}</p>
+                                    </div>
+                                    <div className='table-line'>
+                                        <p>ADD</p><p>{medicalRecord?.rxfinaladd}</p>
+                                    </div>
+                                    <div className='table-line'>
+                                        <p>DNP</p><p>?</p>
+                                    </div>
+                                </div>
+                                <div className='left-eye'>
+                                    <h2>Ojo izquierdo</h2>
+                                    <div className='table-line'>
+                                        <p>RX final lejos</p><p>{medicalRecord?.rxfinaloi}</p>
+                                    </div>
+                                    <div className='table-line'>
+                                        <p>Agudeza visual lejos</p><p>{medicalRecord?.avl}</p>
+                                    </div>
+                                    <div className='table-line'>
+                                        <p>RX final cerca</p><p>{medicalRecord?.rxfinaloi} + {medicalRecord?.rxfinaladd}</p>
+                                    </div>
+                                    <div className='table-line'>
+                                        <p>Agudeza visual cerca</p><p>{medicalRecord?.avp}</p>
+                                    </div>
+                                    <div className='table-line'>
+                                        <p>ADD</p><p>{medicalRecord?.rxfinaladd}</p>
+                                    </div>
+                                    <div className='table-line'>
+                                        <p>DNP</p><p>?</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className='additional-info'>
+                                <h2>Información adicional de la fórmula</h2>
+                                <div className='table-line'>
+                                    <div className='table-line'>
+                                        <p>Uso</p><p>{medicalRecord?.uso}</p>
+                                    </div>
+                                    <div className='table-line'>
+                                        <p>Bifocal</p><p>{medicalRecord?.bif}</p>
+                                    </div>
+                                </div>
+                                <div className='table-line'>
+                                    <p>Control</p><p>{medicalRecord?.control}</p>
+                                </div>
+                                <div className='table-line'>
+                                    <p>Diagnóstico</p><p>{medicalRecord?.diagnostico}</p>
+                                </div>
+                                <div className='table-line'>
+                                    <p>Observaciones fórmula</p><p>{medicalRecord?.observaciones}</p>
+                                </div>
+                            </div>
+                            <Form.Item>
+                                <Button type="primary" htmlType="submit" disabled={!medicalRecord} onClick={() => endConsultation}>
+                                    <span>TERMINAR CONSULTA</span>
+                                </Button>
+                            </Form.Item>
                         </div>
                     }
                 </div>

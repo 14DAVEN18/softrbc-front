@@ -134,3 +134,103 @@
     overflow-y: scroll;
     width: 90%;
 }
+
+
+
+.tab-content3 {
+    align-items: center;
+    border-bottom: 1px solid black;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    border-top: 1px solid black;
+    box-shadow: 0px 0px 10px 10px rgb(58, 58, 72);
+    display: flex;
+    flex-direction: column;
+    height: 85%;
+    justify-content: center;
+    left: 0;
+    padding: 30px 0px;
+    position: relative;
+    right: 0;
+    top: -1px;
+    width: 100%;
+    z-index: 0;
+}
+.table-rx {    
+    border: 1px solid black;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: row;    
+    height: 40%;
+    width: 80%;
+}
+.right-eye {
+    align-content: space-between;
+    border-right: 1px solid black;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+    width: 50%;
+}
+.left-eye {
+    align-content: space-between;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+    width: 50%;
+}
+.right-eye h2, .left-eye h2 {
+    border-bottom: 1px solid black;
+    margin: 0;
+}
+
+.right-eye .table-line:nth-child(even) {
+    background-color: rgb(219, 219, 219);
+}
+.left-eye .table-line:nth-child(even) {
+    background-color: rgb(219, 219, 219);
+}
+
+.additional-info {
+    align-content: space-between;
+    border: 1px solid black;
+    display: flex;
+    flex-direction: column;    
+    height: 30%;
+    justify-content: space-between;
+    margin-top: 5px;
+    width: 80%;
+}
+.table-line {
+    border: 1px solid black;
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.table-line h2 {
+    border-bottom: 1px solid black;
+}
+.table-line p {
+    margin: 2px;
+    text-align: center;
+    width: 50%;
+}
+.table-line p:nth-child(odd) {
+    border-right: 1px solid black;
+}
+.additional-info .table-line:nth-child(even) {
+    background-color: rgb(219, 219, 219);
+}
+
+.appointment-end {
+    color: black;
+    font-weight: bold;
+    max-width: 50%;
+}
+
+.appointment-end span {
+    font-size: 2em;
+}

@@ -31,6 +31,8 @@ export default function Register() {
     const ref = useRef(null);
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
 
 
     const [loading, setLoading] = useState(false);
@@ -73,19 +75,17 @@ export default function Register() {
     const [isCreationFormComplete, setIsCreationFormComplete] = useState(false);
     
     const onCreationValuesChange = (_, allValues) => {
-        // Exclude the optional field from the completeness check
         const requiredValues = { ...allValues }
         delete requiredValues.nombreacompañante
         
-        // Check if all required fields are filled
         const isComplete = Object.values(requiredValues).every(value => !!value);
         
-        // Set the state based on the completeness of required fields
         setIsCreationFormComplete(isComplete);
         console.log("allValues: ", allValues);
     };
 
     const handleCreatePatient = async () => {
+        setLoading(true);
         if (creationForm != null) {
             try {
                 const values = await creationForm.validateFields();
@@ -109,14 +109,15 @@ export default function Register() {
                             aceptarterminos: values.aceptarterminos
                         }
                     }
-                ); // Call the create function from userService.js
-                //console.log('Response:', response.data);
-                setLoading(true);
-                navigation('/cliente/preguntas')
-                // Handle success if needed
+                );
+                setSuccessMessage("Se ha registrado exitosamente. En breve será redirigido al inicio de sesión")
+                setTimeout(() => {
+                    navigation('/cliente/preguntas');
+                }, 7000)
+                
             } catch (error) {
+                setErrorMessage(error)
                 console.error('Error en la solicitud:', error);
-                // Handle error if needed
             } finally {
                 setLoading(true);
                 setTimeout(() => {
@@ -299,6 +300,7 @@ export default function Register() {
                                 {
                                     required: true,
                                     type: "string",
+                                    message: 'Debe diginar una contraseña que cumpla con los requisitos'
                                 }, {
                                     message: 'La contraseña debe tener al menos 8 caracteres',
                                     min: 8
@@ -315,8 +317,8 @@ export default function Register() {
                                     pattern: "^(?=.*[0-9]).+$",
                                     message: "La contraseña debe contener por lo menos 1 número"
                                 }, {
-                                    pattern: "^(?=.*[*+!.]).+$",
-                                    message: "La contraseña solo puede tener al menos uno de los siguientes caracteres: * + ! ó ."
+                                    pattern: "^(?=.*[*!.]).+$",
+                                    message: "La contraseña solo puede tener al menos uno de los siguientes caracteres: * ! ó ."
                                 }
                             ]}
                         >
@@ -375,6 +377,16 @@ export default function Register() {
                         </Form.Item>
 
                     </Form>
+                    { errorMessage && (
+                        <div className='error-message'>
+                            <p>{errorMessage}</p>
+                        </div>
+                    )}
+                    { successMessage && (
+                        <div className='success-message'>
+                            <p>{successMessage}</p>
+                        </div>
+                    )}
                     <Form.Item>
                         <p>
                             ¿Ya tienes una cuenta? <Link to="/inicio-de-sesion">Inicia sesión</Link>

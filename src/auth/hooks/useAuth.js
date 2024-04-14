@@ -15,11 +15,10 @@ export const useAuth = () => {
         
         try {
             const response = await loginUser ({ cedula, password});
-            console.log("login response: ", response)
             const token = response.data.token; // body viene en el body
             const claims = JSON.parse(window.atob(token.split(".")[1]));
             const rol = claims.sub
-            console.log("claims: ", claims)
+            console.log(response)
             dispatch({
                 type: 'login',
                 payload: {rol}
@@ -41,7 +40,8 @@ export const useAuth = () => {
                     'name': response.data.nombre,
                     'surname': response.data.apellido,
                     'telefono': response.data.telefono,
-                    'correo': response.data.correo
+                    'correo': response.data.correo,
+                    'idoptometra': claims.idoptometra
                 }))
                 navigate('/optometra');
             }
