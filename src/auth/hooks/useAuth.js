@@ -31,7 +31,8 @@ export const useAuth = () => {
                     'name': response.data.nombre,
                     'surname': response.data.apellido,
                     'telefono': response.data.telefono,
-                    'correo': response.data.correo
+                    'correo': response.data.correo,
+                    'idadmin': claims.idadmin
                 }))
                 navigate('/administrador');
             }

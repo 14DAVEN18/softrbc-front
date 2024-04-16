@@ -111,12 +111,13 @@ export default function OptometristManagement() {
     const changeOptometristStatus = async () => {
         setLoading(true);
         try {
-            const response = await updateOptometristStatus(selectedOptometrist.usuario.idusuario); // Call the create function from userService.js
+            const response = await updateOptometristStatus(
+                JSON.parse(localStorage.getItem('user')).idadmin,
+                selectedOptometrist.usuario.idusuario
+            );
             //console.log('Response:', response.data);
-            // Handle success if needed
         } catch (error) {
             console.error('Error en la solicitud:', error);
-            // Handle error if needed
         } finally {
             setTimeout(() => {
                 fetchOptometrists();
@@ -171,7 +172,8 @@ export default function OptometristManagement() {
                         },
                         optometra: {
                             numeroTarjeta: values.numeroTarjeta
-                        }
+                        },
+                        idamin: JSON.parse(localStorage.getItem('user')).idadmin
                     }
                 ); // Call the create function from userService.js
                 //console.log('Response:', response.data);

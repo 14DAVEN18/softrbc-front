@@ -180,7 +180,8 @@ export const generatePdfFormula = async ({
     bif,
     uso,
     diagnostico,
-    observaciones
+    observaciones,
+    idcita
 }) => {
     const config = {
         headers: {
@@ -190,7 +191,7 @@ export const generatePdfFormula = async ({
         responseType: 'blob'
     }
     try {
-        const response = await axios.get(`${GENERATE_PDF_FORMULA}?od=${rxfinalod}&oi=${rxfinaloi}&avl=${avl}&avp=${avp}&addicion=${add}&bif=${bif}&uso=${uso}&diagnostico=${diagnostico}&observaciones=${observaciones}`, config);
+        const response = await axios.get(`${GENERATE_PDF_FORMULA}?od=${rxfinalod}&oi=${rxfinaloi}&avl=${avl}&avp=${avp}&addicion=${add}&bif=${bif}&uso=${uso}&diagnostico=${diagnostico}&observaciones=${observaciones}&idcita=${idcita}`, config);
         return response.data
     } catch (error) {
         throw error;

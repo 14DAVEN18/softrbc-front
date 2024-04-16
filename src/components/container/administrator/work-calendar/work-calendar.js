@@ -150,7 +150,12 @@ export default function WorkCalendar() {
             .join(".")
         try {
             setLoading(true)
-            const response = await createCalendar(selectedOptometrist, diasatencion, selectedDuration);
+            const response = await createCalendar(
+                JSON.parse(localStorage.getItem('user')).idadmin,
+                selectedOptometrist,
+                diasatencion,
+                selectedDuration
+            );
             setLoading(true);
         } catch (error) {
             console.error('Error en la solicitud:', error);
@@ -198,6 +203,7 @@ export default function WorkCalendar() {
                 const values = await updateForm.validateFields();
                 const response = await updateCalendar(
                     {
+                        idadmin: JSON.parse(localStorage.getItem('user')).idadmin,
                         idcalendario: selectedCalendar.idcalendario,
                         pregunta: values.pregunta,
                         respuesta: values.respuesta

@@ -30,10 +30,7 @@ export const getDaysOptometrist = async () => {
     }
 }
 
-export const createCalendar = async (idoptometra, diasatencion, duracioncita) => {
-    console.log("idoptometra: ", idoptometra)
-    console.log("diasatencion: ", diasatencion)
-    console.log("duracion: ", duracioncita)
+export const createCalendar = async (idadmin, idoptometra, diasatencion, duracioncita) => {
     try {
         const config = {
             headers: {
@@ -42,6 +39,7 @@ export const createCalendar = async (idoptometra, diasatencion, duracioncita) =>
             }
         }
         return await axios.post(CREATE_CALENDAR, {
+            idadmin,
             idoptometra,
             diasatencion,
             duracioncita

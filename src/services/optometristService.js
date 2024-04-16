@@ -82,17 +82,19 @@ export const updateOptometrist = async ({
     }
 }
 
-export const updateOptometristStatus = async (id) => {
-    console.log(id)
-    try {
-        const config = {
-            headers: {
-                "Authorization": localStorage.getItem('token'),
-                "Content-Type": "application/json"
+export const updateOptometristStatus = async ({
+    idadmin,
+    idoptometra
+    }) => {
+        try {
+            const config = {
+                headers: {
+                    "Authorization": localStorage.getItem('token'),
+                    "Content-Type": "application/json"
+                }
             }
+            return await axios.put(UPDATE_USER_STATUS, {idadmin, idoptometra}, config);
+        } catch (error) {
+            throw error;
         }
-        return await axios.put(`${UPDATE_USER_STATUS}/${id}`, id, config);
-    } catch (error) {
-        throw error;
-    }
 }

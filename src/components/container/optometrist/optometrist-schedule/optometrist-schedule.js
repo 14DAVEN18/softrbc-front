@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Button, Collapse, DatePicker, Form, Input, InputNumber, Modal, Progress, Select, Space, Table, Typography } from 'antd';
 import { UserOutlined, MailOutlined, PhoneOutlined, IdcardOutlined } from '@ant-design/icons';
 import { format } from 'date-fns';
-import dayjs from "dayjs";
+import { saveAs } from 'file-saver';
 
 import './optometrist-schedule.css';
 
@@ -145,8 +145,12 @@ export default function OptometristSchedule() {
 
     // TO MANAGE PATIENT'S INFO
     const [patient, setPatient] = useState(null)
+    const [currentAppointment, setCurrentAppointment] = useState(null)
 
-    const getPatientInfo = async (idpaciente) => {
+    const getPatientInfo = async (idpaciente, idcita) => {
+        setCurrentAppointment(appointments.find(appointment => {
+            return appointment.idcita === idcita
+        }))
         try {
             const response = await getPatientById(idpaciente); 
             setPatient(response.data[0])
@@ -185,7 +189,7 @@ export default function OptometristSchedule() {
             key: 'action',
             render: (_, record) => (
             <Space size="middle">
-                <Button type="primary" onClick={() => getPatientInfo(record.idpaciente)} htmlType='submit'>
+                <Button type="primary" onClick={() => getPatientInfo(record.idpaciente, record.idcita)} htmlType='submit'>
                     Iniciar consulta
                 </Button>
             </Space>
@@ -404,7 +408,7 @@ export default function OptometristSchedule() {
 
     // TO HANDLE END CONSULTATION
     const endConsultation = async () => {
-        if (medicalRecordForm != null) {
+        if (medicalRecord != null) {
             try {
                 setLoading(true);
                 const blobData = await generatePdfFormula(
@@ -417,7 +421,8 @@ export default function OptometristSchedule() {
                         bif: medicalRecord.bif,
                         uso: medicalRecord.uso,
                         diagnostico: medicalRecord.diagnostico,
-                        observaciones: medicalRecord.observaciones
+                        observaciones: medicalRecord.observaciones,
+                        idcita: currentAppointment.idcita
                     }
                 );
                 const blob = new Blob([blobData], { type: 'application/json' });
@@ -1084,9 +1089,6 @@ export default function OptometristSchedule() {
                                     <div className='table-line'>
                                         <p>ADD</p><p>{medicalRecord?.rxfinaladd}</p>
                                     </div>
-                                    <div className='table-line'>
-                                        <p>DNP</p><p>?</p>
-                                    </div>
                                 </div>
                                 <div className='left-eye'>
                                     <h2>Ojo izquierdo</h2>
@@ -1104,9 +1106,6 @@ export default function OptometristSchedule() {
                                     </div>
                                     <div className='table-line'>
                                         <p>ADD</p><p>{medicalRecord?.rxfinaladd}</p>
-                                    </div>
-                                    <div className='table-line'>
-                                        <p>DNP</p><p>?</p>
                                     </div>
                                 </div>
                             </div>
@@ -1131,7 +1130,7 @@ export default function OptometristSchedule() {
                                 </div>
                             </div>
                             <Form.Item>
-                                <Button type="primary" htmlType="submit" disabled={!medicalRecord} onClick={() => endConsultation}>
+                                <Button type="primary" htmlType="submit" disabled={!medicalRecord} onClick={endConsultation}>
                                     <span>TERMINAR CONSULTA</span>
                                 </Button>
                             </Form.Item>
