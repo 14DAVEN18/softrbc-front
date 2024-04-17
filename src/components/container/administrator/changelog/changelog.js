@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, Form, Input, InputNumber, Modal, Space, Table } from 'antd';
-import { UserOutlined, MailOutlined, PhoneOutlined, LockOutlined, IdcardOutlined } from '@ant-design/icons';
+import { Button, Space, } from 'antd';
+import { useNavigate } from "react-router-dom";
 
-import axios from "axios";
-import { CREATE_USER } from '../../../../constants/constants';
-import { Link, useNavigate } from "react-router-dom";
+import { log } from './log';
 
 import './changelog.css';
 
@@ -14,10 +12,17 @@ export default function Changelog() {
     const ref = useRef(null);
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
         setHeight(ref.current.offsetHeight);
         setWidth(ref.current.offsetWidth);
+        if(!localStorage.getItem('token')) {
+            navigate("/inicio-empleados")
+        } else {
+            console.log("log: ", log)
+            console.log("informacion: ", JSON.parse(log[0].informacion))
+        }
     }, [])
 
     const columns = [
@@ -27,12 +32,17 @@ export default function Changelog() {
             key: 'date'
         },
         {
+            dataIndex: 'accion',
+            title: 'Acción realizada',
+            key: 'accion'
+        },
+        {
             title: 'Acciones',
             key: 'action',
             render: (record) => (
             <Space size="middle">
                 <Button type="primary" onClick={() => console.log("ver: ", record.patients)} htmlType='submit'>
-                    Ver
+                    Ver detalle
                 </Button>
             </Space>
             ),

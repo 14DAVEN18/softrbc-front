@@ -4,6 +4,7 @@
     flex-direction: column;
     height: 100%;
     width: 100%;
+    overflow: hidden;
 }
 
 /* Styles for the header of the optometrist page */
@@ -27,12 +28,14 @@
 
 /* Style for employee name */
 .employee-data {
-    align-content: space-around;
+    align-content: center;
     color: white;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol','Noto Color Emoji';
     font-size: 30px;
+    justify-content: center;
+    padding-right: 10px;
 }
 
 .employee-data p {

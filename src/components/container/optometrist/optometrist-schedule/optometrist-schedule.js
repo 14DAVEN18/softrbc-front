@@ -3,6 +3,7 @@ import { Button, Collapse, DatePicker, Form, Input, InputNumber, Modal, Progress
 import { UserOutlined, MailOutlined, PhoneOutlined, IdcardOutlined } from '@ant-design/icons';
 import { format } from 'date-fns';
 import { saveAs } from 'file-saver';
+import { useNavigate } from 'react-router-dom';
 
 import './optometrist-schedule.css';
 
@@ -44,15 +45,18 @@ export default function OptometristSchedule() {
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
     const [loading, setLoading] = useState(false);
-    const optometrist = JSON.parse(localStorage.getItem('user')).name + ' ' + JSON.parse(localStorage.getItem('user')).surname
+    const [optometrist, setOptometrist] = useState('')
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('')
-
+    const navigate = useNavigate();
 
     useEffect(() => {
         setHeight(ref.current.offsetHeight);
         setWidth(ref.current.offsetWidth);
-    }, [])
+        if (localStorage.getItem('user')){
+            setOptometrist(JSON.parse(localStorage.getItem('user')).name + ' ' + JSON.parse(localStorage.getItem('user')).surname)
+        }
+    }, [ref])
 
     const [activeTab, setActiveTab] = useState(1);
 
@@ -65,17 +69,21 @@ export default function OptometristSchedule() {
     const [appointments, setAppointments] = useState([])
     
     useEffect(() => {
-        const today = new Date(2024, 3, 12)
-        const selectedDayFormatted = format(today, 'dd/MM/yyyy');
-    
-        getAppointments(selectedDayFormatted)
-            .then(appointment => {
-                setAppointments(appointment.data)
-            })
-            .catch(error => {
-                console.error('Error while getting appointments', error)
-            });
-    }, []);
+        if(!localStorage.getItem('token')) {
+            navigate("/inicio-empleados")
+        } else {
+            const today = new Date(2024, 3, 12)
+            const selectedDayFormatted = format(today, 'dd/MM/yyyy');
+        
+            getAppointments(selectedDayFormatted)
+                .then(appointment => {
+                    setAppointments(appointment.data)
+                })
+                .catch(error => {
+                    console.error('Error while getting appointments', error)
+                });
+        }
+    }, [navigate]);
 
 
 
@@ -215,8 +223,8 @@ export default function OptometristSchedule() {
         if (updateForm != null) {
             try {
                 const values = await updateForm.validateFields();
-                const response = await updatePatient(
-                    { 
+                const response = await updatePatient({
+                    pacienteDTO: { 
                         usuario: {
                             idusuario: patient?.usuario.idusuario,
                             nombre: values.nombre,
@@ -226,14 +234,15 @@ export default function OptometristSchedule() {
                             telefono: values.telefono,
                             cedula: values.cedula
                         },
-                        paciente:{
+                        paciente: {
                             idpaciente: patient?.paciente.idpaciente,
                             ocupacion: values.ocupacion,
                             fechanacimiento: values.fechanacimiento,
                             genero: values.genero
                         }
-                   }
-                ); 
+                    },
+                    idoptometra: JSON.parse(localStorage.getItem('user')).idoptometra
+                });
                 console.log('Response:', response.data);
                 setSuccessMessage(`Los datos personales del usuario ${patient?.usuario.nombre} ${patient?.usuario.apellido} fueron actualizados correctamente`)
             } catch (error) {
@@ -388,9 +397,10 @@ export default function OptometristSchedule() {
                         },
                         idhistoriaclinica: patient.paciente.idhistoriaclinica
                     }
-                ); // Call the create function from userService.js
-                //console.log('Response:', response.data);
-                setSuccessMessage(`El registro de la consulta fue agregado a la historia clínica del paciente de manera exitosa`)
+                );
+                if (response.status === 200) {
+                    setSuccessMessage(`El registro de la consulta fue agregado a la historia clínica del paciente de manera exitosa`)
+                }
             } catch (error) {
                 console.error('Error en la solicitud:', error);
                 setErrorMessage(`Ocurrió un error al anexar los datos de la consulta a la historia clínica del paciente: ${error.data}`)

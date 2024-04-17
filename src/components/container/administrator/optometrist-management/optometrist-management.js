@@ -22,16 +22,22 @@ export default function OptometristManagement() {
     const ref = useRef(null);
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
+    const [successMessage, setSuccessMessage] = useState('')
+    const [errorMessage, setErrorMessage] = useState('')
 
 
     const [loading, setLoading] = useState(false);
-    const navigation = useNavigate();
+    const navigate = useNavigate();
 
     useEffect(() => {
         setHeight(ref.current.offsetHeight);
         setWidth(ref.current.offsetWidth);
-        fetchOptometrists();
-    }, [])
+        if(!localStorage.getItem('token')) {
+            navigate("/inicio-empleados")
+        } else {
+            fetchOptometrists();
+        }
+    }, [navigate])
 
 
 
@@ -43,10 +49,8 @@ export default function OptometristManagement() {
     const [optometristsData, setOptometristsData] = useState(null);
     const fetchOptometrists = async () => {
         try {
-            const response = await getOptometrists(); // Call the create function from admin Service.js
+            const response = await getOptometrists();
             setOptometristsData(response.data)
-            //console.log('optometrists:', optometristsData);
-
         } catch (error) {
             console.error('Error en la solicitud:', error);
             
@@ -110,14 +114,18 @@ export default function OptometristManagement() {
     
     const changeOptometristStatus = async () => {
         setLoading(true);
+        console.log(selectedOptometrist.idoptometra)
         try {
-            const response = await updateOptometristStatus(
-                JSON.parse(localStorage.getItem('user')).idadmin,
-                selectedOptometrist.usuario.idusuario
-            );
-            //console.log('Response:', response.data);
+            const response = await updateOptometristStatus({
+                idadmin: JSON.parse(localStorage.getItem('user')).idadmin,
+                idusuario: selectedOptometrist.usuario.idusuario,
+                idoptometra: selectedOptometrist.idoptometra
+        });
+            if(response.data === 200) {
+                setSuccessMessage("El estado del optometra se actualizó exitosamente")
+            }
         } catch (error) {
-            console.error('Error en la solicitud:', error);
+            setErrorMessage('Ocurrió un error al cambiar el estado del optometra.', error)
         } finally {
             setTimeout(() => {
                 fetchOptometrists();
@@ -173,15 +181,16 @@ export default function OptometristManagement() {
                         optometra: {
                             numeroTarjeta: values.numeroTarjeta
                         },
-                        idamin: JSON.parse(localStorage.getItem('user')).idadmin
+                        idadmin: JSON.parse(localStorage.getItem('user')).idadmin
                     }
-                ); // Call the create function from userService.js
-                //console.log('Response:', response.data);
-                // Handle success if needed
+                );
+                
+                if (response.status === 200) {
+                    setSuccessMessage('El optometra se registró exitosamente')
+                }
             } catch (error) {
-                console.error('Error en la solicitud:', error);
+                setErrorMessage('Ocurrió un error en la creación del optometra', error)
                 creationForm.resetFields()
-                // Handle error if needed
             } finally {
                 fetchOptometrists();
                 setLoading(false);
@@ -207,6 +216,7 @@ export default function OptometristManagement() {
 
 
     const onUpdateValuesChange = (_, allValues) => {
+        console.log("allValues: ", allValues)
         const isComplete = Object.values(allValues).every(value => !!value);
         setIsUpdateFormComplete(isComplete);
     };
@@ -225,6 +235,7 @@ export default function OptometristManagement() {
                 const values = await updateForm.validateFields();
                 const response = await updateOptometrist(
                     {
+                        idadmin: JSON.parse(localStorage.getItem('user')).idadmin,
                         id: selectedOptometrist.usuario.idusuario,
                         direccion: values.direccion,
                         correo: values.correo,
@@ -494,7 +505,6 @@ export default function OptometristManagement() {
                 >
                     <Form.Item
                         label='Nombres'
-                        name='nombre'
                     >
                         <Typography>
                             <pre>{selectedOptometrist?.usuario.nombre}</pre>
@@ -504,7 +514,6 @@ export default function OptometristManagement() {
                     
                     <Form.Item
                         label='Apellidos'
-                        name='apellido'
                     >
                         <Typography>
                             <pre>{selectedOptometrist?.usuario.apellido}</pre>
@@ -588,6 +597,16 @@ export default function OptometristManagement() {
             <div className='employee-table'>
                 <Table columns={columns} dataSource={filteredData.map((item, index) => ({ ...item, key: index }))} scroll={{y: 600}} pagination={false}/>
             </div>
+            { errorMessage && (
+                <div className='error-message'>
+                    <p>{errorMessage}</p>
+                </div>
+            )}
+            { successMessage && (
+                <div className='success-message'>
+                    <p>{successMessage}</p>
+                </div>
+            )}
         </div>
     );
 }

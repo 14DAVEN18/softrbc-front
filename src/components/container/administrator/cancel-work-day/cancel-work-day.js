@@ -3,7 +3,7 @@ import { addDays, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInt
 import { es } from 'date-fns/locale';
 import { Button, Modal  } from 'antd';
 import { saveAs } from 'file-saver';
-import download from 'downloadjs';
+import { useNavigate } from 'react-router-dom';
 
 
 import './cancel-work-day.css';
@@ -15,12 +15,16 @@ export default function CancelWorkDay() {
     const ref = useRef(null);
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
+    const navigate = useNavigate();
 
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         setHeight(ref.current.offsetHeight);
         setWidth(ref.current.offsetWidth);
+        if(!localStorage.getItem('token')) {
+            navigate("/inicio-empleados")
+        }
     }, [])
 
     // HEADER OF THE CALENDAR ***********************************************************

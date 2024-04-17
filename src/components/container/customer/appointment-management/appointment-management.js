@@ -5,7 +5,7 @@ import { Button, Modal  } from 'antd';
 import { getAppointmentsDuration, getAppointments, createAppointment } from '../../../../services/appointmentService';
 
 import './appointment-management.css';
-import { useAsyncError, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { getDaysOptometrist } from '../../../../services/calendarService';
 
 export default function AppointmentManagement() {
@@ -23,25 +23,29 @@ export default function AppointmentManagement() {
     useEffect(() => {
         setHeight(ref.current.offsetHeight);
         setWidth(ref.current.offsetWidth);
-        const fecthWorkdays = async ()  => {
-            try {
-                const response = await getDaysOptometrist()
-                const newWorkDays = response.data
-                    .flatMap(calendar => calendar.split('.'));
-                console.log("newWorkDays ", newWorkDays)
-                
-                    setWorkDays(prevWorkDays => [
-                        ...prevWorkDays,
-                        ...newWorkDays
-                    ])
-            } catch (error) {
-                console.error('Error while getting work days', error)
-            } finally{
-                console.log("workDays: ", workDays)
+        if(!localStorage.getItem('token')) {
+            navigate("/cliente/preguntas")
+        } else {
+            const fecthWorkdays = async ()  => {
+                try {
+                    const response = await getDaysOptometrist()
+                    const newWorkDays = response.data
+                        .flatMap(calendar => calendar.split('.'));
+                    console.log("newWorkDays ", newWorkDays)
+                    
+                        setWorkDays(prevWorkDays => [
+                            ...prevWorkDays,
+                            ...newWorkDays
+                        ])
+                } catch (error) {
+                    console.error('Error while getting work days', error)
+                } finally{
+                    console.log("workDays: ", workDays)
+                }
             }
+            fecthWorkdays();   
         }
-        fecthWorkdays();        
-    }, [])
+    }, [navigate, workDays])
 
 
 
@@ -130,12 +134,9 @@ export default function AppointmentManagement() {
     // TO DETERMINE IF A TIME IS EARLIER THAN CURRENT TIME
     const isDisabledTime = (time) => {
         const currentTime = new Date();
-        const currentYear = currentTime.getFullYear();
-        const currentMonth = currentTime.getMonth();
         const currentDate = currentTime.getDate();
         const currentHours = currentTime.getHours();
         const currentMinutes = currentTime.getMinutes();
-        const mockCurrentTime = new Date(2024, 2, 21, 12, 0);
     
         // Parse hours and minutes from the time string
         const [appointmentHours, appointmentMinutes] = time.split(':');

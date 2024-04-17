@@ -131,7 +131,10 @@
     width: 90%;
 }
 .medical-record-form {
+    align-items: center;
+    display: flex;
     height: 90%;
+    justify-content: center;
     overflow-y: scroll;
     width: 90%;
 }

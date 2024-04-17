@@ -1,8 +1,9 @@
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState, useContext} from 'react';
 
-import { BookOutlined, CalendarOutlined, HistoryOutlined, MinusCircleOutlined, QuestionOutlined, SolutionOutlined } from '@ant-design/icons';
-import { Avatar, Menu } from 'antd';
+import { BookOutlined, CalendarOutlined, CaretDownOutlined, DownOutlined, HistoryOutlined, MinusCircleOutlined, QuestionOutlined, SolutionOutlined } from '@ant-design/icons';
+import { Avatar, Button, Dropdown, Menu } from 'antd';
 import { Link, Outlet, useNavigate } from "react-router-dom";
+import { AuthContext } from "../../../auth/context/AuthContext";
 
 import './admin-container.css';
 
@@ -42,21 +43,17 @@ const items = [
     getItem(<Link to="/administrador/cambios">Registro de cambios</Link>, '6', <HistoryOutlined />)
 ];
 
-const dropdownOptions = [
-    {
-        key: '1',
-        label: 'Cerrar sesión'
-    },
-];
-
 export default function Admin() {
 
     const ref = useRef(null);
 
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
+    const [openMenu, setOpenMenu] = useState(false)
 
-    //const navigation = useNavigate();
+    const { handlerLogout } = useContext(AuthContext);
+
+    const navigate = useNavigate();
 
     const [user, setUser] = useState(undefined);
 
@@ -64,9 +61,23 @@ export default function Admin() {
         setHeight(ref.current.offsetHeight);
         setWidth(ref.current.offsetWidth);
         setUser(JSON.parse(localStorage.getItem('user')));
-        /*if(localStorage.getItem("user_id") === null)
-            navigation("/login")*/
+        if(!localStorage.getItem('token')) {
+            navigate("/inicio-empleados")
+        }
     }, [])
+
+    const logout = () => {
+        try {
+            handlerLogout()
+            if (!localStorage.getItem('token')) {
+                setOpenMenu(false)
+                navigate('/inicio-empleados')
+            }
+                
+        } catch (error) {
+            console.error("Error: ", error)
+        }
+    }
 
 
     return (
@@ -78,6 +89,16 @@ export default function Admin() {
             <div className='header'>
                 <div className='employee-data'>
                     <div>{user?.name} {user?.surname}</div>
+                    <div className='menu-container'>
+                        <Button icon={<CaretDownOutlined />} size={'medium'} onClick={() => setOpenMenu(!openMenu)}/>
+                        {openMenu &&
+                            <div className='collapse-menu'>
+                                <div onClick={() => logout()}>
+                                    Cerrar sesión
+                                </div>
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
             <div className='content-admin'>

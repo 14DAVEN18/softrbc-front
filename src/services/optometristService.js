@@ -28,7 +28,8 @@ export const createOptometrist = async ({
     },
     optometra: {
         numeroTarjeta
-    }
+    },
+    idadmin
 }) => {
     const config = {
         headers: {
@@ -50,7 +51,8 @@ export const createOptometrist = async ({
                 },
                 optometra: {
                     numeroTarjeta
-                }
+                },
+                idadmin
             }, config);
     } catch (error) {
         throw error;
@@ -58,6 +60,7 @@ export const createOptometrist = async ({
 }
 
 export const updateOptometrist = async ({
+    idadmin,
     id,
     direccion,
     correo,
@@ -72,6 +75,7 @@ export const updateOptometrist = async ({
         }
         return await axios.put(`${MODIFY_USER}/${id}`, 
             {
+                idadmin,
                 id,
                 nuevadireccion: direccion,
                 nuevocorreo: correo,
@@ -84,8 +88,12 @@ export const updateOptometrist = async ({
 
 export const updateOptometristStatus = async ({
     idadmin,
-    idoptometra
+    idusuario,
+    idoptometra,
     }) => {
+        console.log('idadmin: ', idadmin)
+        console.log('idusuario: ', idusuario)
+        console.log('idoptometra: ', idoptometra)
         try {
             const config = {
                 headers: {
@@ -93,7 +101,7 @@ export const updateOptometristStatus = async ({
                     "Content-Type": "application/json"
                 }
             }
-            return await axios.put(UPDATE_USER_STATUS, {idadmin, idoptometra}, config);
+            return await axios.put(UPDATE_USER_STATUS, {idadmin, idusuario, idoptometra}, config);
         } catch (error) {
             throw error;
         }

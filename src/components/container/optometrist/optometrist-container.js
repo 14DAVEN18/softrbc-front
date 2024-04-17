@@ -1,12 +1,11 @@
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState, useContext} from 'react';
 
-import { BookOutlined, CalendarOutlined, SolutionOutlined } from '@ant-design/icons';
-import { Avatar, Menu } from 'antd';
+import { BookOutlined, CaretDownOutlined, SolutionOutlined } from '@ant-design/icons';
+import { Button, Menu } from 'antd';
 import { Link, Outlet, useNavigate } from "react-router-dom";
+import { AuthContext } from "../../../auth/context/AuthContext";
 
 import './optometrist-container.css';
-
-import image from '../../../profile_photos/Watermark.png';
 
 function getItem(label, key, icon, children, type) {
     return {
@@ -29,29 +28,43 @@ const items = [
     }
 ];
 
-const dropdownOptions = [
-    {
-        key: '1',
-        label: 'Cerrar sesión'
-    },
-];
-
 export default function Optometrist() {
 
     const ref = useRef(null);
 
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
-
-    //const navigation = useNavigate();
+    const [openMenu, setOpenMenu] = useState(false)
+    const navigate = useNavigate();
 
     const [user, setUser] = useState(undefined);
+    const { handlerLogout } = useContext(AuthContext);
 
     useEffect(() => {
         setHeight(ref.current.offsetHeight);
         setWidth(ref.current.offsetWidth);
         setUser(JSON.parse(localStorage.getItem('user')));
-    }, [])
+        if(!localStorage.getItem('token')) {
+            navigate("/inicio-empleados")
+        }
+    }, [navigate])
+
+
+
+
+
+
+    const logout = () => {
+        try {
+            handlerLogout()
+            if (!localStorage.getItem('token')) {
+                setOpenMenu(false)
+                navigate('/inicio-empleados')
+            }
+        } catch (error) {
+            console.error("Error: ", error)
+        }
+    }
 
 
 
@@ -65,8 +78,18 @@ export default function Optometrist() {
             ref={ref}
         >
             <div className='opt-header'>
-                <div className='employee-data'>
+            <div className='employee-data'>
                     <div>{user?.name} {user?.surname}</div>
+                    <div className='menu-container'>
+                        <Button icon={<CaretDownOutlined />} size={'medium'} onClick={() => setOpenMenu(!openMenu)}/>
+                        {openMenu &&
+                            <div className='collapse-menu'>
+                                <div onClick={() => logout()}>
+                                    Cerrar sesión
+                                </div>
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
             <div className='content-optometrist'>

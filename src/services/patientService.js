@@ -75,21 +75,24 @@ export const createPatient = async ({
 }
 
 export const updatePatient = async ({
-    usuario: {
-        idusuario,
-        nombre,
-        apellido,
-        correo,
-        direccion,
-        telefono,
-        cedula
+    pacienteDTO: {
+        usuario: {
+            idusuario,
+            nombre,
+            apellido,
+            correo,
+            direccion,
+            telefono,
+            cedula
+        },
+        paciente:{
+            idpaciente,
+            ocupacion,
+            fechanacimiento,
+            genero
+        },
     },
-    paciente:{
-        idpaciente,
-        ocupacion,
-        fechanacimiento,
-        genero
-    }
+    idoptometra
 }) => {
     try {
         const config = {
@@ -100,21 +103,24 @@ export const updatePatient = async ({
         }
         return await axios.put(`${UPDATE_PATIENT}`, 
             {
-                usuario: {
-                    idusuario: idusuario,
-                    nombre: nombre,
-                    apellido: apellido,
-                    correo: correo,
-                    direccion: direccion,
-                    telefono: telefono,
-                    cedula: cedula
+                pacienteDTO: {
+                    usuario: {
+                        idusuario: idusuario,
+                        nombre: nombre,
+                        apellido: apellido,
+                        correo: correo,
+                        direccion: direccion,
+                        telefono: telefono,
+                        cedula: cedula
+                    },
+                    paciente:{
+                        idpaciente: idpaciente,
+                        ocupacion: ocupacion,
+                        fechanacimiento: fechanacimiento,
+                        genero: genero
+                    }
                 },
-                paciente:{
-                    idpaciente: idpaciente,
-                    ocupacion: ocupacion,
-                    fechanacimiento: fechanacimiento,
-                    genero: genero
-                }
+                idoptometra
             }, config);
     } catch (error) {
         throw error;

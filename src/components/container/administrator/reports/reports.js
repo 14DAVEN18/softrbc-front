@@ -1,10 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, Form, Input, InputNumber, Modal, Space, Table } from 'antd';
-import { UserOutlined, MailOutlined, PhoneOutlined, LockOutlined, IdcardOutlined } from '@ant-design/icons';
+import { Button, Space, Table } from 'antd';
 
-import axios from "axios";
-import { CREATE_USER } from '../../../../constants/constants';
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import './reports.css';
 
@@ -15,11 +12,15 @@ export default function Reports() {
     const ref = useRef(null);
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
         setHeight(ref.current.offsetHeight);
         setWidth(ref.current.offsetWidth);
-    }, [])
+        if(!localStorage.getItem('token')) {
+            navigate("/inicio-empleados")
+        }
+    }, [navigate])
 
     const columns = [
         {

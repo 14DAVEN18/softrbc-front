@@ -18,12 +18,16 @@ export default function FAQManagement() {
 
 
     const [loading, setLoading] = useState(false);
-    const navigation = useNavigate();
+    const navigate = useNavigate();
 
     useEffect(() => {
         setHeight(ref.current.offsetHeight);
         setWidth(ref.current.offsetWidth);
-        fetchQuestions();
+        if(!localStorage.getItem('token')) {
+            navigate("/inicio-empleados")
+        } else {
+            fetchQuestions();
+        }
     }, [])
 
 

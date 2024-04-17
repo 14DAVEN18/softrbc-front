@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, Form, Modal, Select, Space, Table, Transfer, Typography } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 
 import './work-calendar.css';
@@ -17,15 +18,22 @@ export default function WorkCalendar() {
     const ref = useRef(null);
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
+    const [successMessage, setSuccessMessage] = useState('')
+    const [errorMessage, setErrorMessage] = useState('')
+    const navigate = useNavigate();
 
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         setHeight(ref.current.offsetHeight);
         setWidth(ref.current.offsetWidth);
-        fetchOptometrists();
-        fetchCalendars();
-    }, [])
+        if(!localStorage.getItem('token')) {
+            navigate("/inicio-empleados")
+        } else {
+            fetchOptometrists();
+            fetchCalendars();
+        }
+    }, [navigate])
 
 
 
@@ -156,9 +164,11 @@ export default function WorkCalendar() {
                 diasatencion,
                 selectedDuration
             );
-            setLoading(true);
+            if(response.data === 200) {
+                setSuccessMessage("El calendario se ha creado exitosamente")
+            }
         } catch (error) {
-            console.error('Error en la solicitud:', error);
+            setErrorMessage('Hubo un problema al crear el calendario: ', error)
         } finally {
             fetchOptometrists();
             fetchCalendars();
@@ -210,9 +220,12 @@ export default function WorkCalendar() {
                     }
     
                 );
+                if(response.data === 200) {
+                    setSuccessMessage("La pregunta se actualizó correctamente")
+                }
                 setLoading(true);
             } catch (error) {
-                console.error('Error en la solicitud:', error);
+                setErrorMessage("Ocurrió un error al actualizar la pregunta: " , error)
             } finally {
                 fetchCalendars();
                 setIsUpdateModalOpen(false);
@@ -250,10 +263,12 @@ export default function WorkCalendar() {
         setLoading(true);
         try {
             const response = await deleteCalendar(selectedCalendar.idpregunta); // Call the create function from userService.js
-            // Handle success if needed
+            if (response.status === 200) {
+                setSuccessMessage('El calendario se eliminó exitosamente')
+            }
         } catch (error) {
+            setErrorMessage('Ocurrió un error al eliminar el calendario: ', error)
             console.error('Error en la solicitud:', error);
-            // Handle error if needed
         } finally {
             fetchCalendars();
             setLoading(false);
@@ -333,6 +348,16 @@ export default function WorkCalendar() {
                     {filteredData.length === 0 &&
                         <div className='alert'>No hay optometras activos en este momento. Por favor registre un optometra o habilite alguno existente</div>
                     }
+                    { errorMessage && (
+                        <div className='error-message'>
+                            <p>{errorMessage}</p>
+                        </div>
+                    )}
+                    { successMessage && (
+                        <div className='success-message'>
+                            <p>{successMessage}</p>
+                        </div>
+                    )}
                     <p className='confirmation'>Por favor llene los siguientes campos:</p>
                     <Form
                         className='creation-form'
