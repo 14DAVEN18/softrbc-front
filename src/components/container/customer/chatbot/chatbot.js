@@ -108,10 +108,15 @@ function Chatbot({
                                         try {
                                             const response = await verifyAppointmentDetails(query)
                                             console.log("Estimado usuario. los detalles son los siguientes: ", response.data)
-                                            addMessage({ text: 'Estimado usuario. los detalles son los siguientes:'})
-                                            addMessage({ text: `Fecha: ${response.data.fecha}`, sender: 'bot' })
-                                            addMessage({ text: `Hora : ${response.data.hora}`, sender: 'bot' })
-                                            addMessage({ text: '0. Menú principal '})
+                                            if(!response.data.estado) {
+                                                addMessage({ text: `Estimado usuario. La cita asociada con el código ${query.codigo} ya fue cancelada previamente. Si aun desea tener su consulta de optometría por favor agende una nueva cita.`})
+                                                addMessage({ text: '0. Menú principal '})
+                                            } else {
+                                                addMessage({ text: 'Estimado usuario. los detalles son los siguientes:'})
+                                                addMessage({ text: `Fecha: ${response.data.fecha}`, sender: 'bot' })
+                                                addMessage({ text: `Hora : ${response.data.hora}`, sender: 'bot' })
+                                                addMessage({ text: '0. Menú principal '})
+                                            }
                                             setNewInput(null)
                                             setCurrentLevel(decisionTree)
                                         } catch (error) {

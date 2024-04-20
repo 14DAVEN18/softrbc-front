@@ -273,6 +273,13 @@ export default function OptometristManagement() {
     // TO DEFINE TABLES FOR COLUMNS
     const columns = [
         {
+            title: 'ID Optometra',
+            key: 'idoptometra',
+            render: (_, record) => (
+                <h3>{record.idoptometra}</h3>
+            )
+        },
+        {
             title: 'Nombre',
             key: 'name',
             render: (_, record) => (

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { GET_CALENDARS, GET_DAYS_OPTOMETRIST, CREATE_CALENDAR, MODIFY_CALENDAR, DELETE_CALENDAR, CANCEL_DAY } from "../constants/constants";
+import { GET_CALENDARS, GET_DAYS_OPTOMETRIST, CREATE_CALENDAR, MODIFY_CALENDAR, CANCEL_DAY } from "../constants/constants";
 
 
 export const getCalendars = async () => {
@@ -51,10 +51,11 @@ export const createCalendar = async (idadmin, idoptometra, diasatencion, duracio
 
 
 export const updateCalendar = async ({
+    idadmin,
     idcalendario,
     idoptometra,
-    diasatencion,
-    duracioncita
+    nuevadiasatencion,
+    nuevaduracion
 }) => {
     try {
         const config = {
@@ -65,27 +66,12 @@ export const updateCalendar = async ({
         }
         return await axios.put(`${MODIFY_CALENDAR}/${idcalendario}`, 
         {
+            idadmin,
             idcalendario,
             idoptometra,
-            diasatencion,
-            duracioncita
+            nuevadiasatencion,
+            nuevaduracion
         }, config);
-    } catch (error) {
-        throw error;
-    }
-}
-
-
-export const deleteCalendar = async (idcalendario) => {
-    const id = idcalendario
-    try {
-        const config = {
-            headers: {
-                "Authorization": localStorage.getItem('token'),
-                "Content-Type": "application/json"
-            }
-        }
-        return await axios.delete(`${DELETE_CALENDAR}/${id}`, config);
     } catch (error) {
         throw error;
     }

@@ -23,7 +23,6 @@ export const FIND_PATIENT_MEDICAL_RECORDS = 'http://localhost:8080/HistoriaClini
 export const GET_CALENDARS = 'http://localhost:8080/calendario/calendariolista'
 export const CREATE_CALENDAR = 'http://localhost:8080/calendario/nueva'
 export const MODIFY_CALENDAR = 'http://localhost:8080/calendario/modificar'
-export const DELETE_CALENDAR = 'http://localhost:8080/calendario/eliminar'
 export const GET_APPOINTMENT_DURATION = 'http://localhost:8080/calendario/duracioncita'
 export const GET_DAYS_OPTOMETRIST = 'http://localhost:8080/calendario/calendariooptometra'
 
@@ -42,6 +41,9 @@ export const CREATE_APPOINTMENT = 'http://localhost:8080/cita/nueva'
 export const VERIFY_APPOINTMENT = 'http://localhost:8080/cita/verificarCodigo' // Param
 export const DELETE_APPOINTMENT = 'http://localhost:8080/cita/eliminar' // Path
 export const CANCEL_DAY = 'http://localhost:8080/cita/export/pdf' // Param
+
+// CHANGELOG RELATED URLs
+export const GET_CHANGELOG = 'http://localhost:8080/auditoria/informacion'
 
 
 

@@ -224,23 +224,21 @@ export default function OptometristSchedule() {
             try {
                 const values = await updateForm.validateFields();
                 const response = await updatePatient({
-                    pacienteDTO: { 
-                        usuario: {
-                            idusuario: patient?.usuario.idusuario,
-                            nombre: values.nombre,
-                            apellido: values.apellido,
-                            correo: values.correo,
-                            direccion: values.direccion,
-                            telefono: values.telefono,
-                            cedula: values.cedula
-                        },
-                        paciente: {
-                            idpaciente: patient?.paciente.idpaciente,
-                            ocupacion: values.ocupacion,
-                            fechanacimiento: values.fechanacimiento,
-                            genero: values.genero
-                        }
-                    },
+                    usuario: {
+                        idusuario: patient?.usuario.idusuario,
+                        nombre: values.nombre,
+                        apellido: values.apellido,
+                        correo: values.correo,
+                        direccion: values.direccion,
+                        telefono: values.telefono,
+                        cedula: values.cedula
+                    },
+                    paciente: {
+                        idpaciente: patient?.paciente.idpaciente,
+                        ocupacion: values.ocupacion,
+                        fechanacimiento: values.fechanacimiento,
+                        genero: values.genero
+                    },
                     idoptometra: JSON.parse(localStorage.getItem('user')).idoptometra
                 });
                 console.log('Response:', response.data);

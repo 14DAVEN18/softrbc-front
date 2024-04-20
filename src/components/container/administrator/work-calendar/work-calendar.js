@@ -5,9 +5,9 @@ import { useNavigate } from 'react-router-dom';
 
 import './work-calendar.css';
 
-import { durations, days } from '../../../../constants/constants';
+import { durations, days, days2 } from '../../../../constants/constants';
 import { getOptometrists } from '../../../../services/optometristService';
-import { getCalendars, createCalendar, updateCalendar, deleteCalendar } from '../../../../services/calendarService';
+import { getCalendars, createCalendar, updateCalendar } from '../../../../services/calendarService';
 
 
 const initialTargetDays = [];
@@ -52,7 +52,6 @@ export default function WorkCalendar() {
             
         } finally {
             setLoading(false);
-            
         }
     }
 
@@ -75,11 +74,28 @@ export default function WorkCalendar() {
     const fetchCalendars = async () => {
         try {
             const response = await getCalendars();
-            setCalendarsData(response.data)
+
+            const calendarFormatted = response.data.map((calendar) => {
+                const diasAtencionFormatted = calendar.diasatencion.split('.').map(day => {
+                    const foundDay = days.find(d => d.day.toLowerCase() === day.toLowerCase());
+                    return foundDay ? { key: foundDay.key, day: foundDay.day } : null; // Return object with key and day if day is found, otherwise null
+                });
+    
+                return {
+                    ...calendar,
+                    diasatencion: diasAtencionFormatted.filter(item => item !== null) // Filter out null values
+                };
+            });
+            setCalendarsData(calendarFormatted);
         } catch (error) {
-            console.error('Error en la solicitud', error)
+            //console.log(error.response.data.error.toLowerCase().includes('expired'))
+            setErrorMessage('Su sesión ha expirado. En breve será redirigido al inicio de sesión')
+            setTimeout(() => {
+                navigate('/inicio-empleados')
+            }, 5000)
+            console.error('Error en la solicitud', error);
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
     }
 
@@ -108,7 +124,7 @@ export default function WorkCalendar() {
     // TO HANDLE THE TRANSFER MENU (DAYS) 
     const [targetDays, setTargetDays] = useState(initialTargetDays);
     const [selectedDays, setSelectedDays] = useState([]);
-    const onChange = (nextTargetDays, direction, moveDays) => {
+    const onChange = (nextTargetDays) => {
         setTargetDays(nextTargetDays);
     };
   
@@ -189,6 +205,7 @@ export default function WorkCalendar() {
 
 
     // START OF HANDLING UPDATE MODAL ***********************************************************
+    const [selectedCalendar, setSelectedCalendar] = useState(null)
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
     const [isUpdateFormComplete, setIsUpdateFormComplete] = useState(false);
     const [updateForm] = Form.useForm();
@@ -199,14 +216,19 @@ export default function WorkCalendar() {
         setIsUpdateFormComplete(isComplete);
     };
     
-    const showUpdateModal = async (calendar) => {
+    const showUpdateModal = (calendar) => {
         setSelectedCalendar(calendar);
         updateForm.setFieldsValue(calendar);
+        setTargetDays(calendar.diasatencion.map(day => day.key))
         setIsUpdateModalOpen(true);
         setIsUpdateFormComplete(false);
     }
 
-    const handleUpdateQuestion = async () => {
+    const handleUpdateCalendar = async () => {
+        const diasatencion = days.filter(item => targetDays.includes(item.key))
+            .map(item => item.day)
+            .join(".")
+
         if (updateForm != null) {
             try {
                 setLoading(true);
@@ -215,8 +237,9 @@ export default function WorkCalendar() {
                     {
                         idadmin: JSON.parse(localStorage.getItem('user')).idadmin,
                         idcalendario: selectedCalendar.idcalendario,
-                        pregunta: values.pregunta,
-                        respuesta: values.respuesta
+                        idoptometra: selectedCalendar.idoptometra,
+                        nuevadiasatencion: diasatencion,
+                        nuevaduracion: selectedCalendar.duracioncita
                     }
     
                 );
@@ -230,8 +253,9 @@ export default function WorkCalendar() {
                 fetchCalendars();
                 setIsUpdateModalOpen(false);
                 setIsUpdateFormComplete(false);
-                setLoading(false);
+                setTargetDays(initialTargetDays)
                 setSelectedCalendar(null);
+                setLoading(false);
             }
         }
         setLoading(true)
@@ -249,53 +273,20 @@ export default function WorkCalendar() {
 
 
 
-    // TO HANDLE DELETION CONFIRMATION MODAL ***********************************************************
-    const [isDeletionModalOpen, setDeletionModalOpen] = useState(false);
-    const [selectedCalendar, setSelectedCalendar] = useState(null);
-
-
-    const showDeletionModal = (calendar) => {
-        setSelectedCalendar(calendar)
-        setDeletionModalOpen(true);
-    };  
-    
-    const removeCalendar = async () => {
-        setLoading(true);
-        try {
-            const response = await deleteCalendar(selectedCalendar.idpregunta); // Call the create function from userService.js
-            if (response.status === 200) {
-                setSuccessMessage('El calendario se eliminó exitosamente')
-            }
-        } catch (error) {
-            setErrorMessage('Ocurrió un error al eliminar el calendario: ', error)
-            console.error('Error en la solicitud:', error);
-        } finally {
-            fetchCalendars();
-            setLoading(false);
-        }
-        
-        setTimeout(() => {
-            setLoading(false);
-            setDeletionModalOpen(false);
-        }, 2000);
-    };
-    
-    const DeletionModalCancel = () => {
-        setDeletionModalOpen(false);
-    };
-
-
-
-
-
-
     // TO DEFINE TABLES FOR COLUMNS
     const columns = [
+        {
+            title: 'ID Calendario',
+            key: 'idcalendario',
+            render: (_, record) => (
+                record.idcalendario
+            )
+        },
         {
             title: 'Dias de trabajo',
             key: 'diasatencion',
             render: (_, record) => (
-                record.diasatencion
+                record.diasatencion.map(day => day.day).join(' ')
             )
         },
         {
@@ -303,9 +294,6 @@ export default function WorkCalendar() {
             key: 'action',
             render: (_, record) => (
             <Space size="middle">
-                <Button type="primary" danger onClick={() => showDeletionModal(record)} htmlType='submit'>
-                    Borrar
-                </Button>
                 <Button type="primary" onClick={ () => showUpdateModal(record)} htmlType='submit'>
                     Modificar
                 </Button>
@@ -313,7 +301,6 @@ export default function WorkCalendar() {
             ),
         },
     ];
-
 
 
 
@@ -421,7 +408,8 @@ export default function WorkCalendar() {
                                 defaultValue="Seleccione una duración"
                                 onChange={handleChangeDuration}
                                 options={selectDurationOptions} 
-                                disabled={filteredData.length===0}/>
+                                disabled={filteredData.length===0}
+                            />
                         </Form.Item>
                     </Form>
                 </Modal>
@@ -436,7 +424,7 @@ export default function WorkCalendar() {
                         <Button key="cancel" onClick={handleUpdateModalCancel}>
                             Salir
                         </Button>
-                        <Button key="update" type="primary" loading={loading} onClick={handleUpdateQuestion} disabled={!isUpdateFormComplete}>
+                        <Button key="update" type="primary" loading={loading} onClick={handleUpdateCalendar} disabled={!isUpdateFormComplete}>
                             Modificar
                         </Button>
                     </>}
@@ -447,7 +435,7 @@ export default function WorkCalendar() {
                         className='update-form'
                         form={updateForm}
                         name="question-update"
-                        onFinish={handleUpdateQuestion}
+                        onFinish={handleUpdateCalendar}
                         onValuesChange={onUpdateValuesChange}
                     >
 
@@ -469,6 +457,8 @@ export default function WorkCalendar() {
                             />
                         </Form.Item>
 
+                        <h4>Dias actuales:</h4>
+                        
                         <Form.Item
                             name="diasatencion"
                             rules={[
@@ -510,36 +500,17 @@ export default function WorkCalendar() {
                         </Form.Item>
                     </Form>
                 </Modal>
-
-
-
-
-
-
-
-                <Modal title="Eliminar calendario" centered open={isDeletionModalOpen} onCancel={DeletionModalCancel} footer=
-                    {<>
-                        <Button key="salir" onClick={DeletionModalCancel}>
-                            Salir
-                        </Button>,
-                        <Button key="action" type="primary" danger loading={loading} onClick={removeCalendar}>
-                            Eliminar
-                        </Button>
-                    </>}>
-                    <p className='confirmation'>¿Está seguro que desea eliminar el calendario?</p>
-
-                    <Typography>
-                        <pre>{selectedCalendar?.diasatencion}</pre>
-                    </Typography>
-
-                    <Typography>
-                        <pre>{selectedCalendar?.duracioncita} minutos</pre>
-                    </Typography>
-                </Modal>
             </div>
 
             <div className='question-table'>
-                <Table columns={columns} dataSource={calendarsData} scroll={{y: 600}} pagination={false}/>
+                <Table
+                    columns={columns}
+                    dataSource={calendarsData?.map((calendar) => ({
+                        ...calendar,
+                        key: calendar.idcalendario
+                }))} 
+                scroll={{y: 600}}
+                pagination={false}/>
             </div>
         </div>
     )

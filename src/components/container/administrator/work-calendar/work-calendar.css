@@ -47,7 +47,9 @@
     width: 70%; /* Adjust the width as needed */
 }
 
-
+.update-form pre {
+    margin: 0px 0px 5px 0px;
+}
 
 .creation-form .ant-select, .creation-form .ant-transfer {
     justify-content: center;

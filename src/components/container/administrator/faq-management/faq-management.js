@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, Form, Input, Modal, Space, Table, Typography } from 'antd';
-import { CheckOutlined, UserOutlined, QuestionOutlined,  } from '@ant-design/icons';
+import { CheckOutlined, QuestionOutlined,  } from '@ant-design/icons';
 import { useNavigate } from "react-router-dom";
 
 
 import './faq-management.css';
 
-import { questions } from './faq-data';
 import { createQuestion, deleteQuestion, getQuestions, updateQuestion } from '../../../../services/faqService';
 
 export default function FAQManagement() {
@@ -243,6 +242,13 @@ export default function FAQManagement() {
 
     // TO DEFINE TABLES FOR COLUMNS
     const columns = [
+        {
+            title: 'ID Pregunta',
+            key: 'idpregutna',
+            render: (_, record) => (
+                record.idpregunta
+            )
+        },
         {
             title: 'Pregunta',
             key: 'pregunta',
