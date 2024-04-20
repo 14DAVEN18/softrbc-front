@@ -5,9 +5,10 @@ import { useNavigate } from 'react-router-dom';
 
 import './work-calendar.css';
 
-import { durations, days, days2 } from '../../../../constants/constants';
+import { durations, days } from '../../../../constants/constants';
 import { getOptometrists } from '../../../../services/optometristService';
 import { getCalendars, createCalendar, updateCalendar } from '../../../../services/calendarService';
+import FeedbackMessage from '../../common/feedback-message/feedback-message';
 
 
 const initialTargetDays = [];
@@ -18,11 +19,30 @@ export default function WorkCalendar() {
     const ref = useRef(null);
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
-    const [successMessage, setSuccessMessage] = useState('')
-    const [errorMessage, setErrorMessage] = useState('')
+    const [message, setMessage] = useState({
+        visible: false,
+        type: '',
+        text: ''
+    })
     const navigate = useNavigate();
 
     const [loading, setLoading] = useState(false);
+
+    const showMessage = (type, text) => {
+        setMessage({
+          visible: true,
+          type: type,
+          text: text
+        });
+    };
+
+    const hideMessage = () => {
+        setMessage({
+            visible: false,
+            type: '',
+            text: ''
+        });
+    };
 
     useEffect(() => {
         setHeight(ref.current.offsetHeight);
@@ -48,8 +68,21 @@ export default function WorkCalendar() {
             const response = await getOptometrists(); // Call the create function from admin Service.js
             setOptometristsData(response.data)
         } catch (error) {
-            console.error('Error en la solicitud:', error);
-            
+            if(error.response.data.error.toLowerCase().includes('expired')){
+                showMessage(
+                    'error',
+                    `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                )
+                setTimeout(() => {
+                    localStorage.clear()
+                    navigate('/inicio-empleados')
+                }, 5000)
+            } else {
+                showMessage(
+                    'error',
+                    'Ocurrió un error al cargar la información de los optometras.'
+                )
+            }
         } finally {
             setLoading(false);
         }
@@ -88,12 +121,21 @@ export default function WorkCalendar() {
             });
             setCalendarsData(calendarFormatted);
         } catch (error) {
-            //console.log(error.response.data.error.toLowerCase().includes('expired'))
-            setErrorMessage('Su sesión ha expirado. En breve será redirigido al inicio de sesión')
-            setTimeout(() => {
-                navigate('/inicio-empleados')
-            }, 5000)
-            console.error('Error en la solicitud', error);
+            if(error.response.data.error.toLowerCase().includes('expired')){
+                showMessage(
+                    'error',
+                    `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                )
+                setTimeout(() => {
+                    localStorage.clear()
+                    navigate('/inicio-empleados')
+                }, 5000)
+            } else {
+                showMessage(
+                    'error',
+                    `Ocurrió un error al cargar la información de los calendarios. ${error.message}`
+                )
+            }
         } finally {
             setLoading(false);
         }
@@ -180,11 +222,28 @@ export default function WorkCalendar() {
                 diasatencion,
                 selectedDuration
             );
-            if(response.data === 200) {
-                setSuccessMessage("El calendario se ha creado exitosamente")
+            if(response.status === 200) {
+                showMessage(
+                    'success',
+                    'Ocurrió un error al creador optometras'
+                )
             }
         } catch (error) {
-            setErrorMessage('Hubo un problema al crear el calendario: ', error)
+            if(error.response.data.error.toLowerCase().includes('expired')){
+                showMessage(
+                    'error',
+                    `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                )
+                setTimeout(() => {
+                    localStorage.clear()
+                    navigate('/inicio-empleados')
+                }, 5000)
+            } else {
+                showMessage(
+                    'error',
+                    `Ocurrió un error al crear el calendario. ${error.data}`
+                )
+            }
         } finally {
             fetchOptometrists();
             fetchCalendars();
@@ -225,10 +284,11 @@ export default function WorkCalendar() {
     }
 
     const handleUpdateCalendar = async () => {
+        
         const diasatencion = days.filter(item => targetDays.includes(item.key))
             .map(item => item.day)
             .join(".")
-
+            
         if (updateForm != null) {
             try {
                 setLoading(true);
@@ -241,14 +301,30 @@ export default function WorkCalendar() {
                         nuevadiasatencion: diasatencion,
                         nuevaduracion: selectedCalendar.duracioncita
                     }
-    
                 );
-                if(response.data === 200) {
-                    setSuccessMessage("La pregunta se actualizó correctamente")
+                if(response.status === 200) {
+                    showMessage(
+                        'success',
+                        'El calendario fue actualizado exitosamente'
+                    )
                 }
                 setLoading(true);
             } catch (error) {
-                setErrorMessage("Ocurrió un error al actualizar la pregunta: " , error)
+                if(error.response.data.error.toLowerCase().includes('expired')){
+                    showMessage(
+                        'error',
+                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/inicio-empleados')
+                    }, 5000)
+                } else {
+                    showMessage(
+                        'error',
+                        `Ocurrió un error al actualizar el calendario. ${error.data}`
+                    ) 
+                }
             } finally {
                 fetchCalendars();
                 setIsUpdateModalOpen(false);
@@ -308,6 +384,8 @@ export default function WorkCalendar() {
     // HTML TEMPLATE
     return (
         <div className='work-calendar' ref={ref}>
+            <FeedbackMessage visible={message?.visible} type={message?.type} text={message?.text} onClose={() => hideMessage()}>
+            </FeedbackMessage>
             
             <div className='form-container'>
                 <div className='modal'>
@@ -335,16 +413,6 @@ export default function WorkCalendar() {
                     {filteredData.length === 0 &&
                         <div className='alert'>No hay optometras activos en este momento. Por favor registre un optometra o habilite alguno existente</div>
                     }
-                    { errorMessage && (
-                        <div className='error-message'>
-                            <p>{errorMessage}</p>
-                        </div>
-                    )}
-                    { successMessage && (
-                        <div className='success-message'>
-                            <p>{successMessage}</p>
-                        </div>
-                    )}
                     <p className='confirmation'>Por favor llene los siguientes campos:</p>
                     <Form
                         className='creation-form'

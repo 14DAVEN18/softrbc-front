@@ -7,6 +7,8 @@ import { AuthContext } from "../../../auth/context/AuthContext";
 
 import './optometrist-container.css';
 
+import FeedbackMessage from '../common/feedback-message/feedback-message';
+
 function getItem(label, key, icon, children, type) {
     return {
       key,
@@ -35,7 +37,28 @@ export default function Optometrist() {
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
     const [openMenu, setOpenMenu] = useState(false)
+    const [message, setMessage] = useState({
+        visible: false,
+        type: '',
+        text: ''
+    })
     const navigate = useNavigate();
+
+    const showMessage = (type, text) => {
+        setMessage({
+          visible: true,
+          type: type,
+          text: text
+        });
+    };
+
+    const hideMessage = () => {
+        setMessage({
+            visible: false,
+            type: '',
+            text: ''
+        });
+    };
 
     const [user, setUser] = useState(undefined);
     const { handlerLogout } = useContext(AuthContext);
@@ -62,7 +85,10 @@ export default function Optometrist() {
                 navigate('/inicio-empleados')
             }
         } catch (error) {
-            console.error("Error: ", error)
+            showMessage(
+                'error',
+                `Ocurrió un error al intentar cerrar sesión. ${error}.`
+            )
         }
     }
 
@@ -72,11 +98,9 @@ export default function Optometrist() {
 
 
     return (
-        <div 
-            id="optometrist" 
-            className="optometrist" 
-            ref={ref}
-        >
+        <div id="optometrist" className="optometrist" ref={ref}>
+            <FeedbackMessage visible={message?.visible} type={message?.type} text={message?.text} onClose={() => hideMessage()}>
+            </FeedbackMessage>
             <div className='opt-header'>
             <div className='employee-data'>
                     <div>{user?.name} {user?.surname}</div>

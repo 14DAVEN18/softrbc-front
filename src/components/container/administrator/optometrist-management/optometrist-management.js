@@ -7,6 +7,8 @@ import { createOptometrist, getOptometrists, updateOptometrist, updateOptometris
 
 import './optometrist-management.css';
 
+import FeedbackMessage from '../../common/feedback-message/feedback-message';
+
 const layout = {
     labelCol: {
       span: 8,
@@ -22,12 +24,31 @@ export default function OptometristManagement() {
     const ref = useRef(null);
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
-    const [successMessage, setSuccessMessage] = useState('')
-    const [errorMessage, setErrorMessage] = useState('')
+    const [message, setMessage] = useState({
+        visible: false,
+        type: '',
+        text: ''
+    })
 
 
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+
+    const showMessage = (type, text) => {
+        setMessage({
+          visible: true,
+          type: type,
+          text: text
+        });
+    };
+
+    const hideMessage = () => {
+        setMessage({
+            visible: false,
+            type: '',
+            text: ''
+        });
+    };
 
     useEffect(() => {
         setHeight(ref.current.offsetHeight);
@@ -52,11 +73,23 @@ export default function OptometristManagement() {
             const response = await getOptometrists();
             setOptometristsData(response.data)
         } catch (error) {
-            console.error('Error en la solicitud:', error);
-            
+            if(error.response.data.error.toLowerCase().includes('expired')){
+                showMessage(
+                    'error',
+                    `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                )
+                setTimeout(() => {
+                    localStorage.clear()
+                    navigate('/inicio-empleados')
+                }, 5000)
+            } else {
+                showMessage(
+                    'error',
+                    `Ocurrió un error al cargar los optometras. ${error.message}`
+                )
+            }
         } finally {
             setLoading(false);
-            
         }
     }
 
@@ -79,11 +112,6 @@ export default function OptometristManagement() {
             setFilteredData(filtered);
         },500)
     }, [searchText, optometristsData])
-
-    const search = (values) => {
-        console.log('Received values from form: ', values);
-    };
-
 
 
 
@@ -114,18 +142,34 @@ export default function OptometristManagement() {
     
     const changeOptometristStatus = async () => {
         setLoading(true);
-        console.log(selectedOptometrist.idoptometra)
         try {
             const response = await updateOptometristStatus({
                 idadmin: JSON.parse(localStorage.getItem('user')).idadmin,
                 idusuario: selectedOptometrist.usuario.idusuario,
                 idoptometra: selectedOptometrist.idoptometra
-        });
-            if(response.data === 200) {
-                setSuccessMessage("El estado del optometra se actualizó exitosamente")
+            });
+            if (response.status === 200) {
+                showMessage(
+                    'success',
+                    `La pregunta se eliminó exitosamente.`
+                )
             }
         } catch (error) {
-            setErrorMessage('Ocurrió un error al cambiar el estado del optometra.', error)
+            if(error.response.data.error.toLowerCase().includes('expired')){
+                showMessage(
+                    'error',
+                    `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                )
+                setTimeout(() => {
+                    localStorage.clear()
+                    navigate('/inicio-empleados')
+                }, 5000)
+            } else {
+                showMessage(
+                    'error',
+                    `Ocurrió un error actualizando el estado del optometra. ${error.message}`
+                )
+            }
         } finally {
             setTimeout(() => {
                 fetchOptometrists();
@@ -178,18 +222,32 @@ export default function OptometristManagement() {
                             telefono: values.telefono,
                             cedula: values.cedula,
                         },
-                        optometra: {
-                            numeroTarjeta: values.numeroTarjeta
-                        },
                         idadmin: JSON.parse(localStorage.getItem('user')).idadmin
                     }
                 );
                 
                 if (response.status === 200) {
-                    setSuccessMessage('El optometra se registró exitosamente')
+                    showMessage(
+                        'success',
+                        `Los datos del optometra se registraron exitosamente.`
+                    )
                 }
             } catch (error) {
-                setErrorMessage('Ocurrió un error en la creación del optometra', error)
+                if(error.response.data.error.toLowerCase().includes('expired')){
+                    showMessage(
+                        'error',
+                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/inicio-empleados')
+                    }, 5000)
+                } else {
+                    showMessage(
+                        'error',
+                        `${error.message}`
+                    )
+                }
                 creationForm.resetFields()
             } finally {
                 fetchOptometrists();
@@ -216,7 +274,6 @@ export default function OptometristManagement() {
 
 
     const onUpdateValuesChange = (_, allValues) => {
-        console.log("allValues: ", allValues)
         const isComplete = Object.values(allValues).every(value => !!value);
         setIsUpdateFormComplete(isComplete);
     };
@@ -241,14 +298,30 @@ export default function OptometristManagement() {
                         correo: values.correo,
                         telefono: values.telefono,
                     }
-    
-                ); // Call the create function from userService.js
-                console.log('Response:', response.data);
+                );
                 setLoading(true);
-                // Handle success if needed
+                if (response.status === 200) {
+                    showMessage(
+                        'success',
+                        `Los datos del optometra se actualizaron correctamente exitosamente.`
+                    )
+                }
             } catch (error) {
-                console.error('Error en la solicitud:', error);
-                // Handle error if needed
+                if(error.response.data.error.toLowerCase().includes('expired')){
+                    showMessage(
+                        'error',
+                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/inicio-empleados')
+                    }, 5000)
+                } else {
+                    showMessage(
+                        'error',
+                        `Ocurrió un al actualizar los datos del optometra. ${error.message}`
+                    )
+                }
             } finally {
                 fetchOptometrists();
                 setIsUpdateModalOpen(false);
@@ -316,9 +389,12 @@ export default function OptometristManagement() {
     return (
         /* div optometrist-management contains the whole screen in which thd component is displayed */
         <div className="optometrist-management" ref={ref}>
+
+            <FeedbackMessage visible={message?.visible} type={message?.type} text={message?.text} onClose={() => hideMessage()}></FeedbackMessage>
+            
             
             <div className='search-form'>
-                <Form name="search" layout="inline" onFinish={search}>
+                <Form name="search" layout="inline">
                     <Form.Item name="search-input">
                         <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Nombre de optometra" onChange={e => setSearchText(e.target.value)}/>
                     </Form.Item>
@@ -390,7 +466,7 @@ export default function OptometristManagement() {
                             message: 'Por favor ingrese el nombre del optómetra sin apellidos!',
                         }]}
                     >
-                        <Input prefix={<UserOutlined/>} placeholder='Nombres'/>
+                        <Input prefix={<UserOutlined/>} placeholder='Nombres' autoComplete='false'/>
                     </Form.Item>
                         
                         
@@ -403,7 +479,7 @@ export default function OptometristManagement() {
                             message: 'Por favor ingrese el apellido del optómetra sin nombres!',
                         }]}
                     >
-                        <Input prefix={<UserOutlined/>} placeholder='Apellidos'/>
+                        <Input prefix={<UserOutlined/>} placeholder='Apellidos' autoComplete='false'/>
                     </Form.Item>
 
                     <Form.Item
@@ -415,7 +491,7 @@ export default function OptometristManagement() {
                             message: 'Por favor ingrese la dirección física del optómetra!',
                         }]}
                     >
-                        <Input prefix={<UserOutlined/>} placeholder='Dirección'/>
+                        <Input prefix={<UserOutlined/>} placeholder='Dirección' autoComplete='false'/>
                     </Form.Item>
 
                     <Form.Item
@@ -432,7 +508,7 @@ export default function OptometristManagement() {
                         },
                         ]}
                     >
-                        <Input prefix={<MailOutlined/>} placeholder='Correo eléctronico'/>
+                        <Input prefix={<MailOutlined/>} placeholder='Correo eléctronico' autoComplete='false'/>
                     </Form.Item>
 
                     <Form.Item
@@ -446,10 +522,18 @@ export default function OptometristManagement() {
                             {
                                 required: true,
                                 message: 'Por favor ingrese el número telefónico del optometra!'
+                            },
+                            {
+                                min: 7,
+                                message: 'El número de telefono no puede tener menos de 7 digitos!'
+                            },
+                            {
+                                max: 10,
+                                message: 'El número de teléfono no puede exceder los 10 dígitos!'
                             }
                         ]}
                     >
-                        <InputNumber prefix={<PhoneOutlined/>} placeholder='Número telefónico'/>
+                        <InputNumber prefix={<PhoneOutlined/>} placeholder='Número telefónico' autoComplete='false'/>
                     </Form.Item>
 
 
@@ -464,25 +548,19 @@ export default function OptometristManagement() {
                             {
                                 required: true,
                                 message: 'Por favor ingrese el número de identificación del optómetra!'
+                            },
+                            {
+                                min: 4,
+                                message: 'El número de documento de identidad debe tener al menos 4 digitos.'
+                            },
+                            {
+                                max: 12,
+                                message: 'El número de documento de identidad no puede tener más de 12 dígitos.'
                             }
                         ]}
                     >
-                        <InputNumber prefix={<IdcardOutlined/>} placeholder='Ingrese el número de cédula sin puntos'/>
+                        <InputNumber prefix={<IdcardOutlined/>} placeholder='Ingrese el número de cédula sin puntos' autoComplete='false'/>
                     </Form.Item>
-    
-
-                    <Form.Item
-                        label='Tarjeta profesional'
-                        name="numeroTarjeta"
-                        rules={[
-                        {
-                            required: true,
-                            message: 'Por favor ingrese el número de tarjeta profesional del optómetra!',
-                        }]}
-                    >
-                        <Input prefix={<UserOutlined/>} placeholder='Número de tarjeta profesional'/>
-                    </Form.Item>
-
                 </Form>
             </Modal>
 
@@ -538,7 +616,7 @@ export default function OptometristManagement() {
                         }]}
                         initialValue={selectedOptometrist?.usuario.direccion}
                     >
-                        <Input prefix={<UserOutlined/>} placeholder='Dirección'/>
+                        <Input prefix={<UserOutlined/>} placeholder='Dirección' autoComplete='false'/>
                     </Form.Item>
 
                     <Form.Item
@@ -556,7 +634,7 @@ export default function OptometristManagement() {
                         ]}
                         initialValue={selectedOptometrist?.usuario.correo}
                     >
-                        <Input prefix={<MailOutlined/>} placeholder='Correo eléctronico'/>
+                        <Input prefix={<MailOutlined/>} placeholder='Correo eléctronico' autoComplete='false'/>
                     </Form.Item>
 
                     <Form.Item
@@ -570,11 +648,19 @@ export default function OptometristManagement() {
                             {
                                 required: true,
                                 message: 'Por favor ingrese el número telefónico del optometra!'
+                            },
+                            {
+                                min: 7,
+                                message: 'El número de telefono no puede tener menos de 7 digitos!'
+                            },
+                            {
+                                max: 10,
+                                message: 'El número de teléfono no puede exceder los 10 dígitos!'
                             }
                         ]}
                         initialValue={selectedOptometrist?.usuario.telefono}
                     >
-                        <InputNumber prefix={<PhoneOutlined/>} placeholder='Número telefónico'/>
+                        <InputNumber prefix={<PhoneOutlined/>} placeholder='Número telefónico' autoComplete='false'/>
                     </Form.Item>
 
                     <Form.Item
@@ -585,14 +671,6 @@ export default function OptometristManagement() {
                         </Typography>
                     </Form.Item>
                     
-
-                    <Form.Item
-                        label='Tarjeta profesional'
-                    >
-                        <Typography>
-                            <pre>{selectedOptometrist?.numerotarjeta}</pre>
-                        </Typography>
-                    </Form.Item>
                 </Form>
             </Modal>
 
@@ -604,16 +682,6 @@ export default function OptometristManagement() {
             <div className='employee-table'>
                 <Table columns={columns} dataSource={filteredData.map((item, index) => ({ ...item, key: index }))} scroll={{y: 600}} pagination={false}/>
             </div>
-            { errorMessage && (
-                <div className='error-message'>
-                    <p>{errorMessage}</p>
-                </div>
-            )}
-            { successMessage && (
-                <div className='success-message'>
-                    <p>{successMessage}</p>
-                </div>
-            )}
         </div>
     );
 }

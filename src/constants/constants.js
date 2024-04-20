@@ -41,6 +41,7 @@ export const CREATE_APPOINTMENT = 'http://localhost:8080/cita/nueva'
 export const VERIFY_APPOINTMENT = 'http://localhost:8080/cita/verificarCodigo' // Param
 export const DELETE_APPOINTMENT = 'http://localhost:8080/cita/eliminar' // Path
 export const CANCEL_DAY = 'http://localhost:8080/cita/export/pdf' // Param
+export const GET_CANCELED_APPOINTMENTS = 'http://localhost:8080/cita/listacitasInactivas'
 
 // CHANGELOG RELATED URLs
 export const GET_CHANGELOG = 'http://localhost:8080/auditoria/informacion'

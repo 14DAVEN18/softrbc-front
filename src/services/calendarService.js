@@ -64,7 +64,7 @@ export const updateCalendar = async ({
                 "Content-Type": "application/json"
             }
         }
-        return await axios.put(`${MODIFY_CALENDAR}/${idcalendario}`, 
+        const response = await axios.put(`${MODIFY_CALENDAR}/${idcalendario}`, 
         {
             idadmin,
             idcalendario,
@@ -72,6 +72,7 @@ export const updateCalendar = async ({
             nuevadiasatencion,
             nuevaduracion
         }, config);
+        return response
     } catch (error) {
         throw error;
     }
@@ -88,7 +89,7 @@ export const cancelWorkDay = async (fecha) => {
     }
     try {   
         const response = await axios.get(`${CANCEL_DAY}?fecha=${fecha}`, config);
-        return response.data;
+        return response;
     } catch (error) {
         throw error;
     }

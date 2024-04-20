@@ -3,6 +3,7 @@ import { Button, Modal, Space, Table, } from 'antd';
 import { useNavigate } from "react-router-dom";
 
 import JSONPretty from 'react-json-pretty';
+import FeedbackMessage from '../../common/feedback-message/feedback-message';
 
 import './changelog.css';
 import { getChangelog } from '../../../../services/changelogService';
@@ -13,7 +14,28 @@ export default function Changelog() {
     const ref = useRef(null);
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
+    const [message, setMessage] = useState({
+        visible: false,
+        type: '',
+        text: ''
+    })
     const navigate = useNavigate();
+
+    const showMessage = (type, text) => {
+        setMessage({
+          visible: true,
+          type: type,
+          text: text
+        });
+    };
+
+    const hideMessage = () => {
+        setMessage({
+            visible: false,
+            type: '',
+            text: ''
+        });
+    };
 
     useEffect(() => {
         setHeight(ref.current.offsetHeight);
@@ -51,9 +73,22 @@ export default function Changelog() {
 
 
             setChangelogData(changeRecord)
-            console.log("changelog: ", changeRecord)
         } catch (error) {
-            console.error('Error en la solicitud:', error);
+            if(error.response.data.error.toLowerCase().includes('expired')){
+                showMessage(
+                    'error',
+                    `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                )
+                setTimeout(() => {
+                    localStorage.clear()
+                    navigate('/inicio-empleados')
+                }, 5000)
+            } else {
+                showMessage(
+                    'error',
+                    `Ocurrió un error al cargar el registro de cambios. ${error.message}`
+                )
+            }
         }
     }
 

@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 
 // Self created comopnents
 import Login from '../login/login';
+import FeedbackMessage from '../../common/feedback-message/feedback-message';
 
 // Self created services
 import { getQuestions } from '../../../../services/faqService';
@@ -44,11 +45,36 @@ function Chatbot({
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
     const [inputValue, setInputValue] = useState('');
+    const [message, setMessage] = useState({
+        visible: false,
+        type: '',
+        text: ''
+    })
+
+    const showMessage = (type, text) => {
+        setMessage({
+          visible: true,
+          type: type,
+          text: text
+        });
+    };
+
+    const hideMessage = () => {
+        setMessage({
+            visible: false,
+            type: '',
+            text: ''
+        });
+    };
+
 
     useEffect(() => {
         setHeight(ref.current.offsetHeight);
         setWidth(ref.current.offsetWidth);
     }, [])
+
+
+
 
     
     useEffect(() => {
@@ -107,7 +133,6 @@ function Chatbot({
                                         }
                                         try {
                                             const response = await verifyAppointmentDetails(query)
-                                            console.log("Estimado usuario. los detalles son los siguientes: ", response.data)
                                             if(!response.data.estado) {
                                                 addMessage({ text: `Estimado usuario. La cita asociada con el código ${query.codigo} ya fue cancelada previamente. Si aun desea tener su consulta de optometría por favor agende una nueva cita.`})
                                                 addMessage({ text: '0. Menú principal '})
@@ -121,7 +146,6 @@ function Chatbot({
                                             setCurrentLevel(decisionTree)
                                         } catch (error) {
                                             addMessage({ text: error.response.data , sender: 'bot'})
-                                            console.error(error)
                                         }
                                         
                                     }
@@ -135,13 +159,12 @@ function Chatbot({
                                     code: async (userMessage) => {
                                         try {
                                             const response = await cancelAppointment(userMessage)
-                                            console.log("detalles: ", response.data)
                                             addMessage({ text: response.data, sender: 'bot'})
                                             addMessage({ text: '0. Menú principal '})
                                             setNewInput(null)
                                             setCurrentLevel(decisionTree)
                                         } catch (error) {
-                                            console.error(error)
+                                            addMessage({ text: `Ocurrió un error cancelando la cita ${userMessage}. Por favor revise el número en intentelo de nuevo`, sender: 'bot'})
                                         }
                                         
                                     }
@@ -150,13 +173,15 @@ function Chatbot({
                         }
                     }
                 };
-                console.log("initialDecisionTree: ", initialDecisionTree)
                 
                 // Set questionsData and decisionTree state
                 setCurrentLevel(initialDecisionTree)
                 setDecisionTree(initialDecisionTree) 
             } catch (error) {
-                console.error('Error en la solicitud:', error);
+                showMessage(
+                    'error',
+                    `Ocurrió un error al cargar las preguntas frecuentes. ${error.message}`
+                )
             }
         };
 
@@ -290,6 +315,8 @@ function Chatbot({
 
     return (
         <div className='chat-container' ref={ref}>
+            <FeedbackMessage visible={message?.visible} type={message?.type} text={message?.text} onClose={() => hideMessage()}>
+            </FeedbackMessage>
             <div className='chat'>
                 <div className='chat-header'>
                     <img src={logoUrl}/>

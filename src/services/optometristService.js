@@ -91,9 +91,6 @@ export const updateOptometristStatus = async ({
     idusuario,
     idoptometra,
     }) => {
-        console.log('idadmin: ', idadmin)
-        console.log('idusuario: ', idusuario)
-        console.log('idoptometra: ', idoptometra)
         try {
             const config = {
                 headers: {

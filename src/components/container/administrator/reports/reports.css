@@ -3,7 +3,6 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    justify-content: center;
     width: 100%;
 }
 
@@ -13,6 +12,10 @@
     width: 80%;
 }
 
-.reports h1 {
+#report-title {
     color: black;
+}
+
+.modal-content {
+    height: 90%;
 }

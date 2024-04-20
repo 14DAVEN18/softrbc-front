@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import './faq-management.css';
 
 import { createQuestion, deleteQuestion, getQuestions, updateQuestion } from '../../../../services/faqService';
+import FeedbackMessage from '../../common/feedback-message/feedback-message';
 
 export default function FAQManagement() {
 
@@ -14,10 +15,31 @@ export default function FAQManagement() {
     const ref = useRef(null);
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
+    const [message, setMessage] = useState({
+        visible: false,
+        type: '',
+        text: ''
+    })
 
 
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+
+    const showMessage = (type, text) => {
+        setMessage({
+          visible: true,
+          type: type,
+          text: text
+        });
+    };
+
+    const hideMessage = () => {
+        setMessage({
+            visible: false,
+            type: '',
+            text: ''
+        });
+    };
 
     useEffect(() => {
         setHeight(ref.current.offsetHeight);
@@ -39,16 +61,26 @@ export default function FAQManagement() {
     const [questionsData, setQuestionsData] = useState(null);
     const fetchQuestions = async () => {
         try {
-            const response = await getQuestions(); // Call the create function from questino Service.js
+            const response = await getQuestions();
             setQuestionsData(response.data)
-            //console.log('optometrists:', optometristsData);
-
         } catch (error) {
-            console.error('Error en la solicitud:', error);
-            
+            if(error.response.data.error.toLowerCase().includes('expired')){
+                showMessage(
+                    'error',
+                    `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                )
+                setTimeout(() => {
+                    localStorage.clear()
+                    navigate('/inicio-empleados')
+                }, 5000)
+            } else {
+                showMessage(
+                    'error',
+                    `Ocurrió un error al cargar las preguntas. ${error.message}`
+                )
+            }
         } finally {
             setLoading(false);
-            
         }
     }
 
@@ -70,10 +102,6 @@ export default function FAQManagement() {
             setFilteredData(filtered);
         },500)
     }, [searchText, questionsData])
-
-    const search = (values) => {
-        console.log('Received values from form: ', values);
-    };
 
 
 
@@ -104,16 +132,35 @@ export default function FAQManagement() {
     const removeQuestion = async () => {
         setLoading(true);
         try {
-            const response = await deleteQuestion(selectedQuestion.idpregunta); // Call the create function from userService.js
-            //console.log('Response:', response.data);
-            // Handle success if needed
+            const response = await deleteQuestion(
+                selectedQuestion.idpregunta,
+                JSON.parse(localStorage.getItem('user')).idadmin
+            );
+            if (response.status === 200) {
+                showMessage(
+                    'success',
+                    `La pregunta se eliminó exitosamente.`
+                )
+            }
         } catch (error) {
-            console.error('Error en la solicitud:', error);
-            // Handle error if needed
+            if(error.response.data.error.toLowerCase().includes('expired')){
+                showMessage(
+                    'error',
+                    `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                )
+                setTimeout(() => {
+                    localStorage.clear()
+                    navigate('/inicio-empleados')
+                }, 5000)
+            } else {
+                showMessage(
+                    'error',
+                    `Ocurrió un error al eliminar la pregunta. ${error.message}`
+                )
+            }
         } finally {
             fetchQuestions();
             setLoading(false);
-            // Handle modal state changes here if needed
         }
         
         setTimeout(() => {
@@ -154,16 +201,34 @@ export default function FAQManagement() {
                 const values = await creationForm.validateFields();
                 const response = await createQuestion(
                     {
+                        idadmin: JSON.parse(localStorage.getItem('user')).idadmin,
                         pregunta: values.pregunta,
                         respuesta: values.respuesta
                     }
-                ); // Call the create function from userService.js
-                //console.log('Response:', response.data);
+                );
                 setLoading(true);
-                // Handle success if needed
+                if (response.status === 200) {
+                    showMessage(
+                        'success',
+                        `La pregunta se creó exitosamente.`
+                    )
+                }
             } catch (error) {
-                console.error('Error en la solicitud:', error);
-                // Handle error if needed
+                if(error.response.data.error.toLowerCase().includes('expired')){
+                    showMessage(
+                        'error',
+                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/inicio-empleados')
+                    }, 5000)
+                } else {
+                    showMessage(
+                        'error',
+                        `Ocurrió un error al crear la pregunta. ${error.message}`
+                    )
+                }
             } finally {
                 fetchQuestions();
                 setLoading(false);
@@ -206,18 +271,36 @@ export default function FAQManagement() {
                 const values = await updateForm.validateFields();
                 const response = await updateQuestion(
                     {
+                        idadmin: JSON.parse(localStorage.getItem('user')).idadmin,
                         id: selectedQuestion.idpregunta,
                         pregunta: values.pregunta,
                         respuesta: values.respuesta
                     }
     
-                ); // Call the create function from userService.js
-                console.log('Response:', response.data);
+                );
                 setLoading(true);
-                // Handle success if needed
+                if (response.status === 200) {
+                    showMessage(
+                        'success',
+                        `La pregunta se actualizó exitosamente.`
+                    )
+                }
             } catch (error) {
-                console.error('Error en la solicitud:', error);
-                // Handle error if needed
+                if(error.response.data.error.toLowerCase().includes('expired')){
+                    showMessage(
+                        'error',
+                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/inicio-empleados')
+                    }, 5000)
+                } else {
+                    showMessage(
+                        'error',
+                        `Ocurrió un error al actualizar la pregunta. ${error.message}`
+                    )
+                }
             } finally {
                 fetchQuestions();
                 setIsUpdateModalOpen(false);
@@ -287,9 +370,10 @@ export default function FAQManagement() {
     return (
         /* div optometrist-management contains the whole screen in which thd component is displayed */
         <div className="question-management" ref={ref}>
-            
+            <FeedbackMessage visible={message?.visible} type={message?.type} text={message?.text} onClose={() => hideMessage()}>
+            </FeedbackMessage>
             <div className='search-form'>
-                <Form name="search" layout="inline" onFinish={search}>
+                <Form name="search" layout="inline">
                     <Form.Item name="search-input">
                         <Input prefix={<CheckOutlined className="site-form-item-icon" />} placeholder="Palabra clave de la pregunta" onChange={e => setSearchText(e.target.value)}/>
                     </Form.Item>

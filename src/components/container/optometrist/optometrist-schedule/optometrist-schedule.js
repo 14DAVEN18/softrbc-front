@@ -8,11 +8,10 @@ import dayjs from 'dayjs';
 
 import './optometrist-schedule.css';
 
-// import { appointments } from './appointmentData';
-
 import { getPatientById, updatePatient } from '../../../../services/patientService';
 import { getAppointments } from '../../../../services/appointmentService';
 import { addMedicalRecord, createMedicalRecord, generatePdfFormula } from '../../../../services/medicalRecordService';
+import FeedbackMessage from '../../common/feedback-message/feedback-message';
 
 
 const layout = {
@@ -47,10 +46,29 @@ export default function OptometristSchedule() {
     const [width, setWidth] = useState(0);
     const [loading, setLoading] = useState(false);
     const [optometrist, setOptometrist] = useState('')
-    const [errorMessage, setErrorMessage] = useState('');
-    const [successMessage, setSuccessMessage] = useState('')
+    const [message, setMessage] = useState({
+        visible: false,
+        type: '',
+        text: ''
+    })
     const dateFormat = "YYYY/MM/DD";
     const navigate = useNavigate();
+
+    const showMessage = (type, text) => {
+        setMessage({
+          visible: true,
+          type: type,
+          text: text
+        });
+    };
+
+    const hideMessage = () => {
+        setMessage({
+            visible: false,
+            type: '',
+            text: ''
+        });
+    };
 
     useEffect(() => {
         setHeight(ref.current.offsetHeight);
@@ -69,6 +87,35 @@ export default function OptometristSchedule() {
     
     // TO LOAD TODAY'S APPOINTMENTS
     const [appointments, setAppointments] = useState([])
+
+    const fetchAppointments = async (date) => {
+        try {
+            const response = await getAppointments(date)
+            setAppointments(response.data)
+            if (response.status === 200) {
+                showMessage(
+                    'success',
+                    `Las citas de hoy fueron cargadas correctamente.`
+                )
+            }
+        } catch (error) {
+            if(error.response.data.error.toLowerCase().includes('expired')){
+                showMessage(
+                    'error',
+                    `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                )
+                setTimeout(() => {
+                    localStorage.clear()
+                    navigate('/inicio-empleados')
+                }, 5000)
+            } else {
+                showMessage(
+                    'error',
+                    `Ocurrió un error al cargar la agenda del dia. ${error.message}`
+                )
+            }
+        }
+    }
     
     useEffect(() => {
         if(!localStorage.getItem('token')) {
@@ -76,14 +123,7 @@ export default function OptometristSchedule() {
         } else {
             const today = new Date(2024, 3, 12)
             const selectedDayFormatted = format(today, 'dd/MM/yyyy');
-        
-            getAppointments(selectedDayFormatted)
-                .then(appointment => {
-                    setAppointments(appointment.data)
-                })
-                .catch(error => {
-                    console.error('Error while getting appointments', error)
-                });
+            fetchAppointments(selectedDayFormatted)
         }
     }, [navigate]);
 
@@ -146,10 +186,6 @@ export default function OptometristSchedule() {
         return timeA - timeB; // Compare time values
     };
 
-    const search = (values) => {
-        console.log('Received values from form: ', values);
-    };
-
 
 
 
@@ -163,21 +199,26 @@ export default function OptometristSchedule() {
         }))
         try {
             const response = await getPatientById(idpaciente); 
-            console.log(response)
             const dateOfBirthMoment = dayjs(response.data[0].paciente.fechanacimiento, 'YYYY/MM/DD');
-            console.log(dateOfBirthMoment)
             const updatedPatientData = {
                 ...response.data[0],
                 fechanacimiento: dateOfBirthMoment,
             };
             setPatient(updatedPatientData)
-            console.log(patient)
+            setMessage({
+                visible: true,
+                type: 'success',
+                text: `Los datos del usuario ${patient?.usuario.nombre} ${patient?.usuario.apellido} fueron cargados exitosamente.`
+            })
         } catch (error) {
-            console.error('Error en la solicitud:', error);
+            setMessage({
+                visible: true,
+                type: 'error',
+                text: `Ocurrió un error al cargar los datos del usuario. ${error.data}`
+            })
         } finally {
             setLoading(false);
         }
-        console.log(patient)
     };
     
 
@@ -250,11 +291,17 @@ export default function OptometristSchedule() {
                     },
                     idoptometra: JSON.parse(localStorage.getItem('user')).idoptometra
                 });
-                console.log('Response:', response.data);
-                setSuccessMessage(`Los datos personales del usuario ${patient?.usuario.nombre} ${patient?.usuario.apellido} fueron actualizados correctamente`)
+                setMessage({
+                    visible: true,
+                    type: 'success',
+                    text: `Los datos personales del usuario ${patient?.usuario.nombre} ${patient?.usuario.apellido} fueron actualizados correctamente`
+                })
             } catch (error) {
-                console.error('Error en la solicitud:', error);
-                setErrorMessage(`Ocurrió un error al registrar los datos del paciente: ${error.data}`)
+                setMessage({
+                    visible: true,
+                    type: 'error',
+                    text: `Ocurrió un error al registrar los datos del paciente: ${error.data}`
+                })
             } finally {
                 setLoading(false);
                 setTimeout(() => {
@@ -283,10 +330,17 @@ export default function OptometristSchedule() {
                     }
                 }))
             }, 1000)
-            setSuccessMessage(`La historia clínica para ${patient?.usuario.nombre} ${patient?.usuario.apellido} fue creada exitosamente`)
+            setMessage({
+                visible: true,
+                type: 'success',
+                text: `La historia clínica para ${patient?.usuario.nombre} ${patient?.usuario.apellido} fue creada exitosamente`
+            })
         } catch (error ){
-            console.error("Error actualizando historia clínica", error)
-            setErrorMessage(`Ocurrió un error al crear la historia médica del paciente: ${error.data}`)
+            setMessage({
+                visible: true,
+                type: 'error',
+                text: `Ocurrió un error al crear la historia médica del paciente. ${error.data}`
+            })
         }
     }
 
@@ -303,7 +357,6 @@ export default function OptometristSchedule() {
     const [medicalRecord, setMedicalRecord] = useState(null)
 
     const onMedicalRecordValuesChange = (_, allValues) => {
-        console.log(allValues)
         const requiredFields = [
             'anamnesis',
             'antecedentesFamiliares', 'antecedentesOculares', 'antecedentesGenerales',
@@ -406,11 +459,26 @@ export default function OptometristSchedule() {
                     }
                 );
                 if (response.status === 200) {
-                    setSuccessMessage(`El registro de la consulta fue agregado a la historia clínica del paciente de manera exitosa`)
+                    showMessage(
+                        'success',
+                        `El registro de la consulta fue agregado a la historia clínica del paciente de manera exitosa.`
+                    )
                 }
             } catch (error) {
-                console.error('Error en la solicitud:', error);
-                setErrorMessage(`Ocurrió un error al anexar los datos de la consulta a la historia clínica del paciente: ${error.data}`)
+                if(error.response.data.error.toLowerCase().includes('expired')){
+                    showMessage(
+                        'error',
+                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        navigate('/inicio-empleados')
+                    }, 5000)
+                } else {
+                    showMessage(
+                        'error',
+                        `Ocurrió un error en el registro de la consulta. ${error.data}.`
+                    )
+                }
             } finally {
                 setLoading(false);
                 setIsMedicalRecordFormComplete(false);
@@ -444,10 +512,17 @@ export default function OptometristSchedule() {
                 );
                 const blob = new Blob([blobData], { type: 'application/json' });
                 saveAs(blob, `formula.pdf`); 
-                setSuccessMessage(`El registro de la consulta fue agregado a la historia clínica del paciente de manera exitosa. Un PDF con la formula será descargado`)
+                setMessage({
+                    visible: true,
+                    type: 'success',
+                    text: `El registro de la consulta fue agregado a la historia clínica del paciente de manera exitosa. Un PDF con la formula será descargado`
+                })
             } catch (error) {
-                console.error('Error en la solicitud:', error);
-                setErrorMessage(`Ocurrió un error al anexar los datos de la consulta a la historia clínica del paciente: ${error.data}`)
+                setMessage({
+                    visible: true,
+                    type: 'error',
+                    text: `Ocurrió un error al anexar los datos de la consulta a la historia clínica del paciente. ${error.data}`
+                })
             } finally {
                 setLoading(false);
                 setIsMedicalRecordFormComplete(false);
@@ -463,20 +538,12 @@ export default function OptometristSchedule() {
     return (
         /* div optometrist-schedule contains the whole screen in which thd component is displayed */
         <div className="optometrist-schedule" ref={ref}>
-            { errorMessage && (
-                <div className='error-message' onClick={setErrorMessage('')}>
-                    <p>{errorMessage}</p>
-                </div>
-            )}
-            { successMessage && (
-                <div className='success-message' onClick={setSuccessMessage('')}>
-                    <p>{successMessage}</p>
-                </div>
-            )}
+            <FeedbackMessage visible={message?.visible} type={message?.type} text={message?.text} onClose={() => hideMessage()}>
+            </FeedbackMessage>
             {
                 !patient &&
                 <div className='search-form'>
-                    <Form name="search" layout="inline" onFinish={search}>
+                    <Form name="search" layout="inline">
                         <Form.Item name="search-input">
                             <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Nombre del paciente" onChange={e => setSearchText(e.target.value)}/>
                         </Form.Item>
@@ -602,16 +669,6 @@ export default function OptometristSchedule() {
                                         CONFIRMAR INFORMACIÓN
                                     </Button>
                                 </Form.Item>
-                                { errorMessage && (
-                                    <div className='error-message'>
-                                        <p>{errorMessage}</p>
-                                    </div>
-                                )}
-                                { successMessage && (
-                                    <div className='success-message'>
-                                        <p>{successMessage}</p>
-                                    </div>
-                                )}
                             </Form>
                         </div>
                     }

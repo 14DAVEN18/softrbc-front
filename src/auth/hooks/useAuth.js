@@ -18,7 +18,6 @@ export const useAuth = () => {
             const token = response.data.token; // body viene en el body
             const claims = JSON.parse(window.atob(token.split(".")[1]));
             const rol = claims.sub
-            console.log(response)
             dispatch({
                 type: 'login',
                 payload: {rol}
@@ -54,7 +53,6 @@ export const useAuth = () => {
                     'correo': response.data.correo,
                     'idpaciente': claims.idpaciente
                 }))
-                console.log('Rol: ', 'Es paciente')
             }
         } catch(error) {
             if (error.response?.status === 401 ) {

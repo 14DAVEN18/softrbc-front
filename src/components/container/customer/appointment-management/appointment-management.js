@@ -8,6 +8,8 @@ import './appointment-management.css';
 import { useNavigate } from 'react-router-dom';
 import { getDaysOptometrist } from '../../../../services/calendarService';
 
+import FeedbackMessage from '../../common/feedback-message/feedback-message';
+
 export default function AppointmentManagement() {
 
     const ref = useRef(null);
@@ -16,9 +18,45 @@ export default function AppointmentManagement() {
 
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate()
-    const [errorMessage, setErrorMessage] = useState('');
-    const [successMessage, setSuccessMessage] = useState('')
+    const [message, setMessage] = useState({
+        visible: false,
+        type: '',
+        text: ''
+    })
     const [workDays, setWorkDays] = useState([])
+
+    const showMessage = (type, text) => {
+        setMessage({
+          visible: true,
+          type: type,
+          text: text
+        });
+    };
+
+    const hideMessage = () => {
+        setMessage({
+            visible: false,
+            type: '',
+            text: ''
+        });
+    };
+
+    const fecthWorkdays = async ()  => {
+        try {
+            const response = await getDaysOptometrist()
+            const newWorkDays = response.data
+                .flatMap(calendar => calendar.split('.'));
+                setWorkDays(prevWorkDays => [
+                    ...prevWorkDays,
+                    ...newWorkDays
+                ])
+        } catch (error) {
+            showMessage(
+                'error',
+                `Ocurrió un error al los dias disponibles. ${error.message}`
+            )
+        }
+    }
 
     useEffect(() => {
         setHeight(ref.current.offsetHeight);
@@ -26,23 +64,6 @@ export default function AppointmentManagement() {
         if(!localStorage.getItem('token')) {
             navigate("/cliente/preguntas")
         } else {
-            const fecthWorkdays = async ()  => {
-                try {
-                    const response = await getDaysOptometrist()
-                    const newWorkDays = response.data
-                        .flatMap(calendar => calendar.split('.'));
-                    console.log("newWorkDays ", newWorkDays)
-                    
-                        setWorkDays(prevWorkDays => [
-                            ...prevWorkDays,
-                            ...newWorkDays
-                        ])
-                } catch (error) {
-                    console.error('Error while getting work days', error)
-                } finally{
-                    console.log("workDays: ", workDays)
-                }
-            }
             fecthWorkdays();   
         }
     }, [navigate, workDays])
@@ -164,9 +185,6 @@ export default function AppointmentManagement() {
 
     // TO DETERMINE IF THE TIME BLOCK IS OCCUPIED
     const isOccupiedTime = (time) => {
-        console.log('Checking if time is occupied:', time);
-        console.log('Appointment times:', appointmentTimes);
-        console.log(appointmentTimes.includes(time))
         if(appointmentTimes.some(appointment => appointment.hora === time))
             return true
         else
@@ -190,6 +208,45 @@ export default function AppointmentManagement() {
         }
     }, [selectedDay]);
 
+    const fetchAppointments = async (day) => {
+        try {
+            const response = await getAppointments(day);
+            setAppointmentTimes(response.data)
+        } catch (error) {
+            if(error.response.data.error.toLowerCase().includes('expired')){
+                showMessage(
+                    'error',
+                    `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                )
+                setTimeout(() => {
+                    localStorage.clear()
+                    navigate('/cliente/preguntas')
+                }, 5000)
+            } else {
+                showMessage(
+                    'error',
+                    `Ocurrió un error al cargar las citas disponibles. ${error.message}`
+                )
+            }
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const fetchAppointmentDuration = async (date) => {
+        try {
+            const response = await getAppointmentsDuration(date);
+            setAppointments(generateAppointments("9:00", response.data, (600/response.data)-1))
+        } catch (error) {
+            showMessage(
+                'error',
+                `Ocurrió un error al cargar los espacios de citas. ${error.message}`
+            )
+        } finally {
+            setLoading(false);
+        }
+    }
+
     const showAppointmentModal = async (day) =>  {
         
         const selectedDayFormatted = {
@@ -199,37 +256,17 @@ export default function AppointmentManagement() {
     
         const normalizedDayOfWeek = selectedDayFormatted.dayOfWeek.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
-
         setSelectedDay({
             ...selectedDayFormatted,
             dayOfWeek: normalizedDayOfWeek
         });
 
-        getAppointments(selectedDayFormatted.date)
-            .then(times => {
-            setAppointmentTimes(times.data)
-            })
-            .catch(error => {
-            if(error.response.status === 403)
-                setErrorMessage("Su sesión ha expirado o no tiene los permisos necesarios para realizar esta acción.")
-                console.error('Error while getting appointments', error)
-            })
-    
-        // Assuming getAppointmentsDuration is an asynchronous function, await its result
-        getAppointmentsDuration(normalizedDayOfWeek)
-            .then(duration => {
-                setAppointments(generateAppointments("9:00", duration.data, (600/duration.data)-1))
-            })
-            .catch(error => {
-                if(error.response.status === 403)
-                    setErrorMessage("Su sesión ha expirado o no tiene los permisos necesarios para realizar esta acción.")
-            })
-            
+        fetchAppointments(selectedDayFormatted.date);
+        fetchAppointmentDuration(normalizedDayOfWeek);
     }; 
     
     const statusDaySelectionModalCancel = () => {
         setIsDaySelectionModalOpen(false);
-        setErrorMessage('')
     };
 
 
@@ -249,7 +286,6 @@ export default function AppointmentManagement() {
 
     const showConfirmationModal = async (time) =>  {
         setSelectedTime(time)
-        console.log("selectedTime: ", selectedTime)
     };  
     
 
@@ -268,22 +304,36 @@ export default function AppointmentManagement() {
             telefono: JSON.parse(localStorage.getItem('user')).telefono,
             correo: JSON.parse(localStorage.getItem('user')).correo
         }
-        console.log('cita: ', cita)
         
         try {
             setLoading(true);
             const response = await createAppointment(cita); // Call the create function from userService.js
-            console.log("response appo: ", response)
+            if (response.status === 200) {
+                showMessage(
+                    'success',
+                    `La cita se agendó exitosamente.`
+                )
+            }
         } catch (error) {
-            console.log('Error en la solicitud:', error);
-            if(error.response.status === 403)
-                setErrorMessage("Su sesión ha expirado o no tiene los permisos necesarios para realizar esta acción.")
-            // Handle error if needed
+            if(error.response.data.error.toLowerCase().includes('expired')){
+                showMessage(
+                    'error',
+                    `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                )
+                setTimeout(() => {
+                    localStorage.clear()
+                    navigate('/cliente/preguntas')
+                }, 5000)
+            } else {
+                showMessage(
+                    'error',
+                    `Ocurrió un error al agendar la cita. ${error.message}`
+                )
+            }
         } finally {
             setIsConfirmationModalOpen(false)
             setIsDaySelectionModalOpen(false)
             setLoading(false);
-            setSuccessMessage(`Su cita para el dia ${selectedDay?.dayOfWeek} (${selectedDay?.date}) a las ${selectedTime} fue agendada exitosamente. En breve será redirigido al chat.`)
             setTimeout(() => {
                 navigate('/cliente/preguntas')
             }, 10000)
@@ -298,7 +348,6 @@ export default function AppointmentManagement() {
     
     const statusConfirmationModalCancel = () => {
         setIsConfirmationModalOpen(false);
-        setErrorMessage('')
     };
 
 
@@ -339,6 +388,8 @@ export default function AppointmentManagement() {
     // HTML TEMPLATE
     return (
         <div className='cancel-day' ref={ref}>
+            <FeedbackMessage visible={message?.visible} type={message?.type} text={message?.text} onClose={() => hideMessage()}>
+            </FeedbackMessage>
             <div className='calendar-action'>
                 <Button onClick={handlePrevMonth} size='large'>Mes anterior</Button>
                 <span>{format(currentDate, 'MMMM yyyy', {locale: es})}</span>
@@ -368,21 +419,10 @@ export default function AppointmentManagement() {
                     </div>
                 ))}
             </div>
-            { errorMessage && (
-                <div className='error-message'>
-                    <p>{errorMessage}</p>
-                </div>
-            )}
-            { successMessage && (
-                <div className='success-message'>
-                    <p>{successMessage}</p>
-                </div>
-            )}
-            { !successMessage && !errorMessage && (
-                <div className='alert-message'>
-                    <p>Si no hay fechas activas, puede deberse a varias razones: 1. No hay optometras disponibles en el momento. 2. Los domingos no son dias laborales. 3. El dia no pertenece al mes actual, en ese caso, avance al siguiente mes para acceder a dichos dias.</p>
-                </div>
-            )}
+            
+            <div className='alert-message'>
+                <p>Si no hay fechas activas, puede deberse a varias razones: 1. No hay optometras disponibles en el momento. 2. Los domingos no son dias laborales. 3. El dia no pertenece al mes actual, en ese caso, avance al siguiente mes para acceder a dichos dias.</p>
+            </div>
 
             <Modal width={'100%'} title={`Agendar cita de optometría. (${selectedDay?.dayOfWeek} - ${selectedDay?.date})`} centered open={isDaySelectionModalOpen} onCancel={statusDaySelectionModalCancel} footer=
                 {<>

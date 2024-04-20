@@ -124,7 +124,6 @@ export const updatePatient = async ({
 }
 
 export const updatePatientStatus = async (id) => {
-    console.log(id)
     try {
         const config = {
             headers: {

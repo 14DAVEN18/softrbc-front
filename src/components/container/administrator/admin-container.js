@@ -4,10 +4,9 @@ import { BookOutlined, CalendarOutlined, CaretDownOutlined, DownOutlined, Histor
 import { Avatar, Button, Dropdown, Menu } from 'antd';
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../auth/context/AuthContext";
+import FeedbackMessage from '../common/feedback-message/feedback-message';
 
 import './admin-container.css';
-
-import image from '../../../profile_photos/Watermark.png';
 
 function getItem(label, key, icon, children, type) {
     return {
@@ -50,10 +49,31 @@ export default function Admin() {
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
     const [openMenu, setOpenMenu] = useState(false)
+    const [message, setMessage] = useState({
+        visible: false,
+        type: '',
+        text: ''
+    })
 
     const { handlerLogout } = useContext(AuthContext);
 
     const navigate = useNavigate();
+
+    const showMessage = (type, text) => {
+        setMessage({
+          visible: true,
+          type: type,
+          text: text
+        });
+    };
+
+    const hideMessage = () => {
+        setMessage({
+            visible: false,
+            type: '',
+            text: ''
+        });
+    };
 
     const [user, setUser] = useState(undefined);
 
@@ -75,17 +95,18 @@ export default function Admin() {
             }
                 
         } catch (error) {
-            console.error("Error: ", error)
+            showMessage(
+                'error',
+                `Ocurrió un error al intentar cerrar sesión. ${error}.`
+            )
         }
     }
 
 
     return (
-        <div 
-            id="administrator" 
-            className="administrator" 
-            ref={ref}
-        >
+        <div id="administrator" className="administrator" ref={ref}>
+            <FeedbackMessage visible={message?.visible} type={message?.type} text={message?.text} onClose={() => hideMessage()}>
+            </FeedbackMessage>
             <div className='header'>
                 <div className='employee-data'>
                     <div>{user?.name} {user?.surname}</div>

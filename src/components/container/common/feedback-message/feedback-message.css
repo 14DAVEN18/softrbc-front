@@ -1,0 +1,47 @@
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(2%);
+    }
+}
+
+.message-container {
+    animation: slideDown 0.4s ease-in forwards;
+    align-items: center;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    left: 20%;
+    padding: 10px;
+    position: absolute;
+    top: 2%;
+    width: 60%;
+    z-index: 100;
+}
+.message-container p {
+    margin: 0 0 3px 0;
+    width: 100%;
+}
+
+.error {
+    border: 1px solid rgb(255, 0, 0);
+    background-color: rgb(255, 85, 85)
+}
+.success {
+    border: 1px solid rgb(0, 87, 0);
+    background-color: rgb(129, 255, 129);
+}
+
+.message-container span {
+    color: black;
+}
+
+.ant-divider-horizontal {
+    margin: 1px 0;
+}

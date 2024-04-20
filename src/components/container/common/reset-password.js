@@ -5,6 +5,8 @@ import { resetPassword } from "../../../services/recoveryService";
 
 import { Link, useNavigate } from "react-router-dom";
 
+import FeedbackMessage from './feedback-message/feedback-message';
+
 const initialResetForm = {
     password: ''
 }
@@ -22,14 +24,33 @@ const PasswordReset = () => {
 
     const [, forceUpdate] = useState({});
     const navigation = useNavigate();
-    const [message, setMessage] = useState("");
-    const [match, setMatch] = useState(2)
+    const [message, setMessage] = useState({
+        visible: false,
+        type: '',
+        text: ''
+    })
 
     useEffect(() => {
         setClientReady(true);
         setHeight(ref.current.offsetHeight);
         setWidth(ref.current.offsetWidth);
     }, [])
+
+    const showMessage = (type, text) => {
+        setMessage({
+          visible: true,
+          type: type,
+          text: text
+        });
+    };
+
+    const hideMessage = () => {
+        setMessage({
+            visible: false,
+            type: '',
+            text: ''
+        });
+    };
 
 
     // To disable submit button at the beginning.
@@ -55,42 +76,29 @@ const PasswordReset = () => {
             const response = await resetPassword({cedula: localStorage.getItem('cedula'), password: values.password})
             
             if(response.status === 200) {
-                navigation('/inicio-empleados'); // Example: Redirect to a success page
-            } else {
-                console.log('Unexpected status code:', response.status);
+                showMessage(
+                    'success',
+                    `Su contraseña se reinició exitosamente. En breve será redirigido a la página de inicio.`
+                )
+                setTimeout(() => {
+                    navigation('/inicio-empleados');
+                }, 5000)
             }
-        } catch {
-
+        } catch (error) {
+            showMessage(
+                'error',
+                `Ocurrió un error al reiniciar su contraseña. ${error.message}`
+            )
         }
 
         setPasswordForm(initialResetForm)
     };
 
     return (
-        <div 
-            id="login" 
-            className="page" 
-            ref={ref}
-        >
-
+        <div id="login" className="page" ref={ref}>
+            <FeedbackMessage visible={message?.visible} type={message?.type} text={message?.text} onClose={() => hideMessage()}>
+            </FeedbackMessage>
             <div className='bottom'>
-                
-                {   
-                    match === 1 && 
-                    (
-                        <div className='error-message'  onClick={() => setMatch(true)}>
-                            <p>{message}</p>
-                        </div>
-                    )
-                }
-                {   
-                    match === 0 && 
-                    (
-                        <div className='error-message'  onClick={() => setMatch(true)}>
-                            <p>{message}</p>
-                        </div>
-                    )
-                }
                 <div className='frame'>
                     <h1>Reinicio de contraseña</h1>
                     <div className='instructions'>

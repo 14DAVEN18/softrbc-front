@@ -4,7 +4,7 @@ import { IdcardOutlined, LockOutlined } from '@ant-design/icons';
 import { AuthContext } from "../../../../auth/context/AuthContext";
 
 import { Link, useNavigate } from "react-router-dom";
-import { click } from '@testing-library/user-event/dist/click';
+import FeedbackMessage from '../../common/feedback-message/feedback-message';
 
 const initialLoginForm = {
     username: '',
@@ -26,9 +26,28 @@ export default function Login({onLogin}) {
 
     const [, forceUpdate] = useState({});
     const navigation = useNavigate();
-    const [errorMessage, setErrorMessage] = useState('');
-    const [successMessage, setSuccessMessage] = useState('');
+    const [message, setMessage] = useState({
+        visible: false,
+        type: '',
+        text: ''
+    });
     const [loading, setLoading] = useState(false);
+
+    const showMessage = (type, text) => {
+        setMessage({
+          visible: true,
+          type: type,
+          text: text
+        });
+    };
+
+    const hideMessage = () => {
+        setMessage({
+            visible: false,
+            type: '',
+            text: ''
+        });
+    };
 
     useEffect(() => {
         setClientReady(true);
@@ -58,35 +77,29 @@ export default function Login({onLogin}) {
     const login = async (values) => {
         try {
             const response = await handlerLogin({ cedula: values.cedula, password: values.password });
-            setSuccessMessage("Ha iniciado sesión exitosamente. En breve podrá continuar con su interacción.")
+            if (response.status === 200) {
+                showMessage(
+                    'success',
+                    `Ha iniciado sesión exitosamente. En breve podrá continuar con su interacción..`
+                )
+            }
             setTimeout(() => {                
                 onLogin();
             }, 7000)
             
         } catch (error) {
-            console.error('Login error:', error);
-            setErrorMessage(error.message);
+            showMessage(
+                'error',
+                `Error: ${error.message}`
+            )
         }
     };
 
     return (
-        <div 
-            id="login" 
-            className="page" 
-            ref={ref}
-        >
+        <div id="login" className="page" ref={ref}>
+            <FeedbackMessage visible={message?.visible} type={message?.type} text={message?.text} onClose={() => hideMessage()}>
+            </FeedbackMessage>
             <div className='patient-login'>
-                { errorMessage && (
-                    <div className='error-message'>
-                        <p>{errorMessage}</p>
-                    </div>
-                )}
-                { successMessage && (
-                    <div className='success-message'>
-                        <p>{successMessage}</p>
-                    </div>
-                )}
-                
                 <h1>Inciar sesión</h1>
                     <Form
                         className="login-form"

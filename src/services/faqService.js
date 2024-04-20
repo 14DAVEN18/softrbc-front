@@ -17,6 +17,7 @@ export const getQuestions = async () => {
 
 
 export const createQuestion = async ({
+    idadmin,
     pregunta,
     respuesta
 }) => {
@@ -29,6 +30,7 @@ export const createQuestion = async ({
     try {
         return await axios.post(CREATE_QUESTION, 
             {
+                idadmin,
                 pregunta,
                 respuesta
             }, config);
@@ -38,6 +40,7 @@ export const createQuestion = async ({
 }
 
 export const updateQuestion = async ({
+    idadmin,
     id,
     pregunta,
     respuesta
@@ -51,6 +54,7 @@ export const updateQuestion = async ({
         }
         return await axios.put(`${MODIFY_QUESTION}/${id}`, 
         {
+            idadmin,
             id,
             pregunta,
             respuesta
@@ -60,8 +64,7 @@ export const updateQuestion = async ({
     }
 }
 
-export const deleteQuestion = async (idpregunta) => {
-    const id = idpregunta
+export const deleteQuestion = async (idpregunta, idadmin) => {
     try {
         const config = {
             headers: {
@@ -69,7 +72,7 @@ export const deleteQuestion = async (idpregunta) => {
                 "Content-Type": "application/json"
             }
         }
-        return await axios.delete(`${DELETE_QUESTION}/${id}`, config);
+        return await axios.delete(`${DELETE_QUESTION}?id=${idpregunta}&idadmin=${idadmin}`, config);
     } catch (error) {
         throw error;
     }

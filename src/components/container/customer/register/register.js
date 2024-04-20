@@ -7,6 +7,8 @@ import React, { useEffect , useRef, useState} from 'react';
 
 import { Link, useNavigate } from "react-router-dom";
 
+import FeedbackMessage from '../../common/feedback-message/feedback-message';
+
 import './register.css';
 
 const layout = {
@@ -31,12 +33,31 @@ export default function Register() {
     const ref = useRef(null);
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
-    const [errorMessage, setErrorMessage] = useState('');
-    const [successMessage, setSuccessMessage] = useState('');
+    const [message, setMessage] = useState({
+        visible: false,
+        type: '',
+        text: ''
+    })
 
 
     const [loading, setLoading] = useState(false);
     const navigation = useNavigate();
+
+    const showMessage = (type, text) => {
+        setMessage({
+          visible: true,
+          type: type,
+          text: text
+        });
+    };
+
+    const hideMessage = () => {
+        setMessage({
+            visible: false,
+            type: '',
+            text: ''
+        });
+    };
 
     useEffect(() => {
         setHeight(ref.current.offsetHeight);
@@ -81,7 +102,6 @@ export default function Register() {
         const isComplete = Object.values(requiredValues).every(value => !!value);
         
         setIsCreationFormComplete(isComplete);
-        console.log("allValues: ", allValues);
     };
 
     const handleCreatePatient = async () => {
@@ -89,7 +109,6 @@ export default function Register() {
         if (creationForm != null) {
             try {
                 const values = await creationForm.validateFields();
-                console.log("values: ", values)
                 const response = await createPatient(
                     {
                         usuario: {
@@ -110,14 +129,21 @@ export default function Register() {
                         }
                     }
                 );
-                setSuccessMessage("Se ha registrado exitosamente. En breve será redirigido al inicio de sesión")
+                if (response.status === 200) {
+                    showMessage(
+                        'success',
+                        `Se ha registrado exitosamente. En breve será redirigido al inicio de sesión.`
+                    )
+                }
                 setTimeout(() => {
                     navigation('/cliente/preguntas');
                 }, 7000)
                 
             } catch (error) {
-                setErrorMessage(error)
-                console.error('Error en la solicitud:', error);
+                showMessage(
+                    'error',
+                    `${error.message}`
+                )
             } finally {
                 setLoading(true);
                 setTimeout(() => {
@@ -141,11 +167,9 @@ export default function Register() {
 
 
     return (
-        <div 
-            id="register" 
-            className="page" 
-            ref={ref}
-        >
+        <div id="register" className="page" ref={ref}>
+            <FeedbackMessage visible={message?.visible} type={message?.type} text={message?.text} onClose={() => hideMessage()}>
+            </FeedbackMessage>
             <div className='patient-register-top'>
                 <h1>Registro de paciente</h1>
             </div>
@@ -168,7 +192,7 @@ export default function Register() {
                                 message: 'Por favor ingrese el nombre del optómetra sin apellidos!',
                             }]}
                         >
-                            <Input prefix={<UserOutlined/>} placeholder='Nombres'/>
+                            <Input prefix={<UserOutlined/>} placeholder='Nombres' autoComplete='false'/>
                         </Form.Item>
                             
                             
@@ -181,7 +205,7 @@ export default function Register() {
                                 message: 'Por favor ingrese el apellido del optómetra sin nombres!',
                             }]}
                         >
-                            <Input prefix={<UserOutlined/>} placeholder='Apellidos'/>
+                            <Input prefix={<UserOutlined/>} placeholder='Apellidos' autoComplete='false'/>
                         </Form.Item>
 
                         <Form.Item
@@ -218,7 +242,7 @@ export default function Register() {
                                 message: 'Por favor ingrese la dirección física del optómetra!',
                             }]}
                         >
-                            <Input prefix={<UserOutlined/>} placeholder='Dirección'/>
+                            <Input prefix={<UserOutlined/>} placeholder='Dirección' autoComplete='false'/>
                         </Form.Item>
 
                         <Form.Item
@@ -235,7 +259,7 @@ export default function Register() {
                             },
                             ]}
                         >
-                            <Input prefix={<MailOutlined/>} placeholder='Correo eléctronico'/>
+                            <Input prefix={<MailOutlined/>} placeholder='Correo eléctronico' autoComplete='false'/>
                         </Form.Item>
 
                         <Form.Item
@@ -249,10 +273,18 @@ export default function Register() {
                                 {
                                     required: true,
                                     message: 'Por favor ingrese el número telefónico del optometra!'
+                                },
+                                {
+                                    min: 7,
+                                    message: 'El número de telefono no puede tener menos de 7 digitos!'
+                                },
+                                {
+                                    max: 10,
+                                    message: 'El número de teléfono no puede exceder los 10 dígitos!'
                                 }
                             ]}
                         >
-                            <InputNumber prefix={<PhoneOutlined/>} placeholder='Número telefónico'/>
+                            <InputNumber prefix={<PhoneOutlined/>} placeholder='Número telefónico' autoComplete='false'/>
                         </Form.Item>
 
 
@@ -266,11 +298,19 @@ export default function Register() {
                                 },
                                 {
                                     required: true,
-                                    message: 'Por favor ingrese el número documento de documento de identidad del paciente'
+                                    message: 'Por favor ingrese el número de identificación del paciente!'
+                                },
+                                {
+                                    min: 4,
+                                    message: 'El número de documento de identidad debe tener al menos 4 digitos.'
+                                },
+                                {
+                                    max: 12,
+                                    message: 'El número de documento de identidad no puede tener más de 12 dígitos.'
                                 }
                             ]}
                         >
-                            <InputNumber prefix={<IdcardOutlined/>} placeholder='Ingrese el número de document de identidad sin puntos'/>
+                            <InputNumber prefix={<IdcardOutlined/>} placeholder='Ingrese el número de document de identidad sin puntos' autoComplete='false'/>
                         </Form.Item>
         
 
@@ -283,14 +323,14 @@ export default function Register() {
                                 message: 'Por favor ingrese su ocupación!',
                             }]}
                         >
-                            <Input prefix={<UserOutlined/>} placeholder='Ocupación'/>
+                            <Input prefix={<UserOutlined/>} placeholder='Ocupación' autoComplete='false'/>
                         </Form.Item>
 
                         <Form.Item
                             label='Nombre del acompañante'
                             name="nombreacompañante"
                         >
-                            <Input prefix={<UserOutlined/>} placeholder='Nombre de acompañante'/>
+                            <Input prefix={<UserOutlined/>} placeholder='Nombre de acompañante' autoComplete='false'/>
                         </Form.Item>
 
                         <Form.Item
@@ -377,16 +417,7 @@ export default function Register() {
                         </Form.Item>
 
                     </Form>
-                    { errorMessage && (
-                        <div className='error-message'>
-                            <p>{errorMessage}</p>
-                        </div>
-                    )}
-                    { successMessage && (
-                        <div className='success-message'>
-                            <p>{successMessage}</p>
-                        </div>
-                    )}
+                    
                     <Form.Item>
                         <p>
                             ¿Ya tienes una cuenta? <Link to="/inicio-de-sesion">Inicia sesión</Link>

@@ -9,13 +9,35 @@ import { useNavigate } from 'react-router-dom';
 import './cancel-work-day.css';
 
 import { cancelWorkDay } from '../../../../services/calendarService';
+import FeedbackMessage from '../../common/feedback-message/feedback-message';
 
 export default function CancelWorkDay() {
 
     const ref = useRef(null);
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
+    const [message, setMessage] = useState({
+        visible: false,
+        type: '',
+        text: ''
+    })
     const navigate = useNavigate();
+
+    const showMessage = (type, text) => {
+        setMessage({
+          visible: true,
+          type: type,
+          text: text
+        });
+    };
+
+    const hideMessage = () => {
+        setMessage({
+            visible: false,
+            type: '',
+            text: ''
+        });
+    };
 
     const [loading, setLoading] = useState(false);
 
@@ -107,27 +129,40 @@ export default function CancelWorkDay() {
     const showCancelationModal = (day) => {
         setSelectedDay(format(day, 'dd/MM/yyyy'))
         setTimeout(() => {
-            console.log('day: ', selectedDay)
             setIsCancelationModalOpen(true);
         }, 50)
         
     };  
     
-    //const [pdf, setPDF] = useState(null)
-    // {format(selectedDay, 'dd/MM/yyyy')}
     const cancelDay = async () => {
         setLoading(true);
         try {
-            const blobData = await cancelWorkDay(selectedDay);
-            console.log('Received blob data:', blobData);
-            console.log('Blob size:', blobData.size);
-            console.log('Blob type:', blobData.type);
+            const response = await cancelWorkDay(selectedDay);
+            const blob = new Blob([response.data], { type: 'application/json' });
+            saveAs(blob, `citas_${selectedDay}.pdf`);
 
-            const blob = new Blob([blobData], { type: 'application/json' });
-            saveAs(blob, `citas_${selectedDay}.pdf`); // Trigger download
+            if(response.status === 200) {
+                showMessage(
+                    'success',
+                    `El dia ${selectedDay} fue cancelado exitosamente. En breve se descargará un documento PDF.`
+                )
+            }
         } catch (error) {
-            console.error('Error en la solicitud:', error);
-            // Handle error if needed
+            if(error.response.data.error.toLowerCase().includes('expired')){
+                showMessage(
+                    'error',
+                    `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                )
+                setTimeout(() => {
+                    localStorage.clear()
+                    navigate('/inicio-empleados')
+                }, 5000)
+            } else {
+                showMessage(
+                    'error',
+                    `Ocurrió un error cancelando el dia laboral ${selectedDay}.`
+                )
+            }
         } finally {
             setLoading(false);
             setIsCancelationModalOpen(false);
@@ -147,6 +182,8 @@ export default function CancelWorkDay() {
     // HTML TEMPLATE
     return (
         <div className='cancel-day' ref={ref}>
+            <FeedbackMessage visible={message?.visible} type={message?.type} text={message?.text} onClose={() => hideMessage()}>
+            </FeedbackMessage>
             <div className='calendar-action'>
                 <Button onClick={handlePrevMonth} size='large'>Mes anterior</Button>
                 <span>{format(currentDate, 'MMMM yyyy', {locale: es})}</span>

@@ -3,7 +3,9 @@ import { Button, Form, Input, InputNumber } from 'antd';
 import { KeyOutlined, IdcardOutlined } from '@ant-design/icons';
 import { recoveryAccount } from "../../../services/recoveryService";
 
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+import FeedbackMessage from './feedback-message/feedback-message';
 
 const initialRecoveryForm = {
     username: '',
@@ -23,8 +25,27 @@ const AccountRecovery = () => {
 
     const [, forceUpdate] = useState({});
     const navigation = useNavigate();
-    const [message, setMessage] = useState("");
-    const [match, setMatch] = useState(2)
+    const [message, setMessage] = useState({
+        visible: false,
+        type: '',
+        text: ''
+    })
+
+    const showMessage = (type, text) => {
+        setMessage({
+          visible: true,
+          type: type,
+          text: text
+        });
+    };
+
+    const hideMessage = () => {
+        setMessage({
+            visible: false,
+            type: '',
+            text: ''
+        });
+    };
 
     useEffect(() => {
         setClientReady(true);
@@ -55,14 +76,21 @@ const AccountRecovery = () => {
             const response = await recoveryAccount({ cedula: values.cedula, codigorecuperacion: values.recoverykey });
 
             if (response.status === 200) {
-                // Redirect to another window or perform other actions
                 localStorage.setItem('cedula', values.cedula)
-                navigation('/reiniciar-clave'); // Example: Redirect to a success page
-            } else {
-                // Handle other status codes if needed
-                console.log('Unexpected status code:', response.status);
-            }
-        } catch {
+                showMessage(
+                    'success',
+                    `Su código de recuperación fue verificado exitosamente. En breve se le pedíra su nueva contraseña`
+                )
+                setTimeout(() => {
+                    navigation('/reiniciar-clave');
+                }, 5000)
+                
+            } 
+        } catch (error) {
+            showMessage(
+                'error',
+                `Ocurrió un error al verificar su código de recuperación. Verifique que el código sea correcto. ${error.message}`
+            )
         }
 
         setRecoveryForm(initialRecoveryForm)
@@ -74,25 +102,9 @@ const AccountRecovery = () => {
             className="page" 
             ref={ref}
         >
-
+            <FeedbackMessage visible={message?.visible} type={message?.type} text={message?.text} onClose={() => hideMessage()}>
+            </FeedbackMessage>
             <div className='bottom'>
-                
-                {   
-                    match === 1 && 
-                    (
-                        <div className='error-message'  onClick={() => setMatch(true)}>
-                            <p>{message}</p>
-                        </div>
-                    )
-                }
-                {   
-                    match === 0 && 
-                    (
-                        <div className='error-message'  onClick={() => setMatch(true)}>
-                            <p>{message}</p>
-                        </div>
-                    )
-                }
                 <div className='frame'>
                     <h1>Recuperación de cuenta</h1>
                     <div className='instructions'>
