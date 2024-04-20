@@ -50,7 +50,7 @@
     width: 100%;
     z-index: 0;
 }
-.tab-content2 {
+.tab-content-create {
     align-items: center;
     border-bottom: 1px solid black;
     border-left: 1px solid black;
@@ -67,7 +67,6 @@
     right: 0;
     top: -1px;
     width: 100%;
-    overflow-y: scroll;
     z-index: 0;
 }
 .tab {
@@ -132,7 +131,6 @@
 }
 .medical-record-form {
     align-items: center;
-    display: flex;
     height: 90%;
     justify-content: center;
     overflow-y: scroll;

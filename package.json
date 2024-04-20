@@ -15,6 +15,7 @@
     "dayjs": "^1.11.10",
     "downloadjs": "^1.4.7",
     "file-saver": "^2.0.5",
+    "moment": "^2.30.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-json-pretty": "^2.2.0",
@@ -29,7 +30,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "setup": "npm install && npm install antd && npm install react-router-dom && npm install date-fns && npm install react-redux redux && npm i react-json-pretty"
+    "setup": "npm i && npm i antd && npm i react-router-dom && npm i date-fns && npm i react-redux redux && npm i react-json-pretty && npm i dayjs"
   },
   "eslintConfig": {
     "extends": [

@@ -4,6 +4,7 @@ import { UserOutlined, MailOutlined, PhoneOutlined, IdcardOutlined } from '@ant-
 import { format } from 'date-fns';
 import { saveAs } from 'file-saver';
 import { useNavigate } from 'react-router-dom';
+import dayjs from 'dayjs';
 
 import './optometrist-schedule.css';
 
@@ -48,6 +49,7 @@ export default function OptometristSchedule() {
     const [optometrist, setOptometrist] = useState('')
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('')
+    const dateFormat = "YYYY/MM/DD";
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -161,7 +163,14 @@ export default function OptometristSchedule() {
         }))
         try {
             const response = await getPatientById(idpaciente); 
-            setPatient(response.data[0])
+            console.log(response)
+            const dateOfBirthMoment = dayjs(response.data[0].paciente.fechanacimiento, 'YYYY/MM/DD');
+            console.log(dateOfBirthMoment)
+            const updatedPatientData = {
+                ...response.data[0],
+                fechanacimiento: dateOfBirthMoment,
+            };
+            setPatient(updatedPatientData)
             console.log(patient)
         } catch (error) {
             console.error('Error en la solicitud:', error);
@@ -486,7 +495,7 @@ export default function OptometristSchedule() {
                     
                     {activeTab === 1 &&
                         <div className='tab-content'>
-                            <Form {...layout} className='creation-form' initialValues={{ remember: false }} form={updateForm} name="patientUpdate" onFinish={handleUpdatePatient} onValuesChange={onUpdateValuesChange} >                                 
+                            <Form {...layout} className='creation-form' initialValues={patient} form={updateForm} name="patientUpdate" onFinish={handleUpdatePatient} onValuesChange={onUpdateValuesChange} >                                 
                                 <Form.Item label='Nombres' name="nombre" 
                                     rules={[{
                                         required: true,
@@ -575,7 +584,7 @@ export default function OptometristSchedule() {
                                         message: 'Por favor seleccione la fecha de nacimiento del paciente!'
                                     }]}
                                 >
-                                    <DatePicker size={'large'} ></DatePicker>
+                                    <DatePicker size={'large'} format={dateFormat} defaultValue={patient?.paciente.fechanacimiento}></DatePicker>
                                 </Form.Item>
 
                                 <Form.Item label='Género' name="genero"
@@ -626,7 +635,7 @@ export default function OptometristSchedule() {
                         </div>
                     }
                     {activeTab === 2 && (!!patient?.paciente.idhistoriaclinica) &&
-                        <div className='tab-content2'>
+                        <div className='tab-content-create'>
                             <div className='progress-bar'>
                                 <Progress percent={progress} />
                             </div>

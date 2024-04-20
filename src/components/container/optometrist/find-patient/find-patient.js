@@ -255,7 +255,7 @@ export default function FindPatient() {
 
 
                 {activeTab === 2 && !!patient &&
-                    <div className='tab-content2'>
+                    <div className='tab-content-view'>
                         {medicalRecords.length > 0 ? (
                             <div className='appointment-table'>
                                 <Table
