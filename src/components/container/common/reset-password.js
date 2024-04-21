@@ -1,10 +1,13 @@
+// React imports
 import { useEffect, useRef, useState } from 'react';
-import { Button, Form, Input } from 'antd';
-import { LockOutlined } from '@ant-design/icons';
-import { resetPassword } from "../../../services/recoveryService";
-
 import { Link, useNavigate } from "react-router-dom";
 
+// External components / libraries
+import { Button, Form, Input } from 'antd';
+import { LockOutlined } from '@ant-design/icons';
+
+// Self created components
+import { resetPassword } from "../../../services/recoveryService";
 import FeedbackMessage from './feedback-message/feedback-message';
 
 const initialResetForm = {

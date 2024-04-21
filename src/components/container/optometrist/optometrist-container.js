@@ -1,13 +1,17 @@
+// React imports
 import {useEffect, useRef, useState, useContext} from 'react';
+import { Link, Outlet, useNavigate } from "react-router-dom";
 
+// External components / libraries
 import { BookOutlined, CaretDownOutlined, SolutionOutlined } from '@ant-design/icons';
 import { Button, Menu } from 'antd';
-import { Link, Outlet, useNavigate } from "react-router-dom";
+
+// Self created components
 import { AuthContext } from "../../../auth/context/AuthContext";
-
-import './optometrist-container.css';
-
 import FeedbackMessage from '../common/feedback-message/feedback-message';
+
+// Styles
+import './optometrist-container.css';
 
 function getItem(label, key, icon, children, type) {
     return {

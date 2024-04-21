@@ -1,9 +1,13 @@
+// React imports
 import { useEffect, useRef, useContext, useState } from 'react';
+import { Link } from "react-router-dom";
+
+// External components / libraries
 import { Button, Form, Input, InputNumber } from 'antd';
 import { IdcardOutlined, LockOutlined } from '@ant-design/icons';
-import { AuthContext } from "../../../../auth/context/AuthContext";
 
-import { Link } from "react-router-dom";
+// Self created components
+import { AuthContext } from "../../../../auth/context/AuthContext";
 import FeedbackMessage from '../../common/feedback-message/feedback-message';
 
 const initialLoginForm = {
@@ -13,10 +17,6 @@ const initialLoginForm = {
 
 export default function Login({onLogin}) {
 
-    
-
-    //const navigate = useNavigate();
-  
     const ref = useRef(null);
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);

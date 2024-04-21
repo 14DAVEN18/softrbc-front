@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from 'antd';
 import { connect } from 'react-redux';
 
-// Self created comopnents
+// Self created components
 import Login from '../login/login';
 import FeedbackMessage from '../../common/feedback-message/feedback-message';
 
@@ -17,8 +17,6 @@ import { addMessage, resetMessage, setDisplayLogin, setDecisionTree, setCurrentL
 
 // Styles
 import './chatbot.css';
-
-
 
 function Chatbot({
     messages,

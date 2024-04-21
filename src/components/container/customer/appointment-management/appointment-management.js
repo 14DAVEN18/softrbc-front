@@ -1,14 +1,21 @@
+// React imports
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+// External components / libraries
 import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, addMonths, format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Button, Modal  } from 'antd';
-import { getAppointmentsDuration, getAppointments, createAppointment } from '../../../../services/appointmentService';
 
-import './appointment-management.css';
-import { useNavigate } from 'react-router-dom';
+// Self created components
+import FeedbackMessage from '../../common/feedback-message/feedback-message';
+
+// Self created services
+import { getAppointmentsDuration, getAppointments, createAppointment } from '../../../../services/appointmentService';
 import { getDaysOptometrist } from '../../../../services/calendarService';
 
-import FeedbackMessage from '../../common/feedback-message/feedback-message';
+// Styles
+import './appointment-management.css';
 
 export default function AppointmentManagement() {
 

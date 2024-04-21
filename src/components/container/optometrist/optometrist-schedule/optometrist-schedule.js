@@ -1,18 +1,24 @@
+// React imports
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+// External components / libraries
 import { Button, Collapse, DatePicker, Form, Input, InputNumber, Modal, Progress, Select, Space, Table, Typography } from 'antd';
 import { UserOutlined, MailOutlined, PhoneOutlined, IdcardOutlined } from '@ant-design/icons';
 import { format } from 'date-fns';
 import { saveAs } from 'file-saver';
-import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 
-import './optometrist-schedule.css';
+// Self created components
+import FeedbackMessage from '../../common/feedback-message/feedback-message';
 
+// Self created services
 import { getPatientById, updatePatient } from '../../../../services/patientService';
 import { getAppointments } from '../../../../services/appointmentService';
 import { addMedicalRecord, createMedicalRecord, generatePdfFormula } from '../../../../services/medicalRecordService';
-import FeedbackMessage from '../../common/feedback-message/feedback-message';
 
+// Styles
+import './optometrist-schedule.css';
 
 const layout = {
     labelCol: {

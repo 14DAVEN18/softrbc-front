@@ -1,15 +1,20 @@
+// React imports
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Button, Form, Modal, Select, Space, Table, Transfer } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
+// External components / libraries
+import { Button, Form, Modal, Select, Space, Table, Transfer } from 'antd';
 
-import './work-calendar.css';
-
+// Self created components
+import FeedbackMessage from '../../common/feedback-message/feedback-message';
 import { durations, days } from '../../../../constants/constants';
+
+// Self created services
 import { getOptometrists } from '../../../../services/optometristService';
 import { getCalendars, createCalendar, updateCalendar } from '../../../../services/calendarService';
-import FeedbackMessage from '../../common/feedback-message/feedback-message';
 
+// Styles
+import './work-calendar.css';
 
 const initialTargetDays = [];
 

@@ -1,11 +1,16 @@
+// React imports
 import {useEffect, useRef, useState, useContext} from 'react';
+import { Link, Outlet, useNavigate } from "react-router-dom";
 
+// External components / libraries
 import { BookOutlined, CalendarOutlined, CaretDownOutlined, HistoryOutlined, MinusCircleOutlined, QuestionOutlined, SolutionOutlined } from '@ant-design/icons';
 import { Button, Menu } from 'antd';
-import { Link, Outlet, useNavigate } from "react-router-dom";
+
+// Self created components
 import { AuthContext } from "../../../auth/context/AuthContext";
 import FeedbackMessage from '../common/feedback-message/feedback-message';
 
+// Styles
 import './admin-container.css';
 
 function getItem(label, key, icon, children, type) {

@@ -1,6 +1,10 @@
+// React imports
 import React from 'react';
+
+// External components / libraries
 import { Divider } from 'antd';
 
+// Styles
 import './feedback-message.css'
 
 const FeedbackMessage = ({ visible, type, text, onClose }) => {

@@ -1,9 +1,13 @@
+// React imports
 import { useEffect, useRef, useState, useContext } from 'react';
+import { Link } from "react-router-dom";
+
+// External components / libraries
 import { Button, Form, Input, InputNumber } from 'antd';
 import { IdcardOutlined, LockOutlined } from '@ant-design/icons';
-import { AuthContext } from "../../../auth/context/AuthContext";
 
-import { Link } from "react-router-dom";
+// Self created components
+import { AuthContext } from "../../../auth/context/AuthContext";
 
 const initialLoginForm = {
     cedula: '',

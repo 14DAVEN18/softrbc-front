@@ -1,4 +1,6 @@
+// React imports
 import {useEffect, useRef, useState} from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 
 import Login from './customer/login/login';
 import Register from './customer/register/register';
@@ -14,25 +16,22 @@ import Admin from './administrator/admin-container'
 import OptometristManagement from './administrator/optometrist-management/optometrist-management';
 import Reports from './administrator/reports/reports';
 import WorkCalendar from './administrator/work-calendar/work-calendar';
+import CancelWorkDay from './administrator/cancel-work-day/cancel-work-day';
+import Changelog from './administrator/changelog/changelog';
+import FAQManagement from './administrator/faq-management/faq-management';
 
 // Components for optometrist pages
 import Optometrist from './optometrist/optometrist-container';
 import OptometristSchedule from './optometrist/optometrist-schedule/optometrist-schedule';
 import FindPatient from './optometrist/find-patient/find-patient';
 
-import { Routes, Route, Navigate } from 'react-router-dom';
+// Components for customer pages
+import AppointmentManagement from './customer/appointment-management/appointment-management';
+import Chatbot from './customer/chatbot/chatbot';
 
+// Styles
 import './container.css';
 import 'antd/dist/reset.css';
-import CancelWorkDay from './administrator/cancel-work-day/cancel-work-day';
-import Changelog from './administrator/changelog/changelog';
-import Chatbot from './customer/chatbot/chatbot';
-import FAQManagement from './administrator/faq-management/faq-management';
-import AppointmentManagement from './customer/appointment-management/appointment-management';
-
-
-// import RegisterTransaction from './application/register-transaction/register-transaction';
-// import ListTransactions from './application/list-transactions/list-transactions';
 
 export default function Container() {
   

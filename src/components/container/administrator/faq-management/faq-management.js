@@ -1,13 +1,19 @@
+// React imports
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Button, Form, Input, Modal, Space, Table, Typography } from 'antd';
-import { CheckOutlined, QuestionOutlined,  } from '@ant-design/icons';
 import { useNavigate } from "react-router-dom";
 
+// External components / libraries
+import { Button, Form, Input, Modal, Space, Table, Typography } from 'antd';
+import { CheckOutlined, QuestionOutlined,  } from '@ant-design/icons';
 
-import './faq-management.css';
-
-import { createQuestion, deleteQuestion, getQuestions, updateQuestion } from '../../../../services/faqService';
+// Self created components
 import FeedbackMessage from '../../common/feedback-message/feedback-message';
+
+// Self created services
+import { createQuestion, deleteQuestion, getQuestions, updateQuestion } from '../../../../services/faqService';
+
+// Styles
+import './faq-management.css';
 
 export default function FAQManagement() {
 

@@ -1,13 +1,18 @@
+// React imports
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Button, Modal, Space, Table } from 'antd';
-
 import { useNavigate } from "react-router-dom";
 
-import './reports.css';
+// External components / libraries
+import { Button, Modal, Space, Table } from 'antd';
 
+// Self created components
 import FeedbackMessage from '../../common/feedback-message/feedback-message';
 
+// Self created services
 import { getCanceledAppointments } from '../../../../services/appointmentService';
+
+// Styles
+import './reports.css';
 
 export default function Reports() {
 

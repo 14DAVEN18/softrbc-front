@@ -1,14 +1,18 @@
+// React imports
+import React, { useEffect , useRef, useState} from 'react';
+import { Link, useNavigate } from "react-router-dom";
+
+// External components / libraries
 import { Button, Checkbox, DatePicker, Form, Input, InputNumber, Select } from 'antd';
 import { UserOutlined, MailOutlined, PhoneOutlined, LockOutlined, IdcardOutlined } from '@ant-design/icons';
 
-import { createPatient } from '../../../../services/patientService';
-
-import React, { useEffect , useRef, useState} from 'react';
-
-import { Link, useNavigate } from "react-router-dom";
-
+// Self created components
 import FeedbackMessage from '../../common/feedback-message/feedback-message';
 
+// Self created services
+import { createPatient } from '../../../../services/patientService';
+
+// Styles
 import './register.css';
 
 const layout = {

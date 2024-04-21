@@ -1,12 +1,19 @@
+// React imports
 import { useRef, useState, useEffect } from 'react';
-import { Button, Form, Input, Modal, Space, Table, Typography } from 'antd';
-import { UserOutlined, SearchOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 
-import './find-patient.css';
-import { getAllMedicalRecordsById } from '../../../../services/medicalRecordService';
+// External components / libraries
+import { Button, Form, Input, Modal, Space, Table, Typography } from 'antd';
+import { UserOutlined, SearchOutlined } from '@ant-design/icons';
+
+// Self created components
 import FeedbackMessage from '../../common/feedback-message/feedback-message';
 
+// Self created services
+import { getAllMedicalRecordsById } from '../../../../services/medicalRecordService';
+
+// Styles
+import './find-patient.css';
 
 const layout = {
     labelCol: {

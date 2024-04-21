@@ -1,13 +1,19 @@
+// React imports
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Button, Form, Input, InputNumber, Modal, Space, Table, Typography } from 'antd';
-import { UserOutlined, MailOutlined, PhoneOutlined, IdcardOutlined } from '@ant-design/icons';
 import { useNavigate } from "react-router-dom";
 
+// External component / libraries
+import { Button, Form, Input, InputNumber, Modal, Space, Table, Typography } from 'antd';
+import { UserOutlined, MailOutlined, PhoneOutlined, IdcardOutlined } from '@ant-design/icons';
+
+// Self created components
+import FeedbackMessage from '../../common/feedback-message/feedback-message';
+
+// Self created services
 import { createOptometrist, getOptometrists, updateOptometrist, updateOptometristStatus } from '../../../../services/optometristService';
 
+// Styles
 import './optometrist-management.css';
-
-import FeedbackMessage from '../../common/feedback-message/feedback-message';
 
 const layout = {
     labelCol: {

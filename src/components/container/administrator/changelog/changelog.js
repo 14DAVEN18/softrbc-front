@@ -1,13 +1,19 @@
+// React imports
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Button, Modal, Space, Table, } from 'antd';
 import { useNavigate } from "react-router-dom";
 
+// External components / libraries
+import { Button, Modal, Space, Table, } from 'antd';
 import JSONPretty from 'react-json-pretty';
+
+// Self created components
 import FeedbackMessage from '../../common/feedback-message/feedback-message';
 
-import './changelog.css';
+// Self created services
 import { getChangelog } from '../../../../services/changelogService';
-//import 'react-json-pretty/themes/monikai.css';
+
+// Styles
+import './changelog.css';
 
 export default function Changelog() {
 

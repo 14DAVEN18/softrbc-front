@@ -1,15 +1,21 @@
+// React imports
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+// External components / libraries
 import { addDays, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, addMonths, format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Button, Modal  } from 'antd';
 import { saveAs } from 'file-saver';
-import { useNavigate } from 'react-router-dom';
 
-
-import './cancel-work-day.css';
-
-import { cancelWorkDay } from '../../../../services/calendarService';
+// Self created components
 import FeedbackMessage from '../../common/feedback-message/feedback-message';
+
+// Self created services
+import { cancelWorkDay } from '../../../../services/calendarService';
+
+// Styles
+import './cancel-work-day.css';
 
 export default function CancelWorkDay() {
 

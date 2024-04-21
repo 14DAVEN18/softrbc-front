@@ -1,11 +1,16 @@
+// React imports
 import { useEffect, useRef, useState } from 'react';
-import { Button, Form, Input, InputNumber } from 'antd';
-import { KeyOutlined, IdcardOutlined } from '@ant-design/icons';
-import { recoveryAccount } from "../../../services/recoveryService";
-
 import { useNavigate } from "react-router-dom";
 
+// External components / libraries
+import { Button, Form, Input, InputNumber } from 'antd';
+import { KeyOutlined, IdcardOutlined } from '@ant-design/icons';
+
+// Self created components
 import FeedbackMessage from './feedback-message/feedback-message';
+
+// Self created services
+import { recoveryAccount } from "../../../services/recoveryService";
 
 const initialRecoveryForm = {
     username: '',
@@ -13,8 +18,6 @@ const initialRecoveryForm = {
 }
 
 const AccountRecovery = () => {   
-
-    //const navigate = useNavigate();
   
     const ref = useRef(null);
     const [height, setHeight] = useState(0);
