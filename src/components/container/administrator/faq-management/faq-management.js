@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button, Form, Input, Modal, Space, Table, Typography } from 'antd';
 import { CheckOutlined, QuestionOutlined,  } from '@ant-design/icons';
 import { useNavigate } from "react-router-dom";
@@ -41,17 +41,6 @@ export default function FAQManagement() {
         });
     };
 
-    useEffect(() => {
-        setHeight(ref.current.offsetHeight);
-        setWidth(ref.current.offsetWidth);
-        if(!localStorage.getItem('token')) {
-            navigate("/inicio-empleados")
-        } else {
-            fetchQuestions();
-        }
-    }, [])
-
-
 
 
 
@@ -59,7 +48,7 @@ export default function FAQManagement() {
 
     // TO FETCH QUESTIONS DATA WHEN COMPONENT IS LOADED FOR THE FIRST TIME ***********************************************************
     const [questionsData, setQuestionsData] = useState(null);
-    const fetchQuestions = async () => {
+    const fetchQuestions = useCallback(async () => {
         try {
             const response = await getQuestions();
             setQuestionsData(response.data)
@@ -82,7 +71,18 @@ export default function FAQManagement() {
         } finally {
             setLoading(false);
         }
-    }
+    },[navigate])
+
+    useEffect(() => {
+        setHeight(ref.current.offsetHeight);
+        setWidth(ref.current.offsetWidth);
+        if(!localStorage.getItem('token')) {
+            navigate("/inicio-empleados")
+        } else {
+            fetchQuestions();
+        }
+    }, [navigate, fetchQuestions])
+
 
 
 

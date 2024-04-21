@@ -187,7 +187,7 @@ function Chatbot({
 
         // Call fetchDataAndConstructTree when component mounts
         fetchDataAndConstructTree();
-    }, []);
+    }, [addMessage, decisionTree, navigate, setCurrentLevel, setDecisionTree, setNewInput]);
 
 
 
@@ -319,7 +319,7 @@ function Chatbot({
             </FeedbackMessage>
             <div className='chat'>
                 <div className='chat-header'>
-                    <img src={logoUrl}/>
+                    <img src={logoUrl} alt='Logo de el palacio de las gafas'/>
                     <h2>Chat</h2>
                 </div>
 

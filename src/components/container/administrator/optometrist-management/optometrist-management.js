@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button, Form, Input, InputNumber, Modal, Space, Table, Typography } from 'antd';
 import { UserOutlined, MailOutlined, PhoneOutlined, IdcardOutlined } from '@ant-design/icons';
 import { useNavigate } from "react-router-dom";
@@ -50,16 +50,6 @@ export default function OptometristManagement() {
         });
     };
 
-    useEffect(() => {
-        setHeight(ref.current.offsetHeight);
-        setWidth(ref.current.offsetWidth);
-        if(!localStorage.getItem('token')) {
-            navigate("/inicio-empleados")
-        } else {
-            fetchOptometrists();
-        }
-    }, [navigate])
-
 
 
 
@@ -68,7 +58,7 @@ export default function OptometristManagement() {
 
     // TO FETCH OPTOMETRIST DATA WHEN COMPONENT IS LOADED FOR THE FIRST TIME ***********************************************************
     const [optometristsData, setOptometristsData] = useState(null);
-    const fetchOptometrists = async () => {
+    const fetchOptometrists = useCallback(async () => {
         try {
             const response = await getOptometrists();
             setOptometristsData(response.data)
@@ -91,7 +81,17 @@ export default function OptometristManagement() {
         } finally {
             setLoading(false);
         }
-    }
+    }, [navigate])
+
+    useEffect(() => {
+        setHeight(ref.current.offsetHeight);
+        setWidth(ref.current.offsetWidth);
+        if(!localStorage.getItem('token')) {
+            navigate("/inicio-empleados")
+        } else {
+            fetchOptometrists();
+        }
+    }, [navigate, fetchOptometrists])
 
 
 

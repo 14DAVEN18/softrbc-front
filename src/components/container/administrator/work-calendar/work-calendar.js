@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { Button, Form, Modal, Select, Space, Table, Transfer, Typography } from 'antd';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Button, Form, Modal, Select, Space, Table, Transfer } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -44,16 +44,6 @@ export default function WorkCalendar() {
         });
     };
 
-    useEffect(() => {
-        setHeight(ref.current.offsetHeight);
-        setWidth(ref.current.offsetWidth);
-        if(!localStorage.getItem('token')) {
-            navigate("/inicio-empleados")
-        } else {
-            fetchOptometrists();
-            fetchCalendars();
-        }
-    }, [navigate])
 
 
 
@@ -63,7 +53,7 @@ export default function WorkCalendar() {
     // TO FETCH OPTOMETRIST DATA WHEN COMPONENT IS LOADED FOR THE FIRST TIME ***********************************************************
     const [optometristsData, setOptometristsData] = useState(null);
     const [filteredData, setFilteredData] = useState([]);
-    const fetchOptometrists = async () => {
+    const fetchOptometrists = useCallback(async () => {
         try {
             const response = await getOptometrists(); // Call the create function from admin Service.js
             setOptometristsData(response.data)
@@ -86,7 +76,7 @@ export default function WorkCalendar() {
         } finally {
             setLoading(false);
         }
-    }
+    }, [navigate])
 
     useEffect(() => {
         setTimeout(() => {
@@ -104,7 +94,7 @@ export default function WorkCalendar() {
     
     // TO FETCH CALENDAR DATA WHEN COMPONENT IS LOADED FOR THE FIRST TIME **************************************************************
     const [calendarsData, setCalendarsData] = useState(null);
-    const fetchCalendars = async () => {
+    const fetchCalendars = useCallback(async () => {
         try {
             const response = await getCalendars();
 
@@ -139,7 +129,22 @@ export default function WorkCalendar() {
         } finally {
             setLoading(false);
         }
-    }
+    }, [navigate])
+
+
+
+
+
+    useEffect(() => {
+        setHeight(ref.current.offsetHeight);
+        setWidth(ref.current.offsetWidth);
+        if(!localStorage.getItem('token')) {
+            navigate("/inicio-empleados")
+        } else {
+            fetchOptometrists();
+            fetchCalendars();
+        }
+    }, [navigate, fetchCalendars, fetchOptometrists])
 
 
 
@@ -292,7 +297,6 @@ export default function WorkCalendar() {
         if (updateForm != null) {
             try {
                 setLoading(true);
-                const values = await updateForm.validateFields();
                 const response = await updateCalendar(
                     {
                         idadmin: JSON.parse(localStorage.getItem('user')).idadmin,

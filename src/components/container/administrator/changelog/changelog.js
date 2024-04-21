@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button, Modal, Space, Table, } from 'antd';
 import { useNavigate } from "react-router-dom";
 
@@ -37,20 +37,12 @@ export default function Changelog() {
         });
     };
 
-    useEffect(() => {
-        setHeight(ref.current.offsetHeight);
-        setWidth(ref.current.offsetWidth);
-        if(!localStorage.getItem('token')) {
-            navigate("/inicio-empleados")
-        } else {
-            fetchChangelog();
-        }
-    }, [navigate])
+    
 
 
     // TO FETCH CHANGELOG DATA WHEN COMPONENT IS LOADED FOR THE FIRST TIME ***********************************************************
     const [changelogData, setChangelogData] = useState(null);
-    const fetchChangelog = async () => {
+    const fetchChangelog = useCallback(async () => {
         try {
             const response = await getChangelog();
 
@@ -90,7 +82,17 @@ export default function Changelog() {
                 )
             }
         }
-    }
+    }, [navigate])
+
+    useEffect(() => {
+        setHeight(ref.current.offsetHeight);
+        setWidth(ref.current.offsetWidth);
+        if(!localStorage.getItem('token')) {
+            navigate("/inicio-empleados")
+        } else {
+            fetchChangelog();
+        }
+    }, [navigate, fetchChangelog])
 
 
 
@@ -148,6 +150,8 @@ export default function Changelog() {
 
     return (
         <div className='changelog' ref={ref}>
+            <FeedbackMessage visible={message?.visible} type={message?.type} text={message?.text} onClose={() => hideMessage()}>
+            </FeedbackMessage>
             <h1>Registro de cambios</h1>
             <div className='changelog-table'>
                 <Table

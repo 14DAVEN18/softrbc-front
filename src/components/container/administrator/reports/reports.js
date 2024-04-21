@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button, Modal, Space, Table } from 'antd';
 
 import { useNavigate } from "react-router-dom";
@@ -16,7 +16,6 @@ export default function Reports() {
     const [width, setWidth] = useState(0);
     const [canceledAppointments, setCanceledAppointments] = useState([])
     const [currentReport, setCurrentReport] = useState([])
-    const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState({
         visible: false,
         type: '',
@@ -24,17 +23,6 @@ export default function Reports() {
     })
 
     const navigate = useNavigate();
-
-    useEffect(() => {
-        setHeight(ref.current.offsetHeight);
-        setWidth(ref.current.offsetWidth);
-        if(!localStorage.getItem('token')) {
-            navigate("/inicio-empleados")
-        } else {
-            fetchCanceledAppointments()
-        }
-    }, [navigate])
-
 
     const showMessage = (type, text) => {
         setMessage({
@@ -56,7 +44,7 @@ export default function Reports() {
 
 
     // TO FETCH CANCELED APPOINTMENTS TO TABLE
-    const fetchCanceledAppointments = async () => {
+    const fetchCanceledAppointments = useCallback(async () => {
         try {
             const response = await getCanceledAppointments();
             const citasByFecha = {};
@@ -91,10 +79,21 @@ export default function Reports() {
                     `Ocurrió un error al cargar los datos de citas canceladas. ${error.message}`
                 )
             }
-        } finally {
-            setLoading(false);
         }
-    }
+    }, [navigate])
+
+
+
+
+    useEffect(() => {
+        setHeight(ref.current.offsetHeight);
+        setWidth(ref.current.offsetWidth);
+        if(!localStorage.getItem('token')) {
+            navigate("/inicio-empleados")
+        } else {
+            fetchCanceledAppointments()
+        }
+    }, [navigate, fetchCanceledAppointments])
 
     
 

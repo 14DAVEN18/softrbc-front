@@ -3,7 +3,7 @@ import { Button, Form, Input, InputNumber } from 'antd';
 import { IdcardOutlined, LockOutlined } from '@ant-design/icons';
 import { AuthContext } from "../../../../auth/context/AuthContext";
 
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import FeedbackMessage from '../../common/feedback-message/feedback-message';
 
 const initialLoginForm = {
@@ -25,7 +25,6 @@ export default function Login({onLogin}) {
     const [clientReady, setClientReady] = useState(false);
 
     const [, forceUpdate] = useState({});
-    const navigation = useNavigate();
     const [message, setMessage] = useState({
         visible: false,
         type: '',
@@ -76,6 +75,7 @@ export default function Login({onLogin}) {
     
     const login = async (values) => {
         try {
+            setLoading(true)
             const response = await handlerLogin({ cedula: values.cedula, password: values.password });
             if (response.status === 200) {
                 showMessage(
@@ -92,6 +92,8 @@ export default function Login({onLogin}) {
                 'error',
                 `Error: ${error.message}`
             )
+        } finally {
+            setLoading(false)
         }
     };
 
@@ -121,7 +123,7 @@ export default function Login({onLogin}) {
                                 }
                             ]}
                         >
-                            <InputNumber prefix={<IdcardOutlined/>} placeholder='Ingrese el número de cédula sin puntos'/>
+                            <InputNumber prefix={<IdcardOutlined/>} placeholder='Ingrese el número de cédula sin puntos' value={username}/>
                         </Form.Item>
 
                         <Form.Item

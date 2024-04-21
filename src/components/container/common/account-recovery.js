@@ -130,7 +130,7 @@ const AccountRecovery = () => {
                                 }
                             ]}
                         >
-                            <InputNumber prefix={<IdcardOutlined/>} placeholder='Ingrese el número de cédula sin puntos'/>
+                            <InputNumber prefix={<IdcardOutlined/>} placeholder='Ingrese el número de cédula sin puntos' value={username}/>
                         </Form.Item>
 
                         <Form.Item

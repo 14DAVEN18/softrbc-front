@@ -47,7 +47,7 @@ export default function CancelWorkDay() {
         if(!localStorage.getItem('token')) {
             navigate("/inicio-empleados")
         }
-    }, [])
+    }, [navigate])
 
     // HEADER OF THE CALENDAR ***********************************************************
     const weekDays = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];

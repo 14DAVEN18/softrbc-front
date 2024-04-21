@@ -2,12 +2,6 @@ import axios from "axios";
 import { CREATE_QUESTION, GET_QUESTION, MODIFY_QUESTION, DELETE_QUESTION } from "../constants/constants";
 
 export const getQuestions = async () => {
-    const config = {
-        headers: {
-            "Authorization": localStorage.getItem('token'),
-            "Content-Type": "application/json"
-        }
-    }
     try {
         return await axios.get(GET_QUESTION);
     } catch (error) {

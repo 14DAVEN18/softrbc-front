@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState, useContext} from 'react';
 
-import { BookOutlined, CalendarOutlined, CaretDownOutlined, DownOutlined, HistoryOutlined, MinusCircleOutlined, QuestionOutlined, SolutionOutlined } from '@ant-design/icons';
-import { Avatar, Button, Dropdown, Menu } from 'antd';
+import { BookOutlined, CalendarOutlined, CaretDownOutlined, HistoryOutlined, MinusCircleOutlined, QuestionOutlined, SolutionOutlined } from '@ant-design/icons';
+import { Button, Menu } from 'antd';
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../auth/context/AuthContext";
 import FeedbackMessage from '../common/feedback-message/feedback-message';
@@ -84,7 +84,7 @@ export default function Admin() {
         if(!localStorage.getItem('token')) {
             navigate("/inicio-empleados")
         }
-    }, [])
+    }, [navigate])
 
     const logout = () => {
         try {

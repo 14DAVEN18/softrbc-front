@@ -41,24 +41,38 @@ export default function AppointmentManagement() {
         });
     };
 
-    const fecthWorkdays = async ()  => {
-        try {
-            const response = await getDaysOptometrist()
-            const newWorkDays = response.data
-                .flatMap(calendar => calendar.split('.'));
-                setWorkDays(prevWorkDays => [
-                    ...prevWorkDays,
-                    ...newWorkDays
-                ])
-        } catch (error) {
-            showMessage(
-                'error',
-                `Ocurrió un error al los dias disponibles. ${error.message}`
-            )
-        }
-    }
+    
 
     useEffect(() => {
+
+        const fecthWorkdays = async ()  => {
+            try {
+                const response = await getDaysOptometrist()
+                const newWorkDays = response.data
+                    .flatMap(calendar => calendar.split('.'));
+                    setWorkDays(prevWorkDays => [
+                        ...prevWorkDays,
+                        ...newWorkDays
+                    ])
+            } catch (error) {
+                if(error.response.data.error.toLowerCase().includes('expired')){
+                    showMessage(
+                        'error',
+                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/cliente/preguntas')
+                    }, 5000)
+                } else {
+                    showMessage(
+                        'error',
+                        `Ocurrió un error al los dias disponibles. ${error.message}`
+                    )
+                }
+            }
+        }
+
         setHeight(ref.current.offsetHeight);
         setWidth(ref.current.offsetWidth);
         if(!localStorage.getItem('token')) {

@@ -64,20 +64,6 @@ export default function Register() {
         setWidth(ref.current.offsetWidth);
     }, [])
 
-    const formItemLayout = {
-    labelCol: {
-        xs: { span: 500 },
-        sm: { span: 0 },
-    },
-    wrapperCol: {
-       span: 0
-    },
-    };
-    const tailFormItemLayout = {
-    wrapperCol: {
-        span: 24
-    },
-    };
 
     
 
@@ -410,6 +396,7 @@ export default function Register() {
                                 type="primary"
                                 htmlType="submit"
                                 className="login-form-button"
+                                loading={loading}
                                 disabled={!isCreationFormComplete}
                             >
                                 CREAR CUENTA

@@ -88,36 +88,38 @@ export default function OptometristSchedule() {
     // TO LOAD TODAY'S APPOINTMENTS
     const [appointments, setAppointments] = useState([])
 
-    const fetchAppointments = async (date) => {
-        try {
-            const response = await getAppointments(date)
-            setAppointments(response.data)
-            if (response.status === 200) {
-                showMessage(
-                    'success',
-                    `Las citas de hoy fueron cargadas correctamente.`
-                )
-            }
-        } catch (error) {
-            if(error.response.data.error.toLowerCase().includes('expired')){
-                showMessage(
-                    'error',
-                    `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
-                )
-                setTimeout(() => {
-                    localStorage.clear()
-                    navigate('/inicio-empleados')
-                }, 5000)
-            } else {
-                showMessage(
-                    'error',
-                    `Ocurrió un error al cargar la agenda del dia. ${error.message}`
-                )
-            }
-        }
-    }
+    
     
     useEffect(() => {
+        const fetchAppointments = async (date) => {
+            try {
+                const response = await getAppointments(date)
+                setAppointments(response.data)
+                if (response.status === 200) {
+                    showMessage(
+                        'success',
+                        `Las citas de hoy fueron cargadas correctamente.`
+                    )
+                }
+            } catch (error) {
+                if(error.response.data.error.toLowerCase().includes('expired')){
+                    showMessage(
+                        'error',
+                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/inicio-empleados')
+                    }, 5000)
+                } else {
+                    showMessage(
+                        'error',
+                        `Ocurrió un error al cargar la agenda del dia. ${error.message}`
+                    )
+                }
+            }
+        }
+
         if(!localStorage.getItem('token')) {
             navigate("/inicio-empleados")
         } else {
@@ -205,17 +207,27 @@ export default function OptometristSchedule() {
                 fechanacimiento: dateOfBirthMoment,
             };
             setPatient(updatedPatientData)
-            setMessage({
-                visible: true,
-                type: 'success',
-                text: `Los datos del usuario ${patient?.usuario.nombre} ${patient?.usuario.apellido} fueron cargados exitosamente.`
-            })
+            if (response.status === 200) {
+                showMessage(
+                    'success',
+                    `Los datos del usuario ${patient?.usuario.nombre} ${patient?.usuario.apellido} fueron cargados exitosamente.`
+                )
+            }
         } catch (error) {
-            setMessage({
-                visible: true,
-                type: 'error',
-                text: `Ocurrió un error al cargar los datos del usuario. ${error.data}`
-            })
+            if(error.response.data.error.toLowerCase().includes('expired')){
+                showMessage(
+                    'error',
+                    `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                )
+                setTimeout(() => {
+                    navigate('/inicio-empleados')
+                }, 5000)
+            } else {
+                showMessage(
+                    'error',
+                    `Ocurrió un error al cargar los datos del usuario. ${error.data}`
+                )
+            }
         } finally {
             setLoading(false);
         }
@@ -291,17 +303,27 @@ export default function OptometristSchedule() {
                     },
                     idoptometra: JSON.parse(localStorage.getItem('user')).idoptometra
                 });
-                setMessage({
-                    visible: true,
-                    type: 'success',
-                    text: `Los datos personales del usuario ${patient?.usuario.nombre} ${patient?.usuario.apellido} fueron actualizados correctamente`
-                })
+                if (response.status === 200) {
+                    showMessage(
+                        'success',
+                        `Los datos personales del usuario ${patient?.usuario.nombre} ${patient?.usuario.apellido} fueron actualizados correctamente`
+                    )
+                }
             } catch (error) {
-                setMessage({
-                    visible: true,
-                    type: 'error',
-                    text: `Ocurrió un error al registrar los datos del paciente: ${error.data}`
-                })
+                if(error.response.data.error.toLowerCase().includes('expired')){
+                    showMessage(
+                        'error',
+                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        navigate('/inicio-empleados')
+                    }, 5000)
+                } else {
+                    showMessage(
+                        'error',
+                        `Ocurrió un error al registrar los datos del paciente: ${error.data}.`
+                    )
+                }
             } finally {
                 setLoading(false);
                 setTimeout(() => {
@@ -330,17 +352,27 @@ export default function OptometristSchedule() {
                     }
                 }))
             }, 1000)
-            setMessage({
-                visible: true,
-                type: 'success',
-                text: `La historia clínica para ${patient?.usuario.nombre} ${patient?.usuario.apellido} fue creada exitosamente`
-            })
+            if (response.status === 200) {
+                showMessage(
+                    'success',
+                    `La historia clínica para ${patient?.usuario.nombre} ${patient?.usuario.apellido} fue creada exitosamente`
+                )
+            }
         } catch (error ){
-            setMessage({
-                visible: true,
-                type: 'error',
-                text: `Ocurrió un error al crear la historia médica del paciente. ${error.data}`
-            })
+            if(error.response.data.error.toLowerCase().includes('expired')){
+                showMessage(
+                    'error',
+                    `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                )
+                setTimeout(() => {
+                    navigate('/inicio-empleados')
+                }, 5000)
+            } else {
+                showMessage(
+                    'error',
+                    `Ocurrió un error al crear la historia médica del paciente. ${error.data}.`
+                )
+            }
         }
     }
 
@@ -496,7 +528,7 @@ export default function OptometristSchedule() {
         if (medicalRecord != null) {
             try {
                 setLoading(true);
-                const blobData = await generatePdfFormula(
+                const response = await generatePdfFormula(
                     {
                         rxfinalod: medicalRecord.rxfinalod,
                         rxfinaloi: medicalRecord.rxfinaloi,
@@ -510,19 +542,29 @@ export default function OptometristSchedule() {
                         idcita: currentAppointment.idcita
                     }
                 );
-                const blob = new Blob([blobData], { type: 'application/json' });
+                const blob = new Blob([response.data], { type: 'application/json' });
                 saveAs(blob, `formula.pdf`); 
-                setMessage({
-                    visible: true,
-                    type: 'success',
-                    text: `El registro de la consulta fue agregado a la historia clínica del paciente de manera exitosa. Un PDF con la formula será descargado`
-                })
+                if (response.status === 200) {
+                    showMessage(
+                        'success',
+                        `El registro de la consulta fue agregado a la historia clínica del paciente de manera exitosa. Un PDF con la formula será descargado.`
+                    )
+                }
             } catch (error) {
-                setMessage({
-                    visible: true,
-                    type: 'error',
-                    text: `Ocurrió un error al anexar los datos de la consulta a la historia clínica del paciente. ${error.data}`
-                })
+                if(error.response.data.error.toLowerCase().includes('expired')){
+                    showMessage(
+                        'error',
+                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        navigate('/inicio-empleados')
+                    }, 5000)
+                } else {
+                    showMessage(
+                        'error',
+                        `Ocurrió un error al anexar los datos de la consulta a la historia clínica del paciente. ${error.data}.`
+                    )
+                }
             } finally {
                 setLoading(false);
                 setIsMedicalRecordFormComplete(false);
