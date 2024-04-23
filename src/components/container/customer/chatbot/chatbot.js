@@ -159,14 +159,14 @@ function Chatbot({
                                         try {
                                             const response = await cancelAppointment(userMessage)
                                             if(!response.data.estado) {
-                                                addMessage({ text: `Estimado usuario. La cita asociada con el código ${userMessage} dado fue cancelada.`})
+                                                addMessage({ text: `Estimado usuario. La cita asociada con el código ${userMessage} fue cancelada. El chat volverá al menú principal en breve.`})
                                                 addMessage({ text: '0. Menú principal.'})
                                             }
                                             setTimeout(() => {
                                                 resetMessage();
                                             }, 10000)
                                         } catch (error) {
-                                            addMessage({ text: `Ocurrió un error cancelando la cita ${userMessage}. Por favor revise el número en intentelo de nuevo`, sender: 'bot'})
+                                            addMessage({ text: `No se encontró una cita asociada con el código ${userMessage}. Por favor revise el número e intentelo de nuevo.`, sender: 'bot'})
                                         }
                                     }
                                 }

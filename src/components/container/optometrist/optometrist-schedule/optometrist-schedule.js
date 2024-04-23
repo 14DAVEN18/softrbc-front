@@ -1,5 +1,5 @@
 // React imports
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // External components / libraries
@@ -94,45 +94,44 @@ export default function OptometristSchedule() {
     // TO LOAD TODAY'S APPOINTMENTS
     const [appointments, setAppointments] = useState([])
 
-    
-    
-    useEffect(() => {
-        const fetchAppointments = async (date) => {
-            try {
-                const response = await getAppointments(date)
-                setAppointments(response.data)
-                if (response.status === 200) {
-                    if(response.data.length === 0) {
-                        showMessage(
-                            'success',
-                            `No hay citas agendadas para hoy.`
-                        )    
-                    } else {
-                        showMessage(
-                            'success',
-                            `Las citas de hoy fueron cargadas correctamente.`
-                        )
-                    }
-                }
-            } catch (error) {
-                if(error.response.data.error.toLowerCase().includes('expired')){
+    const fetchAppointments = useCallback(async (date) => {
+        try {
+            const response = await getAppointments(date)
+            setAppointments(response.data)
+            if (response.status === 200) {
+                if(response.data.length === 0) {
                     showMessage(
-                        'error',
-                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
-                    )
-                    setTimeout(() => {
-                        localStorage.clear()
-                        navigate('/inicio-empleados')
-                    }, 5000)
+                        'success',
+                        `No hay citas agendadas para hoy.`
+                    )    
                 } else {
                     showMessage(
-                        'error',
-                        `Ocurrió un error al cargar la agenda del dia. ${error.message}`
+                        'success',
+                        `Las citas de hoy fueron cargadas correctamente.`
                     )
                 }
             }
+        } catch (error) {
+            if(error.response.data.error.toLowerCase().includes('expired')){
+                showMessage(
+                    'error',
+                    `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                )
+                setTimeout(() => {
+                    localStorage.clear()
+                    navigate('/inicio-empleados')
+                }, 5000)
+            } else {
+                showMessage(
+                    'error',
+                    `Ocurrió un error al cargar la agenda del dia. ${error.message}`
+                )
+            }
         }
-
+    }, [])
+    
+    
+    useEffect(() => {
         if(!localStorage.getItem('token')) {
             navigate("/inicio-empleados")
         } else {
@@ -599,6 +598,7 @@ export default function OptometristSchedule() {
                         `El registro de la consulta fue agregado a la historia clínica del paciente de manera exitosa. Un PDF con la formula será descargado.`
                     )
                 }
+                setPatient(null)
             } catch (error) {
                 if(error.response.data.error.toLowerCase().includes('expired')){
                     showMessage(
@@ -615,6 +615,7 @@ export default function OptometristSchedule() {
                     )
                 }
             } finally {
+                fetchAppointments();
                 setLoading(false);
                 setIsMedicalRecordFormComplete(false);
             }

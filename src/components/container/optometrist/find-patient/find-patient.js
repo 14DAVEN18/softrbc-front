@@ -166,9 +166,10 @@ export default function FindPatient() {
                     }, 5000)
                 }
             } else {
+                setPatient(null)
                 showMessage(
                     'error',
-                    `Ocurrió un error al cargar los datos del paciente solicitado.`
+                    `No se encontró un paciente asociado al número de identificación provisto.`
                 )
             }
         } finally {
