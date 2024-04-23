@@ -135,13 +135,14 @@ function Chatbot({
                                                 addMessage({ text: `Estimado usuario. La cita asociada con el código ${query.codigo} ya fue cancelada previamente. Si aun desea tener su consulta de optometría por favor agende una nueva cita.`})
                                                 addMessage({ text: '0. Menú principal '})
                                             } else {
-                                                addMessage({ text: 'Estimado usuario. los detalles son los siguientes:'})
+                                                addMessage({ text: 'Estimado usuario. los detalles de su cita son los siguientes:'})
                                                 addMessage({ text: `Fecha: ${response.data.fecha}`, sender: 'bot' })
                                                 addMessage({ text: `Hora : ${response.data.hora}`, sender: 'bot' })
-                                                addMessage({ text: '0. Menú principal '})
+                                                addMessage({ text: 'El chat volverá al menú principal en breve'})
                                             }
-                                            setNewInput(null)
-                                            setCurrentLevel(decisionTree)
+                                            setTimeout(() => {
+                                                resetMessage();
+                                            }, 10000)
                                         } catch (error) {
                                             addMessage({ text: error.response.data , sender: 'bot'})
                                         }
@@ -157,20 +158,28 @@ function Chatbot({
                                     code: async (userMessage) => {
                                         try {
                                             const response = await cancelAppointment(userMessage)
-                                            addMessage({ text: response.data, sender: 'bot'})
-                                            addMessage({ text: '0. Menú principal '})
-                                            setNewInput(null)
-                                            setCurrentLevel(decisionTree)
+                                            if(!response.data.estado) {
+                                                addMessage({ text: `Estimado usuario. La cita asociada con el código ${userMessage} dado fue cancelada.`})
+                                                addMessage({ text: '0. Menú principal.'})
+                                            }
+                                            setTimeout(() => {
+                                                resetMessage();
+                                            }, 10000)
                                         } catch (error) {
                                             addMessage({ text: `Ocurrió un error cancelando la cita ${userMessage}. Por favor revise el número en intentelo de nuevo`, sender: 'bot'})
                                         }
-                                        
                                     }
                                 }
                             }
                         }
                     }
                 };
+                if(response.status === 200) {
+                    showMessage(
+                        'success',
+                        `Las preguntas se cargaron correctamente.`
+                    )
+                }
                 
                 // Set questionsData and decisionTree state
                 setCurrentLevel(initialDecisionTree)
@@ -185,23 +194,20 @@ function Chatbot({
 
         // Call fetchDataAndConstructTree when component mounts
         fetchDataAndConstructTree();
-    }, [addMessage, decisionTree, navigate, setCurrentLevel, setDecisionTree, setNewInput]);
+    }, [addMessage, navigate, setCurrentLevel, setDecisionTree, setNewInput]);
 
 
 
-    
+
 
     const handleLogin = () => {
         setDisplayLogin(false);
 
         if(input === '1') {
-            addMessage({ text: `Ha iniciado sesión correctamente. En breve será redirigido a la página de agendamiento.`, sender: 'bot' });
             setNewInput(null)
             setCurrentLevel(decisionTree)
-            setTimeout(() => {
-                resetMessage()
-                navigate('/cliente/agendamiento')
-            })
+            resetMessage()
+            navigate('/cliente/agendamiento')
         } else if(input === '2') {
             addMessage({ text: `Ha iniciado sesión correctamente.`, sender: 'bot' });
             addMessage({ text: `Por favor digite el número de cita que quiere verificar.`, sender: 'bot' });
@@ -220,11 +226,11 @@ function Chatbot({
 
 
     const handleUserInput = async (option) => {
-        addMessage({ text: option, sender: 'user'})
         if (option === '0') {
             setCurrentLevel(decisionTree);
             resetMessage();
         } else {
+            addMessage({ text: option, sender: 'user'})
             // To check if the provided option exists in the currentLevel
             if (currentLevel.hasOwnProperty(option)) {
                 // The provided option exists, now check if the option requires Auth
@@ -237,7 +243,8 @@ function Chatbot({
                         // The user is authenticated, now check if the user wants to schedule an appointment or not.
                         if(selectedOption.hasOwnProperty('action')) {
                             // The user wants to schedule an appointment
-                            selectedOption.action()
+                            resetMessage();
+                            selectedOption.action();
                         } else {
                             // The user wants to verify or cancel an appointment
                             selectedOption = selectedOption.options
@@ -248,7 +255,7 @@ function Chatbot({
                         // The user is NOT authenticade, now check if the user wants to schedule an appointment or not.
                         addMessage({ text: 'Para gestionar citas de optometría debe primero iniciar sesión.', sender: 'bot' });
                         addMessage({ text: 'En unos segundos el sistema le pedirá sus credenciales de inicio de sesión.', sender: 'bot' });
-                           
+                        
                         let countDown = 5;
                         const countDownInterval = setInterval(() => {
                             if (countDown === 0) {
@@ -280,16 +287,21 @@ function Chatbot({
                         // The provided option doesn't have the 'options' property
                         addMessage({text: currentLevel[option].pregunta, sender: 'bot'})
                         addMessage({text: currentLevel[option].respuesta, sender: 'bot'})
+                        addMessage({text: 'Puede digitar el número de otra pregunta o digitar 0 para volver al menú principal', sender: 'bot'})
                     }
                 }
             } else if (regex.test(option)) {
-                if (currentLevel.hasOwnProperty('code'))
-                    currentLevel.code(option)
-            } else
+                if (currentLevel.hasOwnProperty('code')) {
+                    await currentLevel.code(option)
+                    setCurrentLevel(decisionTree)
+                } else {
+                    addMessage({ text: 'Opción inválida. Por favor escriba una de las opcines dadas o ingrese un código ', sender: 'bot'});
+                }
+            } else {
                 addMessage({ text: 'Opción inválida. Por favor escriba una de las opcines dadas.', sender: 'bot'});
+            }
         }
     }
-
 
 
 

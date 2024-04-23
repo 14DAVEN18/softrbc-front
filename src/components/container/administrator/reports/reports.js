@@ -69,15 +69,26 @@ export default function Reports() {
 
             setCanceledAppointments(sortedCitasByFecha)
         } catch (error) {
-            if(error.response.data.error.toLowerCase().includes('expired')){
-                showMessage(
-                    'error',
-                    `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
-                )
-                setTimeout(() => {
-                    localStorage.clear()
-                    navigate('/inicio-empleados')
-                }, 5000)
+            if (error.response.data.hasOwnProperty('error')) {
+                if (error.response.data.error.toLowerCase().includes('expired')){
+                    showMessage(
+                        'error',
+                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/inicio-empleados')
+                    }, 5000)
+                } else if (error.response.data.error.toLowerCase().includes('does not match')) {
+                    showMessage(
+                        'error',
+                        `Su sesión actual no es válida. Debe iniciar sesión de nuevo. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/inicio-empleados')
+                    }, 5000)
+                }
             } else {
                 showMessage(
                     'error',

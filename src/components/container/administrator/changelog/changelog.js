@@ -72,19 +72,26 @@ export default function Changelog() {
 
             setChangelogData(changeRecord)
         } catch (error) {
-            if(error.response.data.error.toLowerCase().includes('expired')){
+            if(error.response.data.hasOwnProperty('error')) {
+                if(error.response.data.error.toLowerCase().includes('expired')){
+                    showMessage(
+                        'error',
+                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/inicio-empleados')
+                    }, 5000)
+                } else {
+                    showMessage(
+                        'error',
+                        `Ocurrió un error al cargar el registro de cambios. ${error.message}`
+                    )
+                }
+            } else{
                 showMessage(
                     'error',
-                    `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
-                )
-                setTimeout(() => {
-                    localStorage.clear()
-                    navigate('/inicio-empleados')
-                }, 5000)
-            } else {
-                showMessage(
-                    'error',
-                    `Ocurrió un error al cargar el registro de cambios. ${error.message}`
+                    `Ocurrió un error al cargar el registro de cambios. ${error.response.data}`
                 )
             }
         }
@@ -158,7 +165,7 @@ export default function Changelog() {
         <div className='changelog' ref={ref}>
             <FeedbackMessage visible={message?.visible} type={message?.type} text={message?.text} onClose={() => hideMessage()}>
             </FeedbackMessage>
-            <h1>Registro de cambios</h1>
+            <h1 id="changelog-title">Registro de cambios</h1>
             <div className='changelog-table'>
                 <Table
                     columns={columns}

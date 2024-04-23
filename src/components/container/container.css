@@ -107,11 +107,12 @@ img {
 
 /* Styles for the placeholder of the input box */
   .ant-input::placeholder {
-    color: rgb(107, 108, 109);
+    color: rgb(184, 184, 185);
   }
 
   .ant-input-number::placeholder {
     color:black;
+    
   }
 
   /* Styles for the invisible box that contains the input fields */

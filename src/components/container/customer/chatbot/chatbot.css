@@ -142,3 +142,7 @@
     background: rgb(25, 25, 76);
     border-radius: 4px;
 }
+
+#option {
+    padding-left: 10px;
+}

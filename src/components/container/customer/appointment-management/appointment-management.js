@@ -62,19 +62,30 @@ export default function AppointmentManagement() {
                         ...newWorkDays
                     ])
             } catch (error) {
-                if(error.response.data.error.toLowerCase().includes('expired')){
+                if (error.response.data.hasOwnProperty('error')) {
+                    if (error.response.data.error.toLowerCase().includes('expired')){
+                        showMessage(
+                            'error',
+                            `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                        )
+                        setTimeout(() => {
+                            localStorage.clear()
+                            navigate('/cliente/preguntas')
+                        }, 5000)
+                    } else if (error.response.data.error.toLowerCase().includes('does not match')) {
+                        showMessage(
+                            'error',
+                            `Su sesión actual no es válida. Debe iniciar sesión de nuevo. En breve será redirigido a la página de inicio de sesión.`
+                        )
+                        setTimeout(() => {
+                            localStorage.clear()
+                            navigate('/cliente/preguntas')
+                        }, 5000)
+                    }
+                } else{
                     showMessage(
                         'error',
-                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
-                    )
-                    setTimeout(() => {
-                        localStorage.clear()
-                        navigate('/cliente/preguntas')
-                    }, 5000)
-                } else {
-                    showMessage(
-                        'error',
-                        `Ocurrió un error al los dias disponibles. ${error.message}`
+                        `Ocurrió un error al cargar los días disponibles. ${error.message}`
                     )
                 }
             }
@@ -87,7 +98,7 @@ export default function AppointmentManagement() {
         } else {
             fecthWorkdays();   
         }
-    }, [navigate, workDays])
+    }, [navigate])
 
 
 
@@ -234,19 +245,30 @@ export default function AppointmentManagement() {
             const response = await getAppointments(day);
             setAppointmentTimes(response.data)
         } catch (error) {
-            if(error.response.data.error.toLowerCase().includes('expired')){
+            if (error.response.data.hasOwnProperty('error')) {
+                if (error.response.data.error.toLowerCase().includes('expired')){
+                    showMessage(
+                        'error',
+                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/cliente/preguntas')
+                    }, 5000)
+                } else if (error.response.data.error.toLowerCase().includes('does not match')) {
+                    showMessage(
+                        'error',
+                        `Su sesión actual no es válida. Debe iniciar sesión de nuevo. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/cliente/preguntas')
+                    }, 5000)
+                }
+            } else{
                 showMessage(
                     'error',
-                    `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
-                )
-                setTimeout(() => {
-                    localStorage.clear()
-                    navigate('/cliente/preguntas')
-                }, 5000)
-            } else {
-                showMessage(
-                    'error',
-                    `Ocurrió un error al cargar las citas disponibles. ${error.message}`
+                    `Ocurrió un error al cargar las citas disponibles. ${error.response.data}`
                 )
             }
         } finally {
@@ -257,7 +279,7 @@ export default function AppointmentManagement() {
     const fetchAppointmentDuration = async (date) => {
         try {
             const response = await getAppointmentsDuration(date);
-            setAppointments(generateAppointments("9:00", response.data, (600/response.data)-1))
+            setAppointments(generateAppointments("9:00", response.data, Math.floor((480/response.data))-1))
         } catch (error) {
             showMessage(
                 'error',
@@ -332,23 +354,35 @@ export default function AppointmentManagement() {
             if (response.status === 200) {
                 showMessage(
                     'success',
-                    `La cita se agendó exitosamente.`
+                    `La cita se agendó exitosamente. En breve será redirigido al chat.`
                 )
             }
         } catch (error) {
-            if(error.response.data.error.toLowerCase().includes('expired')){
+            if (error.response.data.hasOwnProperty('error')) {
+                if (error.response.data.error.toLowerCase().includes('expired')){
+                    showMessage(
+                        'error',
+                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/cliente/preguntas')
+                    }, 5000)
+                } else if (error.response.data.error.toLowerCase().includes('does not match')) {
+                    showMessage(
+                        'error',
+                        `Su sesión actual no es válida. Debe iniciar sesión de nuevo. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/cliente/preguntas')
+                    }, 5000)
+                }
+            } else{
+                console.log(error)
                 showMessage(
                     'error',
-                    `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
-                )
-                setTimeout(() => {
-                    localStorage.clear()
-                    navigate('/cliente/preguntas')
-                }, 5000)
-            } else {
-                showMessage(
-                    'error',
-                    `Ocurrió un error al agendar la cita. ${error.message}`
+                    `Ocurrió un error al agendar la cita. ${error.response.data}`
                 )
             }
         } finally {
@@ -391,6 +425,7 @@ export default function AppointmentManagement() {
     }
 
     const  generateAppointments = (startTime, duration, numberOfAppointments) => {
+        console.log(numberOfAppointments)
         const appointments = [startTime];
         let currentAppointment = startTime;
         for (let i = 0; i < numberOfAppointments; i++) {

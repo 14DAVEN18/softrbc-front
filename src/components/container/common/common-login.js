@@ -8,6 +8,7 @@ import { IdcardOutlined, LockOutlined } from '@ant-design/icons';
 
 // Self created components
 import { AuthContext } from "../../../auth/context/AuthContext";
+import FeedbackMessage from './feedback-message/feedback-message';
 
 const initialLoginForm = {
     cedula: '',
@@ -24,7 +25,27 @@ const EmployeeLogin = () => {
     const [clientReady, setClientReady] = useState(false);
 
     const [, forceUpdate] = useState({});
-    const [errorMessage, setErrorMessage] = useState("");
+    const [message, setMessage] = useState({
+        visible: false,
+        type: '',
+        text: ''
+    })
+
+    const showMessage = (type, text) => {
+        setMessage({
+          visible: true,
+          type: type,
+          text: text
+        });
+    };
+
+    const hideMessage = () => {
+        setMessage({
+            visible: false,
+            type: '',
+            text: ''
+        });
+    };
 
     useEffect(() => {
         setClientReady(true);
@@ -57,7 +78,10 @@ const EmployeeLogin = () => {
         try {
             await handlerLogin({cedula: values.cedula, password: values.password})
         } catch(error) {
-            setErrorMessage(error.message); // Set the error message state
+            showMessage(
+                'error',
+                `Las credenciales proporcionadas son incorrectas. Verifiquelas e inténtelo nuevamente.`
+            )
         }
             
 
@@ -65,12 +89,9 @@ const EmployeeLogin = () => {
     };
 
     return (
-        <div 
-            id="login" 
-            className="page" 
-            ref={ref}
-        >
-
+        <div id="login" className="page" ref={ref}>
+            <FeedbackMessage visible={message?.visible} type={message?.type} text={message?.text} onClose={() => hideMessage()}>
+            </FeedbackMessage>
             <div className='bottom'>
                 
                
@@ -96,7 +117,7 @@ const EmployeeLogin = () => {
                                 }
                             ]}
                         >
-                            <InputNumber prefix={<IdcardOutlined/>} placeholder='Ingrese el número de cédula sin puntos' value={cedula}/>
+                            <InputNumber prefix={<IdcardOutlined/>} placeholder='Ingrese el número de identificación sin puntos' value={cedula}/>
                         </Form.Item>
 
                         <Form.Item
@@ -135,14 +156,6 @@ const EmployeeLogin = () => {
                             </p>
                         </Form.Item>
                     </Form>
-                    {   
-                        errorMessage && 
-                        (
-                            <div className='error-message'  onClick={() => setErrorMessage("")}>
-                                <p>{errorMessage}</p>
-                            </div>
-                        )
-                    }
                 </div>
             </div>
         </div>

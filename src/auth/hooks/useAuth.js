@@ -54,6 +54,7 @@ export const useAuth = () => {
                     'idpaciente': claims.idpaciente
                 }))
             }
+            return response;
         } catch(error) {
             if (error.response?.status === 401 ) {
                 throw new Error('Correo o contraseña incorrectos.')

@@ -183,10 +183,6 @@ const PasswordReset = () => {
                             }}
                         </Form.Item>
                     </Form>
-
-                    <Link to="/inicio-empleados">Reiniciar contraseña</Link>
-                    <Link to="/inicio-empleados">Inicio de sesión</Link>
-                    <Link to="/optometra/agenda">Entrar optometra</Link>
                 </div>
             </div>
         </div>

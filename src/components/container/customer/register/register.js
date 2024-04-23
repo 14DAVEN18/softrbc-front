@@ -182,7 +182,7 @@ export default function Register() {
                                 message: 'Por favor ingrese el nombre del optómetra sin apellidos!',
                             }]}
                         >
-                            <Input prefix={<UserOutlined/>} placeholder='Nombres' autoComplete='false'/>
+                            <Input prefix={<UserOutlined/>} placeholder='Nombres' autoComplete='off'/>
                         </Form.Item>
                             
                             
@@ -195,7 +195,7 @@ export default function Register() {
                                 message: 'Por favor ingrese el apellido del optómetra sin nombres!',
                             }]}
                         >
-                            <Input prefix={<UserOutlined/>} placeholder='Apellidos' autoComplete='false'/>
+                            <Input prefix={<UserOutlined/>} placeholder='Apellidos' autoComplete='off'/>
                         </Form.Item>
 
                         <Form.Item
@@ -232,7 +232,7 @@ export default function Register() {
                                 message: 'Por favor ingrese la dirección física del optómetra!',
                             }]}
                         >
-                            <Input prefix={<UserOutlined/>} placeholder='Dirección' autoComplete='false'/>
+                            <Input prefix={<UserOutlined/>} placeholder='Dirección' autoComplete='off'/>
                         </Form.Item>
 
                         <Form.Item
@@ -249,7 +249,7 @@ export default function Register() {
                             },
                             ]}
                         >
-                            <Input prefix={<MailOutlined/>} placeholder='Correo eléctronico' autoComplete='false'/>
+                            <Input prefix={<MailOutlined/>} placeholder='Correo eléctronico' autoComplete='off'/>
                         </Form.Item>
 
                         <Form.Item
@@ -264,17 +264,26 @@ export default function Register() {
                                     required: true,
                                     message: 'Por favor ingrese el número telefónico del optometra!'
                                 },
-                                {
-                                    min: 7,
-                                    message: 'El número de telefono no puede tener menos de 7 digitos!'
-                                },
-                                {
-                                    max: 10,
-                                    message: 'El número de teléfono no puede exceder los 10 dígitos!'
-                                }
+                                ({ getFieldValue }) => ({
+                                    validator(_, value) {
+                                        const numericValue = Number(value);
+                                        if (!isNaN(numericValue)) {
+                                            const stringValue = String(numericValue);
+                                            if (stringValue.length < 7) {
+                                                return Promise.reject('El número de documento telefónico debe tener al menos 4 dígitos.');
+                                            }
+                                            if (stringValue.length > 10) {
+                                                return Promise.reject('El número de documento telefónico no puede tener más de 12 dígitos.');
+                                            }
+                                            return Promise.resolve();
+                                        } else {
+                                            return Promise.reject('El número ingresado no es válido!');
+                                        }
+                                    }
+                                })
                             ]}
                         >
-                            <InputNumber prefix={<PhoneOutlined/>} placeholder='Número telefónico' autoComplete='false'/>
+                            <InputNumber prefix={<PhoneOutlined/>} placeholder='Número telefónico' autoComplete='off'/>
                         </Form.Item>
 
 
@@ -290,17 +299,26 @@ export default function Register() {
                                     required: true,
                                     message: 'Por favor ingrese el número de identificación del paciente!'
                                 },
-                                {
-                                    min: 4,
-                                    message: 'El número de documento de identidad debe tener al menos 4 digitos.'
-                                },
-                                {
-                                    max: 12,
-                                    message: 'El número de documento de identidad no puede tener más de 12 dígitos.'
-                                }
+                                ({ getFieldValue }) => ({
+                                    validator(_, value) {
+                                        const numericValue = Number(value);
+                                        if (!isNaN(numericValue)) {
+                                            const stringValue = String(numericValue);
+                                            if (stringValue.length < 4) {
+                                                return Promise.reject('El número de documento de identidad debe tener al menos 4 dígitos.');
+                                            }
+                                            if (stringValue.length > 12) {
+                                                return Promise.reject('El número de documento de identidad no puede tener más de 12 dígitos.');
+                                            }
+                                            return Promise.resolve();
+                                        } else {
+                                            return Promise.reject('El número ingresado no es válido!');
+                                        }
+                                    }
+                                })
                             ]}
                         >
-                            <InputNumber prefix={<IdcardOutlined/>} placeholder='Ingrese el número de document de identidad sin puntos' autoComplete='false'/>
+                            <InputNumber prefix={<IdcardOutlined/>} placeholder='Ingrese el número de document de identidad sin puntos' autoComplete='off'/>
                         </Form.Item>
         
 
@@ -313,14 +331,14 @@ export default function Register() {
                                 message: 'Por favor ingrese su ocupación!',
                             }]}
                         >
-                            <Input prefix={<UserOutlined/>} placeholder='Ocupación' autoComplete='false'/>
+                            <Input prefix={<UserOutlined/>} placeholder='Ocupación' autoComplete='off'/>
                         </Form.Item>
 
                         <Form.Item
                             label='Nombre del acompañante'
                             name="nombreacompañante"
                         >
-                            <Input prefix={<UserOutlined/>} placeholder='Nombre de acompañante' autoComplete='false'/>
+                            <Input prefix={<UserOutlined/>} placeholder='Nombre de acompañante' autoComplete='off'/>
                         </Form.Item>
 
                         <Form.Item

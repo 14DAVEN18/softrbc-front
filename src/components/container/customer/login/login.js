@@ -80,7 +80,7 @@ export default function Login({onLogin}) {
             if (response.status === 200) {
                 showMessage(
                     'success',
-                    `Ha iniciado sesión exitosamente. En breve podrá continuar con su interacción..`
+                    `Ha iniciado sesión exitosamente. En breve podrá continuar con su interacción.`
                 )
             }
             setTimeout(() => {                
@@ -123,7 +123,7 @@ export default function Login({onLogin}) {
                                 }
                             ]}
                         >
-                            <InputNumber prefix={<IdcardOutlined/>} placeholder='Ingrese el número de cédula sin puntos' value={username}/>
+                            <InputNumber prefix={<IdcardOutlined/>} placeholder='Ingrese el número de cédula sin puntos' value={username} autoComplete='off'/>
                         </Form.Item>
 
                         <Form.Item
@@ -136,7 +136,7 @@ export default function Login({onLogin}) {
                                 }
                             ]}
                         >
-                            <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} placeholder='Contraseña' onChange={ onInputChange } value={password}/>
+                            <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} placeholder='Contraseña' onChange={ onInputChange } value={password} autoComplete='off'/>
                         </Form.Item>
                         
 

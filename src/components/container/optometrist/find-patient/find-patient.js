@@ -29,7 +29,7 @@ export default function FindPatient() {
     const ref = useRef(null);
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
-    const [patient, setPatient] = useState({})
+    const [patient, setPatient] = useState(null)
     const [medicalRecords, setMedicalRecords] = useState([])
     const [activeTab, setActiveTab] = useState(1);
     const [isMedicalRecordModalOpen, setIsMedicalRecordModalOpen] = useState(false)
@@ -135,7 +135,6 @@ export default function FindPatient() {
                 return dateB - dateA; // Sort descending for most recent first
             });
             const {pacienteDTO, usuario} = response.data
-
             setMedicalRecords(data)
             setPatient({pacienteDTO, usuario})
 
@@ -146,15 +145,26 @@ export default function FindPatient() {
                 )
             }
         } catch (error) {
-            if(error.response.data.error.toLowerCase().includes('expired')){
-                showMessage(
-                    'error',
-                    `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
-                )
-                setTimeout(() => {
-                    localStorage.clear()
-                    navigate('/cliente/preguntas')
-                }, 5000)
+            if (error.response.data.hasOwnProperty('error')) {
+                if (error.response.data.error.toLowerCase().includes('expired')){
+                    showMessage(
+                        'error',
+                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/inicio-empleados')
+                    }, 5000)
+                } else if (error.response.data.error.toLowerCase().includes('does not match')) {
+                    showMessage(
+                        'error',
+                        `Su sesión actual no es válida. Debe iniciar sesión de nuevo. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/inicio-empleados')
+                    }, 5000)
+                }
             } else {
                 showMessage(
                     'error',
@@ -232,7 +242,7 @@ export default function FindPatient() {
             <div className='search-form'>
                 <Form name="search" layout="inline" form={searchForm} >
                     <Form.Item name="cedula">
-                        <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Documento de identidad"/>
+                        <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Documento de identidad" autoComplete='off'/>
                     </Form.Item>
                     <Button type="primary" shape="circle" icon={<SearchOutlined />} onClick={searchPatient} loading={loading}/>
                 </Form>
@@ -245,7 +255,7 @@ export default function FindPatient() {
                     <div className={`tab ${activeTab === 3 ? 'active' : ''}`} onClick={() => setActiveTab(3)}>Formula Clínica</div>
                 </div>
                 
-                {(activeTab === 1 || activeTab === 2 || activeTab === 3) && !(patient.usuario) &&
+                {(activeTab === 1 || activeTab === 2 || activeTab === 3) && !patient &&
                     <div className='tab-content'>
                         <h1>No ha buscado pacientes</h1>
                     </div>
@@ -254,7 +264,7 @@ export default function FindPatient() {
 
 
 
-                {activeTab === 1 && patient.usuario &&
+                {activeTab === 1 && patient &&
                     <div className='tab-content'>
                         <Form {...layout} className='creation-form' initialValues={{ remember: false }} name="patientUpdate" >                                 
                             <Form.Item label='Nombres' name="nombre" >
@@ -300,13 +310,13 @@ export default function FindPatient() {
 
 
 
-                {activeTab === 2 && !!patient &&
+                {activeTab === 2 && patient &&
                     <div className='tab-content-view'>
                         {medicalRecords.length > 0 ? (
                             <div className='appointment-table'>
                                 <Table
                                     columns={columns} 
-                                    dataSource={ medicalRecords.map(record => ({...record, key: record.id})) }
+                                    dataSource={ medicalRecords.map(record => ({...record, key: record.anamnesis.idanamnesis})) }
                                 />
                             </div>
                         ) : (
@@ -537,7 +547,7 @@ export default function FindPatient() {
                     </div>
                 }
 
-                {activeTab === 3 && !!patient &&
+                {activeTab === 3 && patient &&
                     <div className='tab-content3'>
                         <h2>Nombre del paciente: {patient?.usuario.nombre} {patient?.usuario.apellido}</h2>
                         <div className='table-rx'>

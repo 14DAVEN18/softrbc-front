@@ -69,15 +69,26 @@ export default function OptometristManagement() {
             const response = await getOptometrists();
             setOptometristsData(response.data)
         } catch (error) {
-            if(error.response.data.error.toLowerCase().includes('expired')){
-                showMessage(
-                    'error',
-                    `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
-                )
-                setTimeout(() => {
-                    localStorage.clear()
-                    navigate('/inicio-empleados')
-                }, 5000)
+            if (error.response.data.hasOwnProperty('error')) {
+                if (error.response.data.error.toLowerCase().includes('expired')){
+                    showMessage(
+                        'error',
+                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/inicio-empleados')
+                    }, 5000)
+                } else if (error.response.data.error.toLowerCase().includes('does not match')) {
+                    showMessage(
+                        'error',
+                        `Su sesión actual no es válida. Debe iniciar sesión de nuevo. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/inicio-empleados')
+                    }, 5000)
+                }
             } else {
                 showMessage(
                     'error',
@@ -157,19 +168,30 @@ export default function OptometristManagement() {
             if (response.status === 200) {
                 showMessage(
                     'success',
-                    `La pregunta se eliminó exitosamente.`
+                    `El estado del optometra se actualizó correctamente.`
                 )
             }
         } catch (error) {
-            if(error.response.data.error.toLowerCase().includes('expired')){
-                showMessage(
-                    'error',
-                    `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
-                )
-                setTimeout(() => {
-                    localStorage.clear()
-                    navigate('/inicio-empleados')
-                }, 5000)
+            if (error.response.data.hasOwnProperty('error')) {
+                if(error.response.data.error.toLowerCase().includes('expired')){
+                    showMessage(
+                        'error',
+                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/inicio-empleados')
+                    }, 5000)
+                } else if (error.response.data.error.toLowerCase().includes('does not match')) {
+                    showMessage(
+                        'error',
+                        `Su sesión actual no es válida. Debe iniciar sesión de nuevo. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/inicio-empleados')
+                    }, 7000)
+                }
             } else {
                 showMessage(
                     'error',
@@ -239,19 +261,30 @@ export default function OptometristManagement() {
                     )
                 }
             } catch (error) {
-                if(error.response.data.error.toLowerCase().includes('expired')){
-                    showMessage(
-                        'error',
-                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
-                    )
-                    setTimeout(() => {
-                        localStorage.clear()
-                        navigate('/inicio-empleados')
-                    }, 5000)
+                if (error.response.data.hasOwnProperty('error')) {
+                    if(error.response.data.error.toLowerCase().includes('expired')){
+                        showMessage(
+                            'error',
+                            `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                        )
+                        setTimeout(() => {
+                            localStorage.clear()
+                            navigate('/inicio-empleados')
+                        }, 5000)
+                    } else if (error.response.data.error.toLowerCase().includes('does not match')) {
+                        showMessage(
+                            'error',
+                            `Su sesión actual no es válida. Debe iniciar sesión de nuevo. En breve será redirigido a la página de inicio de sesión.`
+                        )
+                        setTimeout(() => {
+                            localStorage.clear()
+                            navigate('/inicio-empleados')
+                        }, 7000)
+                    }
                 } else {
                     showMessage(
                         'error',
-                        `${error.message}`
+                        `Ocurrió un error al registrar los datos del optometra. ${error.message}`
                     )
                 }
                 creationForm.resetFields()
@@ -309,23 +342,34 @@ export default function OptometristManagement() {
                 if (response.status === 200) {
                     showMessage(
                         'success',
-                        `Los datos del optometra se actualizaron correctamente exitosamente.`
+                        `Los datos del optometra se actualizaron correctamente.`
                     )
                 }
             } catch (error) {
-                if(error.response.data.error.toLowerCase().includes('expired')){
+                if (error.response.data.hasOwnProperty('error')) {
+                    if(error.response.data.error.toLowerCase().includes('expired')){
+                        showMessage(
+                            'error',
+                            `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                        )
+                        setTimeout(() => {
+                            localStorage.clear()
+                            navigate('/inicio-empleados')
+                        }, 5000)
+                    } else if (error.response.data.error.toLowerCase().includes('does not match')) {
+                        showMessage(
+                            'error',
+                            `Su sesión actual no es válida. Debe iniciar sesión de nuevo. En breve será redirigido a la página de inicio de sesión.`
+                        )
+                        setTimeout(() => {
+                            localStorage.clear()
+                            navigate('/inicio-empleados')
+                        }, 7000)
+                    }
+                } else{
                     showMessage(
                         'error',
-                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
-                    )
-                    setTimeout(() => {
-                        localStorage.clear()
-                        navigate('/inicio-empleados')
-                    }, 5000)
-                } else {
-                    showMessage(
-                        'error',
-                        `Ocurrió un al actualizar los datos del optometra. ${error.message}`
+                        `Ocurrió un al actualizar los datos del optometra. ${error.response.data}`
                     )
                 }
             } finally {
@@ -342,6 +386,7 @@ export default function OptometristManagement() {
         setIsUpdateModalOpen(false);
         setIsUpdateFormComplete(false);
         setSelectedOptometrist(null);
+        updateForm.resetFields()
     };
 
 
@@ -402,7 +447,7 @@ export default function OptometristManagement() {
             <div className='search-form'>
                 <Form name="search" layout="inline">
                     <Form.Item name="search-input">
-                        <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Nombre de optometra" onChange={e => setSearchText(e.target.value)}/>
+                        <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Nombre de optometra" onChange={e => setSearchText(e.target.value)} autoCapitalize='off'/>
                     </Form.Item>
                 </Form>
                 
@@ -472,7 +517,7 @@ export default function OptometristManagement() {
                             message: 'Por favor ingrese el nombre del optómetra sin apellidos!',
                         }]}
                     >
-                        <Input prefix={<UserOutlined/>} placeholder='Nombres' autoComplete='false'/>
+                        <Input prefix={<UserOutlined/>} placeholder='Nombres' autoComplete='off'/>
                     </Form.Item>
                         
                         
@@ -485,7 +530,7 @@ export default function OptometristManagement() {
                             message: 'Por favor ingrese el apellido del optómetra sin nombres!',
                         }]}
                     >
-                        <Input prefix={<UserOutlined/>} placeholder='Apellidos' autoComplete='false'/>
+                        <Input prefix={<UserOutlined/>} placeholder='Apellidos' autoComplete='off'/>
                     </Form.Item>
 
                     <Form.Item
@@ -497,7 +542,7 @@ export default function OptometristManagement() {
                             message: 'Por favor ingrese la dirección física del optómetra!',
                         }]}
                     >
-                        <Input prefix={<UserOutlined/>} placeholder='Dirección' autoComplete='false'/>
+                        <Input prefix={<UserOutlined/>} placeholder='Dirección' autoComplete='off'/>
                     </Form.Item>
 
                     <Form.Item
@@ -514,7 +559,7 @@ export default function OptometristManagement() {
                         },
                         ]}
                     >
-                        <Input prefix={<MailOutlined/>} placeholder='Correo eléctronico' autoComplete='false'/>
+                        <Input prefix={<MailOutlined/>} placeholder='Correo eléctronico' autoComplete='off'/>
                     </Form.Item>
 
                     <Form.Item
@@ -529,17 +574,26 @@ export default function OptometristManagement() {
                                 required: true,
                                 message: 'Por favor ingrese el número telefónico del optometra!'
                             },
-                            {
-                                min: 7,
-                                message: 'El número de telefono no puede tener menos de 7 digitos!'
-                            },
-                            {
-                                max: 10,
-                                message: 'El número de teléfono no puede exceder los 10 dígitos!'
-                            }
+                            ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                    const numericValue = Number(value);
+                                    if (!isNaN(numericValue)) {
+                                        const stringValue = String(numericValue);
+                                        if (stringValue.length < 7) {
+                                            return Promise.reject('El número de número telefónico debe tener al menos 7 dígitos.');
+                                        }
+                                        if (stringValue.length > 10) {
+                                            return Promise.reject('El número de número telefónico no puede tener más de 10 dígitos.');
+                                        }
+                                        return Promise.resolve();
+                                    } else {
+                                        return Promise.reject('El número ingresado no es válido!');
+                                    }
+                                }
+                            })
                         ]}
                     >
-                        <InputNumber prefix={<PhoneOutlined/>} placeholder='Número telefónico' autoComplete='false'/>
+                        <InputNumber prefix={<PhoneOutlined/>} placeholder='Número telefónico' autoComplete='off'/>
                     </Form.Item>
 
 
@@ -555,17 +609,26 @@ export default function OptometristManagement() {
                                 required: true,
                                 message: 'Por favor ingrese el número de identificación del optómetra!'
                             },
-                            {
-                                min: 4,
-                                message: 'El número de documento de identidad debe tener al menos 4 digitos.'
-                            },
-                            {
-                                max: 12,
-                                message: 'El número de documento de identidad no puede tener más de 12 dígitos.'
-                            }
+                            ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                    const numericValue = Number(value);
+                                    if (!isNaN(numericValue)) {
+                                        const stringValue = String(numericValue);
+                                        if (stringValue.length < 4) {
+                                            return Promise.reject('El número de documento de identidad debe tener al menos 4 dígitos.');
+                                        }
+                                        if (stringValue.length > 12) {
+                                            return Promise.reject('El número de documento de identidad no puede tener más de 12 dígitos.');
+                                        }
+                                        return Promise.resolve();
+                                    } else {
+                                        return Promise.reject('El número ingresado no es válido!');
+                                    }
+                                }
+                            })
                         ]}
                     >
-                        <InputNumber prefix={<IdcardOutlined/>} placeholder='Ingrese el número de cédula sin puntos' autoComplete='false'/>
+                        <InputNumber prefix={<IdcardOutlined/>} placeholder='Ingrese el número de cédula sin puntos' autoComplete='off'/>
                     </Form.Item>
                 </Form>
             </Modal>
@@ -622,7 +685,7 @@ export default function OptometristManagement() {
                         }]}
                         initialValue={selectedOptometrist?.usuario.direccion}
                     >
-                        <Input prefix={<UserOutlined/>} placeholder='Dirección' autoComplete='false'/>
+                        <Input prefix={<UserOutlined/>} placeholder='Dirección' autoComplete='off'/>
                     </Form.Item>
 
                     <Form.Item
@@ -640,7 +703,7 @@ export default function OptometristManagement() {
                         ]}
                         initialValue={selectedOptometrist?.usuario.correo}
                     >
-                        <Input prefix={<MailOutlined/>} placeholder='Correo eléctronico' autoComplete='false'/>
+                        <Input prefix={<MailOutlined/>} placeholder='Correo eléctronico' autoComplete='off'/>
                     </Form.Item>
 
                     <Form.Item
@@ -655,18 +718,27 @@ export default function OptometristManagement() {
                                 required: true,
                                 message: 'Por favor ingrese el número telefónico del optometra!'
                             },
-                            {
-                                min: 7,
-                                message: 'El número de telefono no puede tener menos de 7 digitos!'
-                            },
-                            {
-                                max: 10,
-                                message: 'El número de teléfono no puede exceder los 10 dígitos!'
-                            }
+                            ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                    const numericValue = Number(value);
+                                    if (!isNaN(numericValue)) {
+                                        const stringValue = String(numericValue);
+                                        if (stringValue.length < 7) {
+                                            return Promise.reject('El número de número telefónico debe tener al menos 7 dígitos.');
+                                        }
+                                        if (stringValue.length > 10) {
+                                            return Promise.reject('El número de número telefónico no puede tener más de 10 dígitos.');
+                                        }
+                                        return Promise.resolve();
+                                    } else {
+                                        return Promise.reject('El número ingresado no es válido!');
+                                    }
+                                }
+                            })
                         ]}
                         initialValue={selectedOptometrist?.usuario.telefono}
                     >
-                        <InputNumber prefix={<PhoneOutlined/>} placeholder='Número telefónico' autoComplete='false'/>
+                        <InputNumber prefix={<PhoneOutlined/>} placeholder='Número telefónico' autoComplete='off'/>
                     </Form.Item>
 
                     <Form.Item

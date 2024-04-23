@@ -26,9 +26,6 @@ export const createOptometrist = async ({
         password,
         cedula,
     },
-    optometra: {
-        numeroTarjeta
-    },
     idadmin
 }) => {
     const config = {
@@ -48,9 +45,6 @@ export const createOptometrist = async ({
                     telefono: telefono.toString(),
                     password,
                     cedula: cedula.toString(),
-                },
-                optometra: {
-                    numeroTarjeta
                 },
                 idadmin
             }, config);

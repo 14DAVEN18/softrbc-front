@@ -102,10 +102,17 @@ export default function OptometristSchedule() {
                 const response = await getAppointments(date)
                 setAppointments(response.data)
                 if (response.status === 200) {
-                    showMessage(
-                        'success',
-                        `Las citas de hoy fueron cargadas correctamente.`
-                    )
+                    if(response.data.length === 0) {
+                        showMessage(
+                            'success',
+                            `No hay citas agendadas para hoy.`
+                        )    
+                    } else {
+                        showMessage(
+                            'success',
+                            `Las citas de hoy fueron cargadas correctamente.`
+                        )
+                    }
                 }
             } catch (error) {
                 if(error.response.data.error.toLowerCase().includes('expired')){
@@ -129,7 +136,7 @@ export default function OptometristSchedule() {
         if(!localStorage.getItem('token')) {
             navigate("/inicio-empleados")
         } else {
-            const today = new Date(2024, 3, 12)
+            const today = new Date(2024, 3, 21)
             const selectedDayFormatted = format(today, 'dd/MM/yyyy');
             fetchAppointments(selectedDayFormatted)
         }
@@ -216,22 +223,34 @@ export default function OptometristSchedule() {
             if (response.status === 200) {
                 showMessage(
                     'success',
-                    `Los datos del usuario ${patient?.usuario.nombre} ${patient?.usuario.apellido} fueron cargados exitosamente.`
+                    `Los datos del usuario ${updatedPatientData?.usuario.nombre} ${updatedPatientData?.usuario.apellido} fueron cargados exitosamente.`
                 )
             }
         } catch (error) {
-            if(error.response.data.error.toLowerCase().includes('expired')){
-                showMessage(
-                    'error',
-                    `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
-                )
-                setTimeout(() => {
-                    navigate('/inicio-empleados')
-                }, 5000)
+            if (error.response.data.hasOwnProperty('error')) {
+                if (error.response.data.error.toLowerCase().includes('expired')){
+                    showMessage(
+                        'error',
+                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/inicio-empleados')
+                    }, 5000)
+                } else if (error.response.data.error.toLowerCase().includes('does not match')) {
+                    showMessage(
+                        'error',
+                        `Su sesión actual no es válida. Debe iniciar sesión de nuevo. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/inicio-empleados')
+                    }, 5000)
+                }
             } else {
                 showMessage(
                     'error',
-                    `Ocurrió un error al cargar los datos del usuario. ${error.data}`
+                    `Ocurrió un error al cargar los datos del usuario. ${error.message}`
                 )
             }
         } finally {
@@ -316,14 +335,26 @@ export default function OptometristSchedule() {
                     )
                 }
             } catch (error) {
-                if(error.response.data.error.toLowerCase().includes('expired')){
-                    showMessage(
-                        'error',
-                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
-                    )
-                    setTimeout(() => {
-                        navigate('/inicio-empleados')
-                    }, 5000)
+                if (error.response.data.hasOwnProperty('error')) {
+                    if (error.response.data.error.toLowerCase().includes('expired')){
+                        showMessage(
+                            'error',
+                            `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                        )
+                        setTimeout(() => {
+                            localStorage.clear()
+                            navigate('/inicio-empleados')
+                        }, 5000)
+                    } else if (error.response.data.error.toLowerCase().includes('does not match')) {
+                        showMessage(
+                            'error',
+                            `Su sesión actual no es válida. Debe iniciar sesión de nuevo. En breve será redirigido a la página de inicio de sesión.`
+                        )
+                        setTimeout(() => {
+                            localStorage.clear()
+                            navigate('/inicio-empleados')
+                        }, 5000)
+                    }
                 } else {
                     showMessage(
                         'error',
@@ -503,14 +534,26 @@ export default function OptometristSchedule() {
                     )
                 }
             } catch (error) {
-                if(error.response.data.error.toLowerCase().includes('expired')){
-                    showMessage(
-                        'error',
-                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
-                    )
-                    setTimeout(() => {
-                        navigate('/inicio-empleados')
-                    }, 5000)
+                if (error.response.data.hasOwnProperty('error')) {
+                    if (error.response.data.error.toLowerCase().includes('expired')){
+                        showMessage(
+                            'error',
+                            `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                        )
+                        setTimeout(() => {
+                            localStorage.clear()
+                            navigate('/inicio-empleados')
+                        }, 5000)
+                    } else if (error.response.data.error.toLowerCase().includes('does not match')) {
+                        showMessage(
+                            'error',
+                            `Su sesión actual no es válida. Debe iniciar sesión de nuevo. En breve será redirigido a la página de inicio de sesión.`
+                        )
+                        setTimeout(() => {
+                            localStorage.clear()
+                            navigate('/inicio-empleados')
+                        }, 5000)
+                    }
                 } else {
                     showMessage(
                         'error',
@@ -593,7 +636,7 @@ export default function OptometristSchedule() {
                 <div className='search-form'>
                     <Form name="search" layout="inline">
                         <Form.Item name="search-input">
-                            <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Nombre del paciente" onChange={e => setSearchText(e.target.value)}/>
+                            <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Nombre del paciente" onChange={e => setSearchText(e.target.value)} autoComplete='off'/>
                         </Form.Item>
                     </Form>
                 </div>
@@ -618,7 +661,7 @@ export default function OptometristSchedule() {
                                     }]}
                                     initialValue={patient?.usuario.nombre}
                                 >
-                                    <Input prefix={<UserOutlined/>} placeholder='Nombres'/>
+                                    <Input prefix={<UserOutlined/>} placeholder='Nombres' autoComplete='off'/>
                                 </Form.Item>
                                     
                                 <Form.Item label='Apellidos' name="apellido" 
@@ -628,7 +671,7 @@ export default function OptometristSchedule() {
                                     }]}
                                     initialValue={patient?.usuario.apellido}
                                 >
-                                    <Input prefix={<UserOutlined/>} placeholder='Apellidos'/>
+                                    <Input prefix={<UserOutlined/>} placeholder='Apellidos' autoComplete='off'/>
                                 </Form.Item>
 
                                 <Form.Item label='Correo electrónico' name="correo"
@@ -643,7 +686,7 @@ export default function OptometristSchedule() {
                                     ]}
                                     initialValue={patient?.usuario.correo}
                                 >
-                                    <Input prefix={<MailOutlined/>} placeholder='Correo eléctronico'/>
+                                    <Input prefix={<MailOutlined/>} placeholder='Correo eléctronico' autoComplete='off'/>
                                 </Form.Item>
                                 
                                 <Form.Item label='Dirección' name="direccion"
@@ -653,20 +696,40 @@ export default function OptometristSchedule() {
                                     }]}
                                     initialValue={patient?.usuario.direccion}
                                 >
-                                    <Input prefix={<UserOutlined/>} placeholder='Dirección'/>
+                                    <Input prefix={<UserOutlined/>} placeholder='Dirección' autoComplete='off'/>
                                 </Form.Item>
 
                                 <Form.Item label='Número telefónico' name="telefono"
-                                    rules={[{
+                                    rules={[
+                                        {
                                         type: 'number',
                                         message: 'El número ingresado no es válido!'
-                                    },{
+                                    },
+                                    {
                                         required: true,
                                         message: 'Por favor ingrese el número telefónico del paciente!'
-                                    }]}
+                                    },
+                                    ({ getFieldValue }) => ({
+                                        validator(_, value) {
+                                            const numericValue = Number(value);
+                                            if (!isNaN(numericValue)) {
+                                                const stringValue = String(numericValue);
+                                                if (stringValue.length < 7) {
+                                                    return Promise.reject('El número de número telefónico debe tener al menos 7 dígitos.');
+                                                }
+                                                if (stringValue.length > 10) {
+                                                    return Promise.reject('El número de número telefónico no puede tener más de 10 dígitos.');
+                                                }
+                                                return Promise.resolve();
+                                            } else {
+                                                return Promise.reject('El número ingresado no es válido!');
+                                            }
+                                        }
+                                    })
+                                ]}
                                     initialValue={patient?.usuario.telefono}
                                 >
-                                    <InputNumber prefix={<PhoneOutlined/>} placeholder='Número telefónico'/>
+                                    <InputNumber prefix={<PhoneOutlined/>} placeholder='Número telefónico' autoComplete='off'/>
                                 </Form.Item>
 
                                 <Form.Item label='Documento de identidad' name="cedula" 
@@ -676,10 +739,27 @@ export default function OptometristSchedule() {
                                     },{
                                             required: true,
                                             message: 'Por favor ingrese el número de identificación del paciente!'
-                                    }]}
+                                    },
+                                    ({ getFieldValue }) => ({
+                                        validator(_, value) {
+                                            const numericValue = Number(value);
+                                            if (!isNaN(numericValue)) {
+                                                const stringValue = String(numericValue);
+                                                if (stringValue.length < 4) {
+                                                    return Promise.reject('El número de documento de identidad debe tener al menos 4 dígitos.');
+                                                }
+                                                if (stringValue.length > 12) {
+                                                    return Promise.reject('El número de documento de identidad no puede tener más de 12 dígitos.');
+                                                }
+                                                return Promise.resolve();
+                                            } else {
+                                                return Promise.reject('El número ingresado no es válido!');
+                                            }
+                                        }
+                                    })]}
                                     initialValue={patient?.usuario.cedula}
                                 >
-                                    <InputNumber prefix={<IdcardOutlined/>} placeholder='Ingrese el número de cédula sin puntos'/>
+                                    <InputNumber prefix={<IdcardOutlined/>} placeholder='Ingrese el número de cédula sin puntos' autoComplete='off'/>
                                 </Form.Item>
                 
 
@@ -690,7 +770,7 @@ export default function OptometristSchedule() {
                                     }]}
                                     initialValue={patient?.paciente.ocupacion}
                                 >
-                                    <Input prefix={<UserOutlined/>} placeholder='Ocupación'/>
+                                    <Input prefix={<UserOutlined/>} placeholder='Ocupación' autoComplete='off'/>
                                 </Form.Item>
 
                                 <Form.Item label='Fecha de nacimiento' name="fechanacimiento"

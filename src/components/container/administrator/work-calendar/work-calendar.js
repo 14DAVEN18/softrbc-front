@@ -63,15 +63,26 @@ export default function WorkCalendar() {
             const response = await getOptometrists(); // Call the create function from admin Service.js
             setOptometristsData(response.data)
         } catch (error) {
-            if(error.response.data.error.toLowerCase().includes('expired')){
-                showMessage(
-                    'error',
-                    `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
-                )
-                setTimeout(() => {
-                    localStorage.clear()
-                    navigate('/inicio-empleados')
-                }, 5000)
+            if (error.response.data.hasOwnProperty('error')) {
+                if (error.response.data.error.toLowerCase().includes('expired')){
+                    showMessage(
+                        'error',
+                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/inicio-empleados')
+                    }, 5000)
+                } else if (error.response.data.error.toLowerCase().includes('does not match')) {
+                    showMessage(
+                        'error',
+                        `Su sesión actual no es válida. Debe iniciar sesión de nuevo. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/inicio-empleados')
+                    }, 5000)
+                }
             } else {
                 showMessage(
                     'error',
@@ -116,15 +127,26 @@ export default function WorkCalendar() {
             });
             setCalendarsData(calendarFormatted);
         } catch (error) {
-            if(error.response.data.error.toLowerCase().includes('expired')){
-                showMessage(
-                    'error',
-                    `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
-                )
-                setTimeout(() => {
-                    localStorage.clear()
-                    navigate('/inicio-empleados')
-                }, 5000)
+            if (error.response.data.hasOwnProperty('error')) {
+                if (error.response.data.error.toLowerCase().includes('expired')){
+                    showMessage(
+                        'error',
+                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/inicio-empleados')
+                    }, 5000)
+                } else if (error.response.data.error.toLowerCase().includes('does not match')) {
+                    showMessage(
+                        'error',
+                        `Su sesión actual no es válida. Debe iniciar sesión de nuevo. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/inicio-empleados')
+                    }, 5000)
+                }
             } else {
                 showMessage(
                     'error',
@@ -235,23 +257,34 @@ export default function WorkCalendar() {
             if(response.status === 200) {
                 showMessage(
                     'success',
-                    'Ocurrió un error al creador optometras'
+                    'El calendario laboral se creó exitosamente.'
                 )
             }
         } catch (error) {
-            if(error.response.data.error.toLowerCase().includes('expired')){
-                showMessage(
-                    'error',
-                    `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
-                )
-                setTimeout(() => {
-                    localStorage.clear()
-                    navigate('/inicio-empleados')
-                }, 5000)
+            if (error.response.data.hasOwnProperty('error')) {
+                if (error.response.data.error.toLowerCase().includes('expired')){
+                    showMessage(
+                        'error',
+                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/inicio-empleados')
+                    }, 5000)
+                } else if (error.response.data.error.toLowerCase().includes('does not match')) {
+                    showMessage(
+                        'error',
+                        `Su sesión actual no es válida. Debe iniciar sesión de nuevo. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/inicio-empleados')
+                    }, 5000)
+                }
             } else {
                 showMessage(
                     'error',
-                    `Ocurrió un error al crear el calendario. ${error.data}`
+                    `Ocurrió un error al crear el calendario laboral. ${error.data}`
                 )
             }
         } finally {
@@ -308,7 +341,7 @@ export default function WorkCalendar() {
                         idcalendario: selectedCalendar.idcalendario,
                         idoptometra: selectedCalendar.idoptometra,
                         nuevadiasatencion: diasatencion,
-                        nuevaduracion: selectedCalendar.duracioncita
+                        nuevaduracion: updateForm.getFieldValue('duracioncita')
                     }
                 );
                 if(response.status === 200) {
@@ -319,15 +352,26 @@ export default function WorkCalendar() {
                 }
                 setLoading(true);
             } catch (error) {
-                if(error.response.data.error.toLowerCase().includes('expired')){
-                    showMessage(
-                        'error',
-                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
-                    )
-                    setTimeout(() => {
-                        localStorage.clear()
-                        navigate('/inicio-empleados')
-                    }, 5000)
+                if (error.response.data.hasOwnProperty('error')) {
+                    if (error.response.data.error.toLowerCase().includes('expired')){
+                        showMessage(
+                            'error',
+                            `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                        )
+                        setTimeout(() => {
+                            localStorage.clear()
+                            navigate('/inicio-empleados')
+                        }, 5000)
+                    } else if (error.response.data.error.toLowerCase().includes('does not match')) {
+                        showMessage(
+                            'error',
+                            `Su sesión actual no es válida. Debe iniciar sesión de nuevo. En breve será redirigido a la página de inicio de sesión.`
+                        )
+                        setTimeout(() => {
+                            localStorage.clear()
+                            navigate('/inicio-empleados')
+                        }, 5000)
+                    }
                 } else {
                     showMessage(
                         'error',

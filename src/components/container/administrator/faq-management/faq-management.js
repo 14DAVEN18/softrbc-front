@@ -59,15 +59,26 @@ export default function FAQManagement() {
             const response = await getQuestions();
             setQuestionsData(response.data)
         } catch (error) {
-            if(error.response.data.error.toLowerCase().includes('expired')){
-                showMessage(
-                    'error',
-                    `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
-                )
-                setTimeout(() => {
-                    localStorage.clear()
-                    navigate('/inicio-empleados')
-                }, 5000)
+            if (error.response.data.hasOwnProperty('error')) {
+                if (error.response.data.error.toLowerCase().includes('expired')){
+                    showMessage(
+                        'error',
+                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/inicio-empleados')
+                    }, 5000)
+                } else if (error.response.data.error.toLowerCase().includes('does not match')) {
+                    showMessage(
+                        'error',
+                        `Su sesión actual no es válida. Debe iniciar sesión de nuevo. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/inicio-empleados')
+                    }, 5000)
+                }
             } else {
                 showMessage(
                     'error',
@@ -149,15 +160,26 @@ export default function FAQManagement() {
                 )
             }
         } catch (error) {
-            if(error.response.data.error.toLowerCase().includes('expired')){
-                showMessage(
-                    'error',
-                    `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
-                )
-                setTimeout(() => {
-                    localStorage.clear()
-                    navigate('/inicio-empleados')
-                }, 5000)
+            if (error.response.data.hasOwnProperty('error')) {
+                if (error.response.data.error.toLowerCase().includes('expired')){
+                    showMessage(
+                        'error',
+                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/inicio-empleados')
+                    }, 5000)
+                } else if (error.response.data.error.toLowerCase().includes('does not match')) {
+                    showMessage(
+                        'error',
+                        `Su sesión actual no es válida. Debe iniciar sesión de nuevo. En breve será redirigido a la página de inicio de sesión.`
+                    )
+                    setTimeout(() => {
+                        localStorage.clear()
+                        navigate('/inicio-empleados')
+                    }, 5000)
+                }
             } else {
                 showMessage(
                     'error',
@@ -208,7 +230,7 @@ export default function FAQManagement() {
                 const response = await createQuestion(
                     {
                         idadmin: JSON.parse(localStorage.getItem('user')).idadmin,
-                        pregunta: values.pregunta,
+                        pregunta: `¿${values.pregunta}?`,
                         respuesta: values.respuesta
                     }
                 );
@@ -220,15 +242,26 @@ export default function FAQManagement() {
                     )
                 }
             } catch (error) {
-                if(error.response.data.error.toLowerCase().includes('expired')){
-                    showMessage(
-                        'error',
-                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
-                    )
-                    setTimeout(() => {
-                        localStorage.clear()
-                        navigate('/inicio-empleados')
-                    }, 5000)
+                if (error.response.data.hasOwnProperty('error')) {
+                    if (error.response.data.error.toLowerCase().includes('expired')){
+                        showMessage(
+                            'error',
+                            `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                        )
+                        setTimeout(() => {
+                            localStorage.clear()
+                            navigate('/inicio-empleados')
+                        }, 5000)
+                    } else if (error.response.data.error.toLowerCase().includes('does not match')) {
+                        showMessage(
+                            'error',
+                            `Su sesión actual no es válida. Debe iniciar sesión de nuevo. En breve será redirigido a la página de inicio de sesión.`
+                        )
+                        setTimeout(() => {
+                            localStorage.clear()
+                            navigate('/inicio-empleados')
+                        }, 5000)
+                    }
                 } else {
                     showMessage(
                         'error',
@@ -292,15 +325,26 @@ export default function FAQManagement() {
                     )
                 }
             } catch (error) {
-                if(error.response.data.error.toLowerCase().includes('expired')){
-                    showMessage(
-                        'error',
-                        `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
-                    )
-                    setTimeout(() => {
-                        localStorage.clear()
-                        navigate('/inicio-empleados')
-                    }, 5000)
+                if (error.response.data.hasOwnProperty('error')) {
+                    if (error.response.data.error.toLowerCase().includes('expired')){
+                        showMessage(
+                            'error',
+                            `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                        )
+                        setTimeout(() => {
+                            localStorage.clear()
+                            navigate('/inicio-empleados')
+                        }, 5000)
+                    } else if (error.response.data.error.toLowerCase().includes('does not match')) {
+                        showMessage(
+                            'error',
+                            `Su sesión actual no es válida. Debe iniciar sesión de nuevo. En breve será redirigido a la página de inicio de sesión.`
+                        )
+                        setTimeout(() => {
+                            localStorage.clear()
+                            navigate('/inicio-empleados')
+                        }, 5000)
+                    }
                 } else {
                     showMessage(
                         'error',
@@ -322,6 +366,7 @@ export default function FAQManagement() {
         setIsUpdateModalOpen(false);
         setIsUpdateFormComplete(false);
         setSelectedQuestion(null);
+        updateForm.resetFields()
     };
 
 
@@ -381,7 +426,7 @@ export default function FAQManagement() {
             <div className='search-form'>
                 <Form name="search" layout="inline">
                     <Form.Item name="search-input">
-                        <Input prefix={<CheckOutlined className="site-form-item-icon" />} placeholder="Palabra clave de la pregunta" onChange={e => setSearchText(e.target.value)}/>
+                        <Input prefix={<CheckOutlined className="site-form-item-icon" />} placeholder="Palabra clave de la pregunta" onChange={e => setSearchText(e.target.value)} autoComplete='off'/>
                     </Form.Item>
                 </Form>
                 
@@ -450,7 +495,7 @@ export default function FAQManagement() {
                             message: 'Por favor ingrese una pregunta!',
                         }]}
                     >
-                        <Input prefix={<QuestionOutlined/>} placeholder='Pregunta'/>
+                        <Input prefix={<QuestionOutlined/>} placeholder='Pregunta' autoComplete='off'/>
                     </Form.Item>
                         
                         
@@ -462,7 +507,7 @@ export default function FAQManagement() {
                             message: 'Por favor ingrese la respuesta de la pregunta!',
                         }]}
                     >
-                        <Input prefix={<CheckOutlined/>} placeholder='Respuesta'/>
+                        <Input prefix={<CheckOutlined/>} placeholder='Respuesta' autoComplete='off'/>
                     </Form.Item>
                 </Form>
             </Modal>
@@ -500,7 +545,7 @@ export default function FAQManagement() {
                         }]}
                         initialValue={selectedQuestion?.pregunta}
                     >
-                        <Input prefix={<QuestionOutlined/>} placeholder='Pregunta'/>
+                        <Input prefix={<QuestionOutlined/>} placeholder='Pregunta' autoComplete='off'/>
                     </Form.Item>
 
                     <Form.Item
@@ -513,7 +558,7 @@ export default function FAQManagement() {
                         ]}
                         initialValue={selectedQuestion?.respuesta}
                     >
-                        <Input prefix={<CheckOutlined/>} placeholder='Respuesta'/>
+                        <Input prefix={<CheckOutlined/>} placeholder='Respuesta' autoComplete='off'/>
                     </Form.Item>
                 </Form>
             </Modal>
