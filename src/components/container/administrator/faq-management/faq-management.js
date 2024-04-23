@@ -402,11 +402,11 @@ export default function FAQManagement() {
             key: 'action',
             render: (_, record) => (
             <Space size="middle">
-                <Button type="primary" onClick={ () => showUpdateModal(record)} htmlType='submit'>
-                    Modificar
-                </Button>
                 <Button type="primary" danger onClick={() => showDeletionModal(record)} htmlType='submit'>
                     Eliminar
+                </Button>
+                <Button type="primary" onClick={ () => showUpdateModal(record)} htmlType='submit'>
+                    Modificar
                 </Button>
             </Space>
             ),

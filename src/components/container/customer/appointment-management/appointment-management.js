@@ -350,11 +350,11 @@ export default function AppointmentManagement() {
         
         try {
             setLoading(true);
-            const response = await createAppointment(cita); // Call the create function from userService.js
+            const response = await createAppointment(cita);
             if (response.status === 200) {
                 showMessage(
                     'success',
-                    `La cita se agendó exitosamente. En breve será redirigido al chat.`
+                    `La cita se agendó exitosamente. Se envió un correo electrónico con los datos de su cita. En breve será redirigido al chat.`
                 )
             }
         } catch (error) {

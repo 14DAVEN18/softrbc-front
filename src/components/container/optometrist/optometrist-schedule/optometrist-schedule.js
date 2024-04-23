@@ -135,7 +135,7 @@ export default function OptometristSchedule() {
         if(!localStorage.getItem('token')) {
             navigate("/inicio-empleados")
         } else {
-            const today = new Date(2024, 3, 21)
+            const today = new Date(2024, 3, 23)
             const selectedDayFormatted = format(today, 'dd/MM/yyyy');
             fetchAppointments(selectedDayFormatted)
         }

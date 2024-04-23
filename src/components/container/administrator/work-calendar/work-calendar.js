@@ -526,7 +526,7 @@ export default function WorkCalendar() {
                         >
                             <Select 
                                 size={'large'}
-                                defaultValue="Seleccione una duración"
+                                defaultValue="Seleccione una duración de cita"
                                 onChange={handleChangeDuration}
                                 options={selectDurationOptions} 
                                 disabled={filteredData.length===0}
@@ -615,7 +615,7 @@ export default function WorkCalendar() {
                         >
                             <Select 
                                 size={'large'}
-                                defaultValue="Seleccione una duración"
+                                defaultValue="Seleccione una duración de cita"
                                 onChange={handleChangeDuration}
                                 options={selectDurationOptions} />
                         </Form.Item>

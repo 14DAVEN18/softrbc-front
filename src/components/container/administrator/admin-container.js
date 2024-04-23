@@ -40,7 +40,7 @@ const items = [
     {
         type: 'divider'
     },
-    getItem(<Link to="/administrador/reportes">Reportes</Link>, '5', <BookOutlined />),
+    getItem(<Link to="/administrador/reportes">Reportes de citas inactivas</Link>, '5', <BookOutlined />),
     {
         type: 'divider'
     },
