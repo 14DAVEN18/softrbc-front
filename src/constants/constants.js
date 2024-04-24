@@ -1,69 +1,57 @@
 
 
 // AUTH RELATED URLs
-export const LOGIN_USER = 'http://localhost:8080/login'
-export const VALIDATE_RECOVERY_KEY = 'http://localhost:8080/usuarios/verificarCodigoRecuperacion'
-export const RESET_PASSWORD = 'http://localhost:8080/usuarios/actualizarContrasena'
+export const LOGIN_USER = 'http://20.84.118.153:8080/login'
+export const VALIDATE_RECOVERY_KEY = 'http://20.84.118.153:8080/usuarios/verificarCodigoRecuperacion'
+export const RESET_PASSWORD = 'http://20.84.118.153:8080/usuarios/actualizarContrasena'
 
 
 // OPTOMETRIST RELATED URLs
-export const GET_USER = 'http://localhost:8080/usuarios/listaOptometras'
-export const CREATE_USER = "http://localhost:8080/usuarios/nueva"
-export const MODIFY_USER = 'http://localhost:8080/usuarios/modificar'
-export const UPDATE_USER_STATUS = 'http://localhost:8080/usuarios/cambiarEstado'
+export const GET_USER = 'http://20.84.118.153:8080/usuarios/listaOptometras'
+export const CREATE_USER = "http://20.84.118.153:8080/usuarios/nueva"
+export const MODIFY_USER = 'http://20.84.118.153:8080/usuarios/modificar'
+export const UPDATE_USER_STATUS = 'http://20.84.118.153:8080/usuarios/cambiarEstado'
 
 
 // PATIENT RELATED URLs
-export const CREATE_PATIENT = "http://localhost:8080/paciente/nueva"
-export const GET_PATIENT_BY_ID = 'http://localhost:8080/paciente/pacienteEncontrado'
-export const UPDATE_PATIENT = "http://localhost:8080/paciente/actualizar"
-export const FIND_PATIENT_MEDICAL_RECORDS = 'http://localhost:8080/HistoriaClinica/buscarHistoria'
+export const CREATE_PATIENT = "http://20.84.118.153:8080/paciente/nueva"
+export const GET_PATIENT_BY_ID = 'http://20.84.118.153:8080/paciente/pacienteEncontrado'
+export const UPDATE_PATIENT = "http://20.84.118.153:8080/paciente/actualizar"
+export const FIND_PATIENT_MEDICAL_RECORDS = 'http://20.84.118.153:8080/HistoriaClinica/buscarHistoria'
 
 // CALENDAR RELATED URLs
-export const GET_CALENDARS = 'http://localhost:8080/calendario/calendariolista'
-export const CREATE_CALENDAR = 'http://localhost:8080/calendario/nueva'
-export const MODIFY_CALENDAR = 'http://localhost:8080/calendario/modificar'
-export const GET_APPOINTMENT_DURATION = 'http://localhost:8080/calendario/duracioncita'
-export const GET_DAYS_OPTOMETRIST = 'http://localhost:8080/calendario/calendariooptometra'
+export const GET_CALENDARS = 'http://20.84.118.153:8080/calendario/calendariolista'
+export const CREATE_CALENDAR = 'http://20.84.118.153:8080/calendario/nueva'
+export const MODIFY_CALENDAR = 'http://20.84.118.153:8080/calendario/modificar'
+export const GET_APPOINTMENT_DURATION = 'http://20.84.118.153:8080/calendario/duracioncita'
+export const GET_DAYS_OPTOMETRIST = 'http://20.84.118.153:8080/calendario/calendariooptometra'
 
 
 // QUESTION RELATED URLs
-export const GET_QUESTION = 'http://localhost:8080/preguntas/listaPreguntas'
-export const CREATE_QUESTION = 'http://localhost:8080/preguntas/nueva'
-export const MODIFY_QUESTION = 'http://localhost:8080/preguntas/modificar'
-export const DELETE_QUESTION = 'http://localhost:8080/preguntas/eliminar'
+export const GET_QUESTION = 'http://20.84.118.153:8080/preguntas/listaPreguntas'
+export const CREATE_QUESTION = 'http://20.84.118.153:8080/preguntas/nueva'
+export const MODIFY_QUESTION = 'http://20.84.118.153:8080/preguntas/modificar'
+export const DELETE_QUESTION = 'http://20.84.118.153:8080/preguntas/eliminar'
 
 
 // APPOINTMENT RELATED URLs
-export const GET_APPOINTMENTS_TIME = 'http://localhost:8080/cita/lista' // Param Retorna solo horas por fecha
-export const GET_APPOINTMENTS = 'http://localhost:8080/cita/listacitas' // Param Retorna un array de listas completas
-export const CREATE_APPOINTMENT = 'http://localhost:8080/cita/nueva'
-export const VERIFY_APPOINTMENT = 'http://localhost:8080/cita/verificarCodigo' // Param
-export const DELETE_APPOINTMENT = 'http://localhost:8080/cita/eliminar' // Path
-export const CANCEL_DAY = 'http://localhost:8080/cita/export/pdf' // Param
-export const GET_CANCELED_APPOINTMENTS = 'http://localhost:8080/cita/listacitasInactivas'
+export const GET_APPOINTMENTS_TIME = 'http://20.84.118.153:8080/cita/lista' // Param Retorna solo horas por fecha
+export const GET_APPOINTMENTS = 'http://20.84.118.153:8080/cita/listacitas' // Param Retorna un array de listas completas
+export const CREATE_APPOINTMENT = 'http://20.84.118.153:8080/cita/nueva'
+export const VERIFY_APPOINTMENT = 'http://20.84.118.153:8080/cita/verificarCodigo' // Param
+export const DELETE_APPOINTMENT = 'http://20.84.118.153:8080/cita/eliminar' // Path
+export const CANCEL_DAY = 'http://20.84.118.153:8080/cita/export/pdf' // Param
+export const GET_CANCELED_APPOINTMENTS = 'http://20.84.118.153:8080/cita/listacitasInactivas'
 
 // CHANGELOG RELATED URLs
-export const GET_CHANGELOG = 'http://localhost:8080/auditoria/informacion'
+export const GET_CHANGELOG = 'http://20.84.118.153:8080/auditoria/informacion'
 
 
 
 // MEDICAL RECORD URLs
-export const CREATE_MEDICAL_RECORD = 'http://localhost:8080/HistoriaClinica/crearhistoria'
-export const ADD_MEDICAL_RECORD = 'http://localhost:8080/HistoriaClinica/nueva'
-export const GENERATE_PDF_FORMULA = 'http://localhost:8080/HistoriaClinica/generarFormula'
-
-
-
-export const USER_ALREADY_REGISTERED = "Ya tienes una cuenta asociada con ese correo electrónico..";
-export const USER_DOES_NOT_EXIST = "No hay cuenta que coincida con las credeciales ingresadas.";
-export const INVALID_PASSWORD = "La contraseña ingresada es invalida.";
-export const USER_NOT_CREATED = "El usuario no se puedo crear.";
-export const TRANSACTION_NOT_CREATED = 'No se puedo registrar el hecho económico.';
-export const NO_TRANSACTIONS_LISTED = 'No existen transacciones que correspondan con el tipo seleccionado.';
-export const USER_SUCCESSFULLY_REGISTERED = "El usuario ha sido registrado exitósamente.";
-export const TRANSACTION_SUCCESSFULLY_REGISTERED = "El hecho económico fue registrado exitósamente.";
-export const CREDENTIALS_SUCCESSFULLY_VALIDATED = "Las credenciales de usuario han sido validadas exitósamente.";
+export const CREATE_MEDICAL_RECORD = 'http://20.84.118.153:8080/HistoriaClinica/crearhistoria'
+export const ADD_MEDICAL_RECORD = 'http://20.84.118.153:8080/HistoriaClinica/nueva'
+export const GENERATE_PDF_FORMULA = 'http://20.84.118.153:8080/HistoriaClinica/generarFormula'
 
 
 
