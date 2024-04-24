@@ -27,7 +27,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build --warn",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "setup": "npm i && npm i antd && npm i react-router-dom && npm i date-fns && npm i react-redux redux && npm i react-json-pretty && npm i dayjs"

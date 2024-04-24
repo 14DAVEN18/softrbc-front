@@ -78,10 +78,19 @@ const EmployeeLogin = () => {
         try {
             await handlerLogin({cedula: values.cedula, password: values.password})
         } catch(error) {
-            showMessage(
-                'error',
-                `Las credenciales proporcionadas son incorrectas. Verifiquelas e inténtelo nuevamente.`
-            )
+            if(error.hasOwnProperty('message')) {
+                if(error.message.toLowerCase() === 'network error') {
+                    showMessage(
+                        'error',
+                        `No se puedo conectar al servidor. Por favor intente más tarde.`
+                    )
+                }
+            } else {
+                showMessage(
+                    'error',
+                    `Las credenciales proporcionadas son incorrectas. Verifiquelas e inténtelo nuevamente.`
+                )
+            }
         }
             
 
