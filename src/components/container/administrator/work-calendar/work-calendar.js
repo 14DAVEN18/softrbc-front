@@ -110,21 +110,27 @@ export default function WorkCalendar() {
     
     // TO FETCH CALENDAR DATA WHEN COMPONENT IS LOADED FOR THE FIRST TIME **************************************************************
     const [calendarsData, setCalendarsData] = useState(null);
+    const [remainingDays, setUsedDays] = useState([])
     const fetchCalendars = useCallback(async () => {
         try {
             const response = await getCalendars();
+            const allUsedDays = [];
 
             const calendarFormatted = response.data.map((calendar) => {
                 const diasAtencionFormatted = calendar.diasatencion.split('.').map(day => {
                     const foundDay = days.find(d => d.day.toLowerCase() === day.toLowerCase());
-                    return foundDay ? { key: foundDay.key, day: foundDay.day } : null; // Return object with key and day if day is found, otherwise null
+                    return foundDay ? { key: foundDay.key, day: foundDay.day } : null;
                 });
-    
+                const filteredDiasAtencion = diasAtencionFormatted.filter(item => item != null);
+
+                const remainingDays = days.filter(day => filteredDiasAtencion.some(d => d.key === day.key))
+                allUsedDays.push(...remainingDays)
                 return {
                     ...calendar,
-                    diasatencion: diasAtencionFormatted.filter(item => item !== null) // Filter out null values
+                    diasatencion: diasAtencionFormatted
                 };
             });
+            setUsedDays(days.filter(day => !allUsedDays.some(d => d.key === day.key)))
             setCalendarsData(calendarFormatted);
         } catch (error) {
             if (error.response.data.hasOwnProperty('error')) {
@@ -157,7 +163,6 @@ export default function WorkCalendar() {
             setLoading(false);
         }
     }, [navigate])
-
 
 
 
@@ -239,11 +244,12 @@ export default function WorkCalendar() {
     
     const showCreationModal = () => {
         setIsCreationModalOpen(true);
+        setTargetDays([])
     }
 
     const handleCreateCalendar = async () => {
         
-        const diasatencion = days.filter(item => targetDays.includes(item.key))
+        const diasatencion = remainingDays.filter(item => targetDays.includes(item.key))
             .map(item => item.day)
             .join(".")
         try {
@@ -310,6 +316,7 @@ export default function WorkCalendar() {
     const [selectedCalendar, setSelectedCalendar] = useState(null)
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
     const [isUpdateFormComplete, setIsUpdateFormComplete] = useState(false);
+    const [modifyDays, setModifyDays] = useState ([])
     const [updateForm] = Form.useForm();
 
 
@@ -319,6 +326,7 @@ export default function WorkCalendar() {
     };
     
     const showUpdateModal = (calendar) => {
+        setModifyDays([...remainingDays, ...calendar.diasatencion])
         setSelectedCalendar(calendar);
         updateForm.setFieldsValue(calendar);
         setTargetDays(calendar.diasatencion.map(day => day.key))
@@ -382,7 +390,7 @@ export default function WorkCalendar() {
                 fetchCalendars();
                 setIsUpdateModalOpen(false);
                 setIsUpdateFormComplete(false);
-                setTargetDays(initialTargetDays)
+                setTargetDays(remainingDays)
                 setSelectedCalendar(null);
                 setLoading(false);
             }
@@ -502,7 +510,7 @@ export default function WorkCalendar() {
                             ]}
                         >
                             <Transfer
-                                dataSource={days}
+                                dataSource={remainingDays}
                                 titles={['Días disponibles', 'Días a trabajar']}
                                 targetKeys={targetDays}
                                 selectedKeys={selectedDays}
@@ -591,7 +599,7 @@ export default function WorkCalendar() {
                             initialValue={selectedCalendar?.diasatencion}
                         >
                             <Transfer
-                                dataSource={days}
+                                dataSource={modifyDays}
                                 titles={['Días disponibles', 'Días a trabajar']}
                                 targetKeys={targetDays}
                                 selectedKeys={selectedDays}

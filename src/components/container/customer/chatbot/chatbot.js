@@ -138,13 +138,40 @@ function Chatbot({
                                                 addMessage({ text: 'Estimado usuario. los detalles de su cita son los siguientes:'})
                                                 addMessage({ text: `Fecha: ${response.data.fecha}`, sender: 'bot' })
                                                 addMessage({ text: `Hora : ${response.data.hora}`, sender: 'bot' })
-                                                addMessage({ text: 'El chat volverá al menú principal en breve'})
+                                                addMessage({ text: '0. Menú principal.'})
                                             }
-                                            setTimeout(() => {
-                                                resetMessage();
-                                            }, 10000)
                                         } catch (error) {
-                                            addMessage({ text: error.response.data , sender: 'bot'})
+                                            if (error.response.data.hasOwnProperty('error')) {
+                                                if (error.response.data.error.toLowerCase().includes('expired')){
+                                                    addMessage({ text: 'Estimado usuario. Su sesión expiró. En unos segundos el sistema le pedirá sus credenciales de inicio de sesión.', sender: 'bot'})
+                                                    localStorage.clear()
+                        
+                                                    let countDown = 5;
+                                                    const countDownInterval = setInterval(() => {
+                                                        if (countDown === 0) {
+                                                            clearInterval(countDownInterval)
+                                                            setDisplayLogin(true)
+                                                        } else {
+                                                            addMessage({ text: `${countDown} segundo(s)`, sender: 'bot' });
+                                                            countDown--;
+                                                        }
+                                                    }, 1000)
+                                                } else if (error.response.data.error.toLowerCase().includes('does not match')) {
+                                                    addMessage({ text: 'Estimado usuario. Su sesión actual no es válida. En unos segundos el sistema le pedirá sus credenciales de inicio de sesión.', sender: 'bot'})
+                                                    localStorage.clear()
+
+                                                    let countDown = 5;
+                                                    const countDownInterval = setInterval(() => {
+                                                        if (countDown === 0) {
+                                                            clearInterval(countDownInterval)
+                                                            setDisplayLogin(true)
+                                                        } else {
+                                                            addMessage({ text: `${countDown} segundo(s)`, sender: 'bot' });
+                                                            countDown--;
+                                                        }
+                                                    }, 1000)
+                                                }
+                                            }
                                         }
                                         
                                     }
@@ -159,14 +186,41 @@ function Chatbot({
                                         try {
                                             const response = await cancelAppointment(userMessage)
                                             if(!response.data.estado) {
-                                                addMessage({ text: `Estimado usuario. La cita asociada con el código ${userMessage} fue cancelada. El chat volverá al menú principal en breve.`})
+                                                addMessage({ text: `Estimado usuario. La cita asociada con el código ${userMessage} fue cancelada.`})
                                                 addMessage({ text: '0. Menú principal.'})
                                             }
-                                            setTimeout(() => {
-                                                resetMessage();
-                                            }, 10000)
                                         } catch (error) {
-                                            addMessage({ text: `No se encontró una cita asociada con el código ${userMessage}. Por favor revise el número e intentelo de nuevo.`, sender: 'bot'})
+                                            if (error.response.data.hasOwnProperty('error')) {
+                                                if (error.response.data.error.toLowerCase().includes('expired')){
+                                                    addMessage({ text: 'Estimado usuario. Su sesión expiró. En unos segundos el sistema le pedirá sus credenciales de inicio de sesión.', sender: 'bot'})
+                                                    localStorage.clear()
+                        
+                                                    let countDown = 5;
+                                                    const countDownInterval = setInterval(() => {
+                                                        if (countDown === 0) {
+                                                            clearInterval(countDownInterval)
+                                                            setDisplayLogin(true)
+                                                        } else {
+                                                            addMessage({ text: `${countDown} segundo(s)`, sender: 'bot' });
+                                                            countDown--;
+                                                        }
+                                                    }, 1000)
+                                                } else if (error.response.data.error.toLowerCase().includes('does not match')) {
+                                                    addMessage({ text: 'Estimado usuario. Su sesión actual no es válida. En unos segundos el sistema le pedirá sus credenciales de inicio de sesión.', sender: 'bot'})
+                                                    localStorage.clear()
+
+                                                    let countDown = 5;
+                                                    const countDownInterval = setInterval(() => {
+                                                        if (countDown === 0) {
+                                                            clearInterval(countDownInterval)
+                                                            setDisplayLogin(true)
+                                                        } else {
+                                                            addMessage({ text: `${countDown} segundo(s)`, sender: 'bot' });
+                                                            countDown--;
+                                                        }
+                                                    }, 1000)
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -174,12 +228,6 @@ function Chatbot({
                         }
                     }
                 };
-                if(response.status === 200) {
-                    showMessage(
-                        'success',
-                        `Las preguntas se cargaron correctamente.`
-                    )
-                }
                 
                 // Set questionsData and decisionTree state
                 setCurrentLevel(initialDecisionTree)
@@ -197,7 +245,9 @@ function Chatbot({
     }, [addMessage, navigate, setCurrentLevel, setDecisionTree, setNewInput]);
 
 
-
+    useEffect(() => {
+        console.log("currenLevel: ", currentLevel)
+    })
 
 
     const handleLogin = () => {
@@ -211,11 +261,13 @@ function Chatbot({
         } else if(input === '2') {
             addMessage({ text: `Ha iniciado sesión correctamente.`, sender: 'bot' });
             addMessage({ text: `Por favor digite el número de cita que quiere verificar.`, sender: 'bot' });
-            setCurrentLevel(currentLevel[input].options)
+            if(currentLevel.hasOwnProperty(input))
+                setCurrentLevel(currentLevel[input].options)
         } else {
             addMessage({ text: `Ha iniciado sesión correctamente.`, sender: 'bot' });
             addMessage({ text: `Por favor digite el número de cita que quiere cancelar.`, sender: 'bot' });
-            setCurrentLevel(currentLevel[input].options)
+            if(currentLevel.hasOwnProperty(input))
+                setCurrentLevel(currentLevel[input].options)
         }
         setNewInput(null)
     };
@@ -293,7 +345,6 @@ function Chatbot({
             } else if (regex.test(option)) {
                 if (currentLevel.hasOwnProperty('code')) {
                     await currentLevel.code(option)
-                    setCurrentLevel(decisionTree)
                 } else {
                     addMessage({ text: 'Opción inválida. Por favor escriba una de las opcines dadas o ingrese un código ', sender: 'bot'});
                 }

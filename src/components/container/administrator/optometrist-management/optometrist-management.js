@@ -282,9 +282,10 @@ export default function OptometristManagement() {
                         }, 7000)
                     }
                 } else {
+                    console.log(error)
                     showMessage(
                         'error',
-                        `Ocurrió un error al registrar los datos del optometra. ${error.message}`
+                        `Ocurrió un error al registrar los datos del optometra. ${error.response.data}`
                     )
                 }
                 creationForm.resetFields()
