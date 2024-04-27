@@ -141,6 +141,7 @@ function Chatbot({
                                                 addMessage({ text: '0. Menú principal.'})
                                             }
                                         } catch (error) {
+                                            console.log(error)
                                             if (error.response.data.hasOwnProperty('error')) {
                                                 if (error.response.data.error.toLowerCase().includes('expired')){
                                                     addMessage({ text: 'Estimado usuario. Su sesión expiró. En unos segundos el sistema le pedirá sus credenciales de inicio de sesión.', sender: 'bot'})
@@ -171,6 +172,10 @@ function Chatbot({
                                                         }
                                                     }, 1000)
                                                 }
+                                            } else {
+                                                addMessage({ text: `${error.response.data}`, sender: 'bot'})
+                                                addMessage({ text: `Revise el código e inténtelo de nuevo.`, sender: 'bot'})
+                                                addMessage({ text: `O ingrese 0 para volver al menú principal`, sender: 'bot'})
                                             }
                                         }
                                         
@@ -221,6 +226,11 @@ function Chatbot({
                                                     }, 1000)
                                                 }
                                             }
+                                            else {
+                                                addMessage({ text: `${error.response.data}`, sender: 'bot'})
+                                                addMessage({ text: `Revise el código e inténtelo de nuevo.`, sender: 'bot'})
+                                                addMessage({ text: `O ingrese 0 para volver al menú principal`, sender: 'bot'})
+                                            }
                                         }
                                     }
                                 }
@@ -243,11 +253,6 @@ function Chatbot({
         // Call fetchDataAndConstructTree when component mounts
         fetchDataAndConstructTree();
     }, [addMessage, navigate, setCurrentLevel, setDecisionTree, setNewInput]);
-
-
-    useEffect(() => {
-        console.log("currenLevel: ", currentLevel)
-    })
 
 
     const handleLogin = () => {
