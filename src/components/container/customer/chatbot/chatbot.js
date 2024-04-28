@@ -238,6 +238,8 @@ function Chatbot({
                         }
                     }
                 };
+
+                console.log("initialDecisionTree: ", initialDecisionTree)
                 
                 // Set questionsData and decisionTree state
                 setCurrentLevel(initialDecisionTree)
