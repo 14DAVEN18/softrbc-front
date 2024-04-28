@@ -227,11 +227,6 @@ function Chatbot({
                         }
                     }
                 };
-
-                // Fetch questions data
-                const response = await getQuestions();
-                const questions = response.data;
-
                 const optionsFor1 = {};
                 questions.forEach((question, index) => {
                     optionsFor1[index + 1] = {
@@ -248,6 +243,12 @@ function Chatbot({
                 // Set questionsData and decisionTree state
                 setCurrentLevel(initialDecisionTree)
                 setDecisionTree(initialDecisionTree) 
+
+                // Fetch questions data
+                const response = await getQuestions();
+                const questions = response.data;
+
+                
             } catch (error) {
                 console.log("Falló algo")
             }
