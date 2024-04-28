@@ -88,8 +88,9 @@ function Chatbot({
 
     // Fetch questions data and construct decision tree
     useEffect(() => {
-        console.log("use effect decision tree")
+        
         const fetchDataAndConstructTree = async () => {
+            console.log("fetchDataAndContructTree")
             try {
                 // Fetch questions data
                 const response = await getQuestions();
