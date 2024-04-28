@@ -142,7 +142,6 @@ function Chatbot({
                                                 addMessage({ text: '0. Menú principal.'})
                                             }
                                         } catch (error) {
-                                            console.log(error)
                                             if (error.response.data.hasOwnProperty('error')) {
                                                 if (error.response.data.error.toLowerCase().includes('expired')){
                                                     addMessage({ text: 'Estimado usuario. Su sesión expiró. En unos segundos el sistema le pedirá sus credenciales de inicio de sesión.', sender: 'bot'})
@@ -256,10 +255,7 @@ function Chatbot({
         fetchDataAndConstructTree();
     }, [addMessage, navigate, setCurrentLevel, setDecisionTree, setNewInput]);
 
-    useEffect(() => {
-        console.log("currentlevel", currentLevel)
-        console.log("decisionTree: ", decisionTree)
-    })
+
 
 
     const handleLogin = () => {
