@@ -91,7 +91,19 @@ function Chatbot({
         
         const fetchDataAndConstructTree = async () => {
             console.log("fetchDataAndContructTree")
+
             try {
+                const response = await getQuestions();
+                const questions = response.data;
+
+                const optionsFor1 = {};
+                questions.forEach((question, index) => {
+                    optionsFor1[index + 1] = {
+                        pregunta: question.pregunta,
+                        respuesta: question.respuesta
+                    };
+                });
+                
                 // Construct decision tree with fetched questions data
                 const initialDecisionTree = {
                     '1': {
@@ -227,30 +239,16 @@ function Chatbot({
                         }
                     }
                 };
-                /*const optionsFor1 = {};
-                questions.forEach((question, index) => {
-                    optionsFor1[index + 1] = {
-                        pregunta: question.pregunta,
-                        respuesta: question.respuesta
-                    };
-                });
-                
 
                 
-
-                console.log("initialDecisionTree: ", initialDecisionTree)
-                */
                 // Set questionsData and decisionTree state
                 setCurrentLevel(initialDecisionTree)
                 setDecisionTree(initialDecisionTree) 
-
-                // Fetch questions data
-                /*const response = await getQuestions();
-                const questions = response.data;*/
-
-                
             } catch (error) {
-                console.log("Falló algo")
+                showMessage(
+                    'error',
+                    'Ocurrió un error al cargar las preguntas.'
+                )
             }
         };
 
