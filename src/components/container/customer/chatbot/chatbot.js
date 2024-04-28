@@ -251,6 +251,10 @@ function Chatbot({
         fetchDataAndConstructTree();
     }, [addMessage, navigate, setCurrentLevel, setDecisionTree, setNewInput]);
 
+    useEffect(() => {
+        console.log("currentlevel", currentLevel)
+    })
+
 
     const handleLogin = () => {
         setDisplayLogin(false);
