@@ -255,6 +255,7 @@ function Chatbot({
 
     useEffect(() => {
         console.log("currentlevel", currentLevel)
+        console.log("decisionTree: ", decisionTree)
     })
 
 
