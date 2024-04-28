@@ -96,7 +96,7 @@ function Chatbot({
                 const initialDecisionTree = {
                     '1': {
                         text: 'Preguntas frecuentes',
-                        options: optionsFor1
+                        options: []
                     },
                     '2': {
                         text: 'Citas de optometría',
@@ -227,7 +227,7 @@ function Chatbot({
                         }
                     }
                 };
-                const optionsFor1 = {};
+                /*const optionsFor1 = {};
                 questions.forEach((question, index) => {
                     optionsFor1[index + 1] = {
                         pregunta: question.pregunta,
@@ -239,14 +239,14 @@ function Chatbot({
                 
 
                 console.log("initialDecisionTree: ", initialDecisionTree)
-                
+                */
                 // Set questionsData and decisionTree state
                 setCurrentLevel(initialDecisionTree)
                 setDecisionTree(initialDecisionTree) 
 
                 // Fetch questions data
-                const response = await getQuestions();
-                const questions = response.data;
+                /*const response = await getQuestions();
+                const questions = response.data;*/
 
                 
             } catch (error) {
