@@ -92,19 +92,6 @@ function Chatbot({
         const fetchDataAndConstructTree = async () => {
             console.log("fetchDataAndContructTree")
             try {
-                // Fetch questions data
-                const response = await getQuestions();
-                const questions = response.data;
-
-                const optionsFor1 = {};
-                questions.forEach((question, index) => {
-                    optionsFor1[index + 1] = {
-                        pregunta: question.pregunta,
-                        respuesta: question.respuesta
-                    };
-                });
-                
-
                 // Construct decision tree with fetched questions data
                 const initialDecisionTree = {
                     '1': {
@@ -241,13 +228,28 @@ function Chatbot({
                     }
                 };
 
+                // Fetch questions data
+                const response = await getQuestions();
+                const questions = response.data;
+
+                const optionsFor1 = {};
+                questions.forEach((question, index) => {
+                    optionsFor1[index + 1] = {
+                        pregunta: question.pregunta,
+                        respuesta: question.respuesta
+                    };
+                });
+                
+
+                
+
                 console.log("initialDecisionTree: ", initialDecisionTree)
                 
                 // Set questionsData and decisionTree state
                 setCurrentLevel(initialDecisionTree)
                 setDecisionTree(initialDecisionTree) 
             } catch (error) {
-                
+                console.log("Falló algo")
             }
         };
 
