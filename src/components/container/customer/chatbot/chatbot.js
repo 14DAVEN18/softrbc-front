@@ -243,10 +243,7 @@ function Chatbot({
                 setCurrentLevel(initialDecisionTree)
                 setDecisionTree(initialDecisionTree) 
             } catch (error) {
-                showMessage(
-                    'error',
-                    `Ocurrió un error al cargar las preguntas frecuentes. ${error.message}`
-                )
+                
             }
         };
 
