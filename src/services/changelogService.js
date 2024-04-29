@@ -1,5 +1,5 @@
 import axios from "axios";
-import { GET_CHANGELOG } from "../constants/constants";
+import { baseURL } from "../constants/constants";
 
 export const getChangelog = async () => {
     const config = {
@@ -9,7 +9,7 @@ export const getChangelog = async () => {
         }
     }
     try {
-        return await axios.get(GET_CHANGELOG, config);
+        return await axios.get(`${baseURL}/auditoria/informacion`, config);
     } catch (error) {
         throw error;
     }

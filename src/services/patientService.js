@@ -1,20 +1,5 @@
 import axios from "axios";
-import { CREATE_PATIENT, GET_PATIENT_BY_ID, UPDATE_PATIENT } from "../constants/constants";
-
-export const getPatients = async () => {
-    const config = {
-        headers: {
-            "Authorization": localStorage.getItem('token'),
-            "Content-Type": "application/json"
-        }
-    }
-    try {
-        return await axios.get(CREATE_PATIENT, config);
-    } catch (error) {
-        throw error;
-    }
-}
-
+import { baseURL } from "../constants/constants";
 
 export const getPatientById = async (idpaciente) => {
     const config = {
@@ -24,7 +9,7 @@ export const getPatientById = async (idpaciente) => {
         }
     }
     try {
-        return await axios.get(`${GET_PATIENT_BY_ID}/${idpaciente}`, config);
+        return await axios.get(`${baseURL}/paciente/pacienteEncontrado/${idpaciente}`, config);
     } catch (error) {
         throw error;
     }
@@ -50,7 +35,7 @@ export const createPatient = async ({
     }
 }) => {
     try {
-        return await axios.post(CREATE_PATIENT, 
+        return await axios.post(`${baseURL}/paciente/nueva`, 
             {
                 usuario: {
                     nombre,
@@ -99,7 +84,7 @@ export const updatePatient = async ({
                 "Content-Type": "application/json"
             }
         }
-        return await axios.put(`${UPDATE_PATIENT}`, 
+        return await axios.put(`${baseURL}/paciente/actualizar`, 
             {
                 usuario: {
                     idusuario: idusuario,
@@ -118,20 +103,6 @@ export const updatePatient = async ({
                 },
                 idoptometra
             }, config);
-    } catch (error) {
-        throw error;
-    }
-}
-
-export const updatePatientStatus = async (id) => {
-    try {
-        const config = {
-            headers: {
-                "Authorization": localStorage.getItem('token'),
-                "Content-Type": "application/json"
-            }
-        }
-        return await axios.put(`${CREATE_PATIENT}/${id}`, id, config);
     } catch (error) {
         throw error;
     }

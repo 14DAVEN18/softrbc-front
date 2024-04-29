@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CREATE_USER, GET_USER, MODIFY_USER, UPDATE_USER_STATUS } from "../constants/constants";
+import { baseURL } from "../constants/constants";
 
 export const getOptometrists = async () => {
     const config = {
@@ -9,7 +9,7 @@ export const getOptometrists = async () => {
         }
     }
     try {
-        return await axios.get(GET_USER, config);
+        return await axios.get(`${baseURL}/usuarios/listaOptometras`, config);
     } catch (error) {
         throw error;
     }
@@ -35,7 +35,7 @@ export const createOptometrist = async ({
         }
     }
     try {
-        return await axios.post(CREATE_USER, 
+        return await axios.post(`${baseURL}/usuarios/nueva`, 
             {
                 usuario: {
                     nombre,
@@ -67,7 +67,7 @@ export const updateOptometrist = async ({
                 "Content-Type": "application/json"
             }
         }
-        return await axios.put(`${MODIFY_USER}/${id}`, 
+        return await axios.put(`${baseURL}/usuarios/modificar/${id}`, 
             {
                 idadmin,
                 id,
@@ -92,7 +92,7 @@ export const updateOptometristStatus = async ({
                     "Content-Type": "application/json"
                 }
             }
-            return await axios.put(UPDATE_USER_STATUS, {idadmin, idusuario, idoptometra}, config);
+            return await axios.put(`${baseURL}/usuarios/cambiarEstado`, {idadmin, idusuario, idoptometra}, config);
         } catch (error) {
             throw error;
         }

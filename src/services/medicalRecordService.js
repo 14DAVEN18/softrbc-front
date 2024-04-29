@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CREATE_MEDICAL_RECORD, ADD_MEDICAL_RECORD, GENERATE_PDF_FORMULA, FIND_PATIENT_MEDICAL_RECORDS } from "../constants/constants";
+import { baseURL } from "../constants/constants";
 
 
 export const createMedicalRecord = async () => {
@@ -10,7 +10,7 @@ export const createMedicalRecord = async () => {
         }
     }
     try {
-        return await axios.post(CREATE_MEDICAL_RECORD, undefined, config);
+        return await axios.post(`${baseURL}/HistoriaClinica/crearhistoria`, undefined, config);
     } catch (error) {
         throw error;
     }
@@ -95,7 +95,7 @@ export const addMedicalRecord = async (
                 "Content-Type": "application/json"
             }
         }
-        return await axios.post(ADD_MEDICAL_RECORD, 
+        return await axios.post(`${baseURL}/HistoriaClinica/nueva`, 
             {
                 Anamnesis: {
                     anamnesis
@@ -191,7 +191,7 @@ export const generatePdfFormula = async ({
         responseType: 'blob'
     }
     try {
-        return await axios.get(`${GENERATE_PDF_FORMULA}?od=${rxfinalod}&oi=${rxfinaloi}&avl=${avl}&avp=${avp}&addicion=${add}&bif=${bif}&uso=${uso}&diagnostico=${diagnostico}&observaciones=${observaciones}&idcita=${idcita}`, config);
+        return await axios.get(`${baseURL}/HistoriaClinica/generarFormula?od=${rxfinalod}&oi=${rxfinaloi}&avl=${avl}&avp=${avp}&addicion=${add}&bif=${bif}&uso=${uso}&diagnostico=${diagnostico}&observaciones=${observaciones}&idcita=${idcita}`, config);
     } catch (error) {
         throw error;
     }
@@ -205,7 +205,7 @@ export const getAllMedicalRecordsById = async (cedula) => {
         }
     }
     try {
-        return await axios.get(`${FIND_PATIENT_MEDICAL_RECORDS}/${cedula}`, config);
+        return await axios.get(`${baseURL}/HistoriaClinica/buscarHistoria/${cedula}`, config);
     } catch (error) {
         throw error;
     }

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { GET_CALENDARS, GET_DAYS_OPTOMETRIST, CREATE_CALENDAR, MODIFY_CALENDAR, CANCEL_DAY } from "../constants/constants";
+import { baseURL } from "../constants/constants";
 
 
 export const getCalendars = async () => {
@@ -10,7 +10,7 @@ export const getCalendars = async () => {
         }
     }
     try {
-        return await axios.get(GET_CALENDARS, config);
+        return await axios.get(`${baseURL}/calendario/calendariolista`, config);
     } catch (error) {
         throw error;
     }
@@ -24,7 +24,7 @@ export const getDaysOptometrist = async () => {
         }
     }
     try {
-        return await axios.get(GET_DAYS_OPTOMETRIST, config)
+        return await axios.get(`${baseURL}/calendario/calendariooptometra`, config)
     } catch (error) {
         throw error;
     }
@@ -38,7 +38,7 @@ export const createCalendar = async (idadmin, idoptometra, diasatencion, duracio
                 "Content-Type": "application/json"
             }
         }
-        return await axios.post(CREATE_CALENDAR, {
+        return await axios.post(`${baseURL}/calendario/nueva`, {
             idadmin,
             idoptometra,
             diasatencion,
@@ -64,7 +64,7 @@ export const updateCalendar = async ({
                 "Content-Type": "application/json"
             }
         }
-        const response = await axios.put(`${MODIFY_CALENDAR}/${idcalendario}`, 
+        const response = await axios.put(`${baseURL}/calendario/modificar/${idcalendario}`, 
         {
             idadmin,
             idcalendario,
@@ -88,7 +88,7 @@ export const cancelWorkDay = async (fecha) => {
         responseType: 'blob'
     }
     try {   
-        const response = await axios.get(`${CANCEL_DAY}?fecha=${fecha}`, config);
+        const response = await axios.get(`${baseURL}/cita/export/pdf?fecha=${fecha}`, config);
         return response;
     } catch (error) {
         throw error;

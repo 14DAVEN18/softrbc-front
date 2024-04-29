@@ -1,5 +1,5 @@
 import axios from "axios";
-import { GET_APPOINTMENTS_TIME, GET_APPOINTMENTS, GET_APPOINTMENT_DURATION, CREATE_APPOINTMENT, VERIFY_APPOINTMENT, DELETE_APPOINTMENT, GET_CANCELED_APPOINTMENTS } from "../constants/constants";
+import { baseURL } from "../constants/constants";
 
 export const getAppointmentsDuration = async (dia) => {
     const config = {
@@ -9,7 +9,7 @@ export const getAppointmentsDuration = async (dia) => {
         }
     }
     try {
-        return await axios.get(`${GET_APPOINTMENT_DURATION}/${dia}`, config);
+        return await axios.get(`${baseURL}/calendario/duracioncita/${dia}`, config);
     } catch (error) {
         throw error;
     }
@@ -24,7 +24,7 @@ export const getAppointments = async (date) => {
         }
     }
     try {
-        return await axios.get(`${GET_APPOINTMENTS}?fecha=${date}`, config);
+        return await axios.get(`${baseURL}/cita/listacitas?fecha=${date}`, config);
     } catch (error) {
         throw error;
     }
@@ -39,7 +39,7 @@ export const getAppointmentTimes = async (date) => {
         }
     }
     try {
-        return await axios.get(`${GET_APPOINTMENTS_TIME}?fecha=${date}`, config);
+        return await axios.get(`${baseURL}/cita/lista?fecha=${date}`, config);
     } catch (error) {
         throw error;
     }
@@ -61,7 +61,7 @@ export const createAppointment = async ({
         }
     }
     try {
-        return await axios.post(CREATE_APPOINTMENT, 
+        return await axios.post(`${baseURL}/cita/nueva`, 
             {
                 fecha,
                 hora,
@@ -83,7 +83,7 @@ export const verifyAppointmentDetails = async (query) => {
         }
     }
     try {
-        return await axios.get(`${VERIFY_APPOINTMENT}?idpaciente=${query.idpaciente}&codigo=${query.codigo}`, config);
+        return await axios.get(`${baseURL}/cita/verificarCodigo?idpaciente=${query.idpaciente}&codigo=${query.codigo}`, config);
     } catch (error) {
         throw error;
     }
@@ -98,7 +98,7 @@ export const cancelAppointment = async (codigo) => {
                 "Content-Type": "application/json"
             }
         }
-        return await axios.delete(`${DELETE_APPOINTMENT}/${codigo}`, config);
+        return await axios.delete(`${baseURL}/cita/eliminar/${codigo}`, config);
     } catch (error) {
         throw error;
     }
@@ -112,7 +112,7 @@ export const getCanceledAppointments = async () => {
         }
     }
     try {
-        return await axios.get(GET_CANCELED_APPOINTMENTS, config);
+        return await axios.get(`${baseURL}/cita/listacitasInactivas`, config);
     } catch (error) {
         throw error;
     }

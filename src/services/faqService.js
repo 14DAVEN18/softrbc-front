@@ -1,9 +1,9 @@
 import axios from "axios";
-import { CREATE_QUESTION, GET_QUESTION, MODIFY_QUESTION, DELETE_QUESTION } from "../constants/constants";
+import { baseURL } from "../constants/constants";
 
 export const getQuestions = async () => {
     try {
-        return await axios.get(GET_QUESTION);
+        return await axios.get(`${baseURL}/preguntas/listaPreguntas`);
     } catch (error) {
         throw error;
     }
@@ -22,7 +22,7 @@ export const createQuestion = async ({
         }
     }
     try {
-        return await axios.post(CREATE_QUESTION, 
+        return await axios.post(`${baseURL}/preguntas/nueva`, 
             {
                 idadmin,
                 pregunta,
@@ -46,7 +46,7 @@ export const updateQuestion = async ({
                 "Content-Type": "application/json"
             }
         }
-        return await axios.put(`${MODIFY_QUESTION}/${id}`, 
+        return await axios.put(`${baseURL}/preguntas/modificar/${id}`, 
         {
             idadmin,
             id,
@@ -66,7 +66,7 @@ export const deleteQuestion = async (idpregunta, idadmin) => {
                 "Content-Type": "application/json"
             }
         }
-        return await axios.delete(`${DELETE_QUESTION}?id=${idpregunta}&idadmin=${idadmin}`, config);
+        return await axios.delete(`${baseURL}/preguntas/eliminar?id=${idpregunta}&idadmin=${idadmin}`, config);
     } catch (error) {
         throw error;
     }
