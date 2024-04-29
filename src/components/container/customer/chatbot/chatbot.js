@@ -90,7 +90,6 @@ function Chatbot({
     useEffect(() => {
         
         const fetchDataAndConstructTree = async () => {
-            console.log("fetchDataAndContructTree")
 
             try {
                 const response = await getQuestions();
@@ -103,12 +102,13 @@ function Chatbot({
                         respuesta: question.respuesta
                     };
                 });
+
                 
                 // Construct decision tree with fetched questions data
                 const initialDecisionTree = {
                     '1': {
                         text: 'Preguntas frecuentes',
-                        options: []
+                        options: optionsFor1
                     },
                     '2': {
                         text: 'Citas de optometría',
@@ -321,8 +321,11 @@ function Chatbot({
                             if (countDown === 0) {
                                 clearInterval(countDownInterval)
                                 setDisplayLogin(true)
+                            } else if (countDown === 1) {
+                                addMessage({ text: `${countDown} segundo`, sender: 'bot' });
+                                countDown--;
                             } else {
-                                addMessage({ text: `${countDown} segundo(s)`, sender: 'bot' });
+                                addMessage({ text: `${countDown} segundos`, sender: 'bot' });
                                 countDown--;
                             }
                         }, 1000)
@@ -330,19 +333,32 @@ function Chatbot({
                 } else {
                     // this option doesn't require Auth, now check if the option has 'options' property
                     if (currentLevel[option].hasOwnProperty('options')) {
+                        
                         // The provided option has the 'options' property
                         const selectedOption = currentLevel[option].options
-                        addMessage({ text: currentLevel[option].text, sender: 'bot'})
-                        const optionsTexts = Object.keys(selectedOption).map(key => {
-                            if(selectedOption[key].hasOwnProperty('pregunta'))
-                                return { text: `${key}. ${selectedOption[key].pregunta}`, sender: 'bot' }
-                            else if (selectedOption[key].hasOwnProperty('text'))
-                                return { text: `${key}. ${selectedOption[key].text}`, sender: 'bot' }
-                        });
-                        optionsTexts.forEach(message => {
-                            addMessage(message)
-                        })
-                        setCurrentLevel(selectedOption)
+                        if(Object.keys(selectedOption).length > 0) {
+                            addMessage({ text: currentLevel[option].text, sender: 'bot'})
+                            if(selectedOption[1].hasOwnProperty('pregunta')) {
+                                const optionsTexts = Object.keys(selectedOption).map(key => {
+                                    return { text: `${key}. ${selectedOption[key].pregunta}`, sender: 'bot' }
+                                });
+                                optionsTexts.forEach(message => {
+                                    addMessage(message)
+                                })
+                                addMessage({ text: 'Si la pregunta que tiene no está listada, por favor comuníquese con la optica al +57 321 225 8819 o al correo electrónico elpalaciodelasgafascc@gmail.com', sender: 'bot'})
+                                setCurrentLevel(selectedOption)
+                            } else {
+                                const optionsTexts = Object.keys(selectedOption).map(key => {
+                                    return { text: `${key}. ${selectedOption[key].text}`, sender: 'bot' }
+                                });
+                                optionsTexts.forEach(message => {
+                                    addMessage(message)
+                                })
+                                setCurrentLevel(selectedOption)
+                            }
+                        } else {
+                            addMessage({ text: 'En el momento no hay preguntas establecidas, si tiene alguna duda específica, por favor comuníquese con la optica al +57 321 225 8819 o al correo electrónico elpalaciodelasgafascc@gmail.com', sender: 'bot' })
+                        }   
                     } else {
                         // The provided option doesn't have the 'options' property
                         addMessage({text: currentLevel[option].pregunta, sender: 'bot'})

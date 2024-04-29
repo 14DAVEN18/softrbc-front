@@ -55,18 +55,18 @@ export default function AppointmentManagement() {
         const fecthWorkdays = async ()  => {
             try {
                 const response = await getDaysOptometrist()
+                console.log(response.data)
                 const newWorkDays = response.data
-                    .flatMap(calendar => calendar.split('.'));
-                    setWorkDays(prevWorkDays => [
-                        ...prevWorkDays,
-                        ...newWorkDays
-                    ])
+                    .flatMap(calendar => calendar.split('.'))
+                    .filter((day, index, self) => self.indexOf(day) === index);
+                console.log(newWorkDays)
+                setWorkDays(newWorkDays)
             } catch (error) {
                 if (error.response.data.hasOwnProperty('error')) {
                     if (error.response.data.error.toLowerCase().includes('expired')){
                         showMessage(
                             'error',
-                            `Su sesión expiró. En breve será redirigido a la página de inicio de sesión.`
+                            `Su sesión expiró. En breve será redirigido al chat, por favor inicie sesión de nuevo en el menú "Agendar cita".`
                         )
                         setTimeout(() => {
                             localStorage.clear()
@@ -75,7 +75,7 @@ export default function AppointmentManagement() {
                     } else if (error.response.data.error.toLowerCase().includes('does not match')) {
                         showMessage(
                             'error',
-                            `Su sesión actual no es válida. Debe iniciar sesión de nuevo. En breve será redirigido a la página de inicio de sesión.`
+                            `Su sesión actual no es válida. Debe iniciar sesión de nuevo. En breve será redirigido al chat, por favor inicie sesión de nuevo en el menú "Agendar cita".`
                         )
                         setTimeout(() => {
                             localStorage.clear()
@@ -100,7 +100,9 @@ export default function AppointmentManagement() {
         }
     }, [navigate])
 
-
+    useEffect(()=> {
+        console.log(workDays)
+    })
 
 
 
@@ -172,7 +174,7 @@ export default function AppointmentManagement() {
         return (!isCurrentMonth(date) || 
                 formattedDate < formattedCurrentDate) ||
                 isSunday(date) ||
-                !workDays.includes(format(date, 'EEEE', { locale: es }).toLowerCase());
+                !workDays.includes(format(date, 'EEEE', { locale: es }).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
     };
 
 

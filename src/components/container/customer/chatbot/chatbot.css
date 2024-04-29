@@ -52,6 +52,7 @@
     background-color: rgb(145, 187, 255);
     border-radius: 0 5px 5px 5px;
     display: flex;
+    font-size: 1.3em;
     margin: 5px 0 0 12px;
     max-width: 80%;
     padding: 1% 2%;
@@ -60,30 +61,31 @@
 }
 /* Triangle shape for the peak */
 .bot-message::before {
-    content: '';
-    position: absolute;
-    top: 0px; /* Adjust this value to control the height of the peak */
-    left: -10px;
-    width: 0;
-    height: 0;
     border-style: solid;
     border-width: 0 10px 10px 0;
     border-color: black rgb(145, 187, 255) transparent transparent; /* Adjust the color to match the background color of the .bot-message */
+    content: '';
+    height: 0;
+    left: -10px;
+    position: absolute;
+    top: 0px; /* Adjust this value to control the height of the peak */
+    width: 0;
 }
 
 
 .user-message {
+    align-self: flex-end; /* Align the user message to the right */
     align-items: center;
     background-color: rgb(211, 211, 211); /* Change the background color as needed */
     border-radius: 5px;
+    font-size: 1.3em;
     margin-top: 5px; /* Adjust margin to create space between messages */
     margin-left: auto;
     margin-right: 12px;
     padding: 1% 2%;
-    max-width: 70%; /* Adjust the maximum width as needed */
-    align-self: flex-end; /* Align the user message to the right */
-    text-align: right; /* Align the text to the right */
     position: relative; /* Set position to relative for absolute positioning of the peak */
+    max-width: 70%; /* Adjust the maximum width as needed */
+    text-align: right; /* Align the text to the right */
 }
 
 /* Triangle shape for the peak */
