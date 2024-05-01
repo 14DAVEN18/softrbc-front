@@ -1,6 +1,6 @@
 
 
-export const baseURL ='http://localhost:8080'
+export const baseURL ='http://20.84.118.153:8080'
 
 
 export const durations = [
