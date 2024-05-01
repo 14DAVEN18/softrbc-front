@@ -194,7 +194,9 @@ export default function WorkCalendar() {
         value: optometra.idoptometra
     }));
 
-
+    useEffect(() => {
+        console.log(selectOptometristOptions)
+    })
 
 
 
@@ -576,7 +578,7 @@ export default function WorkCalendar() {
                                     message: 'Por favor seleccione un optometra'
                                 }
                             ]}
-                            initialValue={selectedCalendar?.idoptometra}
+                            initialValue={selectedCalendar ? selectOptometristOptions.find(optometrist => optometrist.value === selectedCalendar.idoptometra)?.label : undefined}
                         >
                             <Select 
                                 size={'large'}
@@ -586,8 +588,6 @@ export default function WorkCalendar() {
                             />
                         </Form.Item>
 
-                        <h4>Dias actuales:</h4>
-                        
                         <Form.Item
                             name="diasatencion"
                             rules={[
