@@ -578,7 +578,7 @@ export default function WorkCalendar() {
                                     message: 'Por favor seleccione un optometra'
                                 }
                             ]}
-                            initialValue={selectedCalendar ? selectOptometristOptions.find(optometrist => optometrist.value === selectedCalendar.idoptometra)?.label : undefined}
+                            initialValue={selectedCalendar ? selectOptometristOptions.find(optometrist => optometrist.value === selectedCalendar.idoptometra)?.label: undefined}
                         >
                             <Select 
                                 size={'large'}
