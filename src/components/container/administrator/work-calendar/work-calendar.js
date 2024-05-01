@@ -194,9 +194,6 @@ export default function WorkCalendar() {
         value: optometra.idoptometra
     }));
 
-    useEffect(() => {
-        console.log(selectOptometristOptions)
-    })
 
 
 
@@ -578,7 +575,7 @@ export default function WorkCalendar() {
                                     message: 'Por favor seleccione un optometra'
                                 }
                             ]}
-                            initialValue={selectedCalendar ? selectOptometristOptions.find(optometrist => optometrist.value === selectedCalendar.idoptometra)?.label: undefined}
+                            initialValue={selectedCalendar?.idoptometra}
                         >
                             <Select 
                                 size={'large'}
