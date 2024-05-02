@@ -142,7 +142,13 @@ function Chatbot({
                                                 addMessage({ text: '0. Menú principal.'})
                                             }
                                         } catch (error) {
-                                            if (error.response.data.hasOwnProperty('error')) {
+                                            if(!error.hasOwnProperty('response')) {
+                                                if(error.hasOwnProperty('message')) {
+                                                    if(error.message.toLowerCase() === 'network error') {
+                                                        addMessage({ text: 'No se puedo conectar al servidor. Por favor intente más tarde.', sender: 'bot'})
+                                                    }
+                                                }
+                                            } else if (error.response.data.hasOwnProperty('error')) {
                                                 if (error.response.data.error.toLowerCase().includes('expired')){
                                                     addMessage({ text: 'Estimado usuario. Su sesión expiró. En unos segundos el sistema le pedirá sus credenciales de inicio de sesión.', sender: 'bot'})
                                                     localStorage.clear()
@@ -195,7 +201,13 @@ function Chatbot({
                                                 addMessage({ text: '0. Menú principal.'})
                                             }
                                         } catch (error) {
-                                            if (error.response.data.hasOwnProperty('error')) {
+                                            if(!error.hasOwnProperty('response')) {
+                                                if(error.hasOwnProperty('message')) {
+                                                    if(error.message.toLowerCase() === 'network error') {
+                                                        addMessage({ text: 'No se puedo conectar al servidor. Por favor intente más tarde.', sender: 'bot'})
+                                                    }
+                                                }
+                                            } else if (error.response.data.hasOwnProperty('error')) {
                                                 if (error.response.data.error.toLowerCase().includes('expired')){
                                                     addMessage({ text: 'Estimado usuario. Su sesión expiró. En unos segundos el sistema le pedirá sus credenciales de inicio de sesión.', sender: 'bot'})
                                                     localStorage.clear()
@@ -244,10 +256,19 @@ function Chatbot({
                 setCurrentLevel(initialDecisionTree)
                 setDecisionTree(initialDecisionTree) 
             } catch (error) {
-                showMessage(
-                    'error',
-                    'Ocurrió un error al cargar las preguntas.'
-                )
+                if(error.hasOwnProperty('message')) {
+                    if(error.message.toLowerCase() === 'network error') {
+                        showMessage(
+                            'error',
+                            `No se puedo conectar al servidor. Por favor intente más tarde.`
+                        )
+                    }
+                } else {
+                    showMessage(
+                        'error',
+                        'Ocurrió un error al cargar las preguntas.'
+                    )
+                }
             }
         };
 

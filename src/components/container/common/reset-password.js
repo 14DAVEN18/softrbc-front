@@ -88,10 +88,21 @@ const PasswordReset = () => {
                 }, 5000)
             }
         } catch (error) {
-            showMessage(
-                'error',
-                `Ocurrió un error al reiniciar su contraseña. ${error.message}`
-            )
+            if(!error.hasOwnProperty('response')) {
+                if(error.hasOwnProperty('message')) {
+                    if(error.message.toLowerCase() === 'network error') {
+                        showMessage(
+                            'error',
+                            `No se puedo conectar al servidor. Por favor intente más tarde.`
+                        )
+                    }
+                }
+            } else {
+                showMessage(
+                    'error',
+                    `Ocurrió un error al reiniciar su contraseña. ${error.message}`
+                )
+            }
         }
 
         setPasswordForm(initialResetForm)

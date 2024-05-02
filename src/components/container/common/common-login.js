@@ -78,18 +78,21 @@ const EmployeeLogin = () => {
         try {
             await handlerLogin({cedula: values.cedula, password: values.password})
         } catch(error) {
-            showMessage(
-                'error',
-                `${error.message}`
-            )
-            if(error.hasOwnProperty('message')) {
-                if(error.message.toLowerCase() === 'network error') {
-                    showMessage(
-                        'error',
-                        `No se puedo conectar al servidor. Por favor intente más tarde.`
-                    )
+            if(!error.hasOwnProperty('response')) {
+                if(error.hasOwnProperty('message')) {
+                    if(error.message.toLowerCase() === 'network error') {
+                        showMessage(
+                            'error',
+                            `No se puedo conectar al servidor. Por favor intente más tarde.`
+                        )
+                    }
                 }
-            } 
+            } else {
+                showMessage(
+                    'error',
+                    `${error.message}`
+                )
+            }
         }
             
 

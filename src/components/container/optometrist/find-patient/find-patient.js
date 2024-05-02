@@ -145,7 +145,16 @@ export default function FindPatient() {
                 )
             }
         } catch (error) {
-            if (error.response.data.hasOwnProperty('error')) {
+            if(!error.hasOwnProperty('response')) {
+                if(error.hasOwnProperty('message')) {
+                    if(error.message.toLowerCase() === 'network error') {
+                        showMessage(
+                            'error',
+                            `No se puedo conectar al servidor. Por favor intente más tarde.`
+                        )
+                    }
+                }
+            } else if (error.response.data.hasOwnProperty('error')) {
                 if (error.response.data.error.toLowerCase().includes('expired')){
                     showMessage(
                         'error',

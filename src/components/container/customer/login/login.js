@@ -88,10 +88,21 @@ export default function Login({onLogin}) {
             }, 7000)
             
         } catch (error) {
-            showMessage(
-                'error',
-                `Error: ${error.message}`
-            )
+            if(!error.hasOwnProperty('response')) {
+                if(error.hasOwnProperty('message')) {
+                    if(error.message.toLowerCase() === 'network error') {
+                        showMessage(
+                            'error',
+                            `No se puedo conectar al servidor. Por favor intente más tarde.`
+                        )
+                    }
+                }
+            } else {
+                showMessage(
+                    'error',
+                    `Error: ${error.message}`
+                )
+            }
         } finally {
             setLoading(false)
         }

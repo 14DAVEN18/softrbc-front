@@ -63,7 +63,16 @@ export default function WorkCalendar() {
             const response = await getOptometrists(); // Call the create function from admin Service.js
             setOptometristsData(response.data)
         } catch (error) {
-            if (error.response.data.hasOwnProperty('error')) {
+            if(!error.hasOwnProperty('response')) {
+                if(error.hasOwnProperty('message')) {
+                    if(error.message.toLowerCase() === 'network error') {
+                        showMessage(
+                            'error',
+                            `No se puedo conectar al servidor. Por favor intente más tarde.`
+                        )
+                    }
+                }
+            } else if (error.response.data.hasOwnProperty('error')) {
                 if (error.response.data.error.toLowerCase().includes('expired')){
                     showMessage(
                         'error',
@@ -133,7 +142,16 @@ export default function WorkCalendar() {
             setUsedDays(days.filter(day => !allUsedDays.some(d => d.key === day.key)))
             setCalendarsData(calendarFormatted);
         } catch (error) {
-            if (error.response.data.hasOwnProperty('error')) {
+            if(!error.hasOwnProperty('response')) {
+                if(error.hasOwnProperty('message')) {
+                    if(error.message.toLowerCase() === 'network error') {
+                        showMessage(
+                            'error',
+                            `No se puedo conectar al servidor. Por favor intente más tarde.`
+                        )
+                    }
+                }
+            } else if (error.response.data.hasOwnProperty('error')) {
                 if (error.response.data.error.toLowerCase().includes('expired')){
                     showMessage(
                         'error',
@@ -266,7 +284,16 @@ export default function WorkCalendar() {
                 )
             }
         } catch (error) {
-            if (error.response.data.hasOwnProperty('error')) {
+            if(!error.hasOwnProperty('response')) {
+                if(error.hasOwnProperty('message')) {
+                    if(error.message.toLowerCase() === 'network error') {
+                        showMessage(
+                            'error',
+                            `No se puedo conectar al servidor. Por favor intente más tarde.`
+                        )
+                    }
+                }
+            } else if (error.response.data.hasOwnProperty('error')) {
                 if (error.response.data.error.toLowerCase().includes('expired')){
                     showMessage(
                         'error',
@@ -359,7 +386,16 @@ export default function WorkCalendar() {
                 }
                 setLoading(true);
             } catch (error) {
-                if (error.response.data.hasOwnProperty('error')) {
+                if(!error.hasOwnProperty('response')) {
+                    if(error.hasOwnProperty('message')) {
+                        if(error.message.toLowerCase() === 'network error') {
+                            showMessage(
+                                'error',
+                                `No se puedo conectar al servidor. Por favor intente más tarde.`
+                            )
+                        }
+                    }
+                } else if (error.response.data.hasOwnProperty('error')) {
                     if (error.response.data.error.toLowerCase().includes('expired')){
                         showMessage(
                             'error',

@@ -90,10 +90,21 @@ const AccountRecovery = () => {
                 
             } 
         } catch (error) {
-            showMessage(
-                'error',
-                `Ocurrió un error al verificar su código de recuperación. Verifique que el código sea correcto. ${error.message}`
-            )
+            if(!error.hasOwnProperty('response')) {
+                if(error.hasOwnProperty('message')) {
+                    if(error.message.toLowerCase() === 'network error') {
+                        showMessage(
+                            'error',
+                            `No se puedo conectar al servidor. Por favor intente más tarde.`
+                        )
+                    }
+                }
+            } else {
+                showMessage(
+                    'error',
+                    `Ocurrió un error al verificar su código de recuperación. Verifique que el código sea correcto.`
+                )
+            }
         }
 
         setRecoveryForm(initialRecoveryForm)

@@ -13,6 +13,7 @@ import FeedbackMessage from '../../common/feedback-message/feedback-message';
 
 // Self created services
 import { cancelWorkDay } from '../../../../services/calendarService';
+import { getDaysOptometrist } from '../../../../services/calendarService';
 
 // Styles
 import './cancel-work-day.css';
@@ -27,6 +28,7 @@ export default function CancelWorkDay() {
         type: '',
         text: ''
     })
+    const [workDays, setWorkDays] = useState([])
     const navigate = useNavigate();
 
     const showMessage = (type, text) => {
@@ -48,10 +50,61 @@ export default function CancelWorkDay() {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        
+        const fecthWorkdays = async ()  => {
+            try {
+                const response = await getDaysOptometrist()
+                console.log(response.data)
+                const newWorkDays = response.data
+                    .flatMap(calendar => calendar.split('.'))
+                    .filter((day, index, self) => self.indexOf(day) === index);
+                console.log(newWorkDays)
+                setWorkDays(newWorkDays)
+            } catch (error) {
+                if(!error.hasOwnProperty('response')) {
+                    if(error.hasOwnProperty('message')) {
+                        if(error.message.toLowerCase() === 'network error') {
+                            showMessage(
+                                'error',
+                                `No se puedo conectar al servidor. Por favor intente más tarde.`
+                            )
+                        }
+                    }
+                } else if (error.response.data.hasOwnProperty('error')) {
+                    if (error.response.data.error.toLowerCase().includes('expired')){
+                        showMessage(
+                            'error',
+                            `Su sesión expiró. En breve será redirigido al chat, por favor inicie sesión de nuevo en el menú "Agendar cita".`
+                        )
+                        setTimeout(() => {
+                            localStorage.clear()
+                            navigate('/cliente/preguntas')
+                        }, 5000)
+                    } else if (error.response.data.error.toLowerCase().includes('does not match')) {
+                        showMessage(
+                            'error',
+                            `Su sesión actual no es válida. Debe iniciar sesión de nuevo. En breve será redirigido al chat, por favor inicie sesión de nuevo en el menú "Agendar cita".`
+                        )
+                        setTimeout(() => {
+                            localStorage.clear()
+                            navigate('/cliente/preguntas')
+                        }, 5000)
+                    }
+                } else{
+                    showMessage(
+                        'error',
+                        `Ocurrió un error al cargar los días disponibles.`
+                    )
+                }
+            }
+        }
+
         setHeight(ref.current.offsetHeight);
         setWidth(ref.current.offsetWidth);
         if(!localStorage.getItem('token')) {
             navigate("/inicio-empleados")
+        } else {
+            fecthWorkdays();   
         }
     }, [navigate])
 
@@ -119,7 +172,10 @@ export default function CancelWorkDay() {
         const allowedDate = addDays(new Date(), 2)
         const formattedDate = format(date, 'yyyy-MM-dd');
         const formattedCurrentDate = format(allowedDate, 'yyyy-MM-dd');
-        return (!isCurrentMonth(date) || formattedDate < formattedCurrentDate) || isSunday(date);
+        return (!isCurrentMonth(date) ||
+                formattedDate < formattedCurrentDate) ||
+                isSunday(date) ||
+                !workDays.includes(format(date, 'EEEE', { locale: es }).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
     };
 
 
@@ -154,7 +210,16 @@ export default function CancelWorkDay() {
                 )
             }
         } catch (error) {
-            if (error.response.data.hasOwnProperty('error')) {
+            if(!error.hasOwnProperty('response')) {
+                if(error.hasOwnProperty('message')) {
+                    if(error.message.toLowerCase() === 'network error') {
+                        showMessage(
+                            'error',
+                            `No se puedo conectar al servidor. Por favor intente más tarde.`
+                        )
+                    }
+                }
+            } else if (error.response.data.hasOwnProperty('error')) {
                 if (error.response.data.error.toLowerCase().includes('expired')){
                     showMessage(
                         'error',
