@@ -49,7 +49,7 @@ export default function Container() {
       <div className='container' ref={ref}>
         <div className="content">
           <Routes>
-            <Route path='/' element={ <Navigate replace to="/inicio-empleados"/> }></Route>
+            <Route path='/' element={ <Navigate replace to="/cliente/preguntas"/> }></Route>
             <Route path='/inicio-empleados' element={ <EmployeeLogin/> }></Route>
             <Route path='/recuperacion-de-cuenta' element={ <AccountRecovery/> }></Route>
             <Route path='/reiniciar-clave' element={ <PasswordReset/> }></Route>

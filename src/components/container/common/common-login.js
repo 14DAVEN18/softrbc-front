@@ -78,12 +78,19 @@ const EmployeeLogin = () => {
         try {
             await handlerLogin({cedula: values.cedula, password: values.password})
         } catch(error) {
+            console.log(error)
             if(!error.hasOwnProperty('response')) {
+                console.log("response")
                 if(error.hasOwnProperty('message')) {
                     if(error.message.toLowerCase() === 'network error') {
                         showMessage(
                             'error',
                             `No se puedo conectar al servidor. Por favor intente más tarde.`
+                        )
+                    } else {
+                        showMessage(
+                            'error',
+                            `Usuario o contraseña incorrectos.`
                         )
                     }
                 }
