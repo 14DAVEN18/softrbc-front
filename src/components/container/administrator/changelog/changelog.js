@@ -48,13 +48,37 @@ export default function Changelog() {
 
     // TO FETCH CHANGELOG DATA WHEN COMPONENT IS LOADED FOR THE FIRST TIME ***********************************************************
     const [changelogData, setChangelogData] = useState(null);
+    const date_format = "%Y-%m-%d_%H:%M:%S"
     const fetchChangelog = useCallback(async () => {
         try {
             const response = await getChangelog();
 
             const changeRecord = response.data.map((log) => {
                 const JsonObject = JSON.parse(log.informacion);
-                const formattedDate = log.fecha.replace(/_/g, ' ');
+
+                let dateStr = log.fecha
+                console.log("dateStr: ", dateStr)
+                let [datePart, timePart] = dateStr.split('_');
+                let [year, month, day] = datePart.split('-').map(Number);
+                let [hour, minute, second] = timePart.split(':').map(Number);
+
+                let dateObj = new Date(year, month - 1, day, hour, minute, second);
+
+                // Step 2: Subtract 5 hours
+                dateObj.setHours(dateObj.getHours() - 5);
+
+                // Step 3: Convert the modified Date object back to the original string format
+                let newDateStr = dateObj.getFullYear() + '-' +
+                    String(dateObj.getMonth() + 1).padStart(2, '0') + '-' +
+                    String(dateObj.getDate()).padStart(2, '0') + '_' +
+                    String(dateObj.getHours()).padStart(2, '0') + ':' +
+                    String(dateObj.getMinutes()).padStart(2, '0') + ':' +
+                    String(dateObj.getSeconds()).padStart(2, '0');
+
+                // Update the object with the new date string
+                const formattedDate = newDateStr.replace(/_/g, ' ');;
+                console.log("formattedDate: ", formattedDate)
+
     
                 return {
                     ...log,
