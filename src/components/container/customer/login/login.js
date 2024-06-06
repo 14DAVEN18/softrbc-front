@@ -95,6 +95,11 @@ export default function Login({onLogin}) {
                             'error',
                             `No se puedo conectar al servidor. Por favor intente más tarde.`
                         )
+                    } else {
+                        showMessage(
+                            'error',
+                            `Credeciales incorrectas.`
+                        )
                     }
                 }
             } else {
