@@ -458,7 +458,9 @@ export default function WorkCalendar() {
             title: 'Dias de trabajo',
             key: 'diasatencion',
             render: (_, record) => (
-                record.diasatencion.map(day => day.day).join(' ')
+                record.diasatencion && record.diasatencion.length > 0
+                    ? record.diasatencion.map(day => day.day).join(' ')
+                    : 'no hay dias asignados'
             )
         },
         {
